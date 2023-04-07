@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import TagAnnotationForm from "../forms/TagAnnotForm";
 import TempRedTag from "../prompts/ConfirmSubmitTag";
+import { Tornado } from "../../assets/icons";
 
 interface props {
   imageSrc: any;
@@ -42,12 +43,17 @@ function ImageAnnot({ imageSrc }: props) {
     const ctx = canvas!.getContext("2d");
     //tag
     ctx!.font = "24px Arial";
-    ctx!.fillStyle = "white";
-    ctx!.fillText(tag, x, y);
+    ctx!.fillStyle = "#2A2A2A";
+    // Draw the background color rectangle
+    let textWidth = ctx!.measureText(tag).width;
+    ctx!.fillRect(x, y, textWidth + 20, 40);
+    // Draw the text
+    ctx!.fillStyle = "#fff";
+    ctx!.fillText(tag, x + 10, y + 25);
     //dot
     ctx!.beginPath();
-    ctx!.fillStyle = "green";
-    ctx!.arc(x, y, 5, 0, 2 * Math.PI);
+    ctx!.fillStyle = "white";
+    ctx!.arc(x, y, 10, 0, 2 * Math.PI);
     ctx!.fill();
 
     setAnnotations([...annotations, { x, y }]);
@@ -65,6 +71,8 @@ function ImageAnnot({ imageSrc }: props) {
     image.src = imageSrc;
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
+    image.width = canvas!.width;
+    image.height = canvas!.height;
     context!.clearRect(0, 0, canvas!.width, canvas!.height);
     setTimeout(() => {
       context!.drawImage(image, 0, 0, image.width, image.height);
@@ -78,8 +86,8 @@ function ImageAnnot({ imageSrc }: props) {
     const image = new Image();
     image.src = imageSrc;
     image.onload = () => {
-      canvas!.width = image.width;
-      canvas!.height = image.height;
+      image.width = canvas!.width;
+      image.height = canvas!.height;
       ctx!.drawImage(image, 0, 0, image.width, image.height);
     };
   }, [imageSrc]);
@@ -90,10 +98,19 @@ function ImageAnnot({ imageSrc }: props) {
         position: "relative",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
+        alignItems: "flex-start",
+        paddingBottom: "0.5rem",
       }}
     >
-      <canvas ref={canvasRef} onClick={(e) => handleCanvasClick(e)} />
+      <canvas
+        ref={canvasRef}
+        onClick={(e) => handleCanvasClick(e)}
+        style={{
+          borderRadius: "7px",
+        }}
+        width='1000'
+        height='562'
+      />
 
       {tempRedPrompt && (
         <>
@@ -101,6 +118,7 @@ function ImageAnnot({ imageSrc }: props) {
           <TagAnnotationForm
             refer={ref}
             tags={tag}
+            handleCloseInput={setTempRedPrompt}
             handleInputChange={handleInputChange}
             onSubmit={handleSubmitTag}
             position={currentAnnotation}
@@ -110,9 +128,18 @@ function ImageAnnot({ imageSrc }: props) {
 
       <button
         onClick={handleClearAllTags}
-        style={{ marginTop: "10px", width: "200px" }}
+        style={{
+          marginTop: "10px",
+          marginLeft: "10px",
+          border: "none",
+          borderRadius: "7px",
+          padding: "10px",
+          color: "#fff",
+          backgroundColor: "#2a2a2a",
+          boxShadow: "0px 3px 3px 0px rgba(0, 0, 0, 0.2)",
+        }}
       >
-        Clear
+        <Tornado />
       </button>
     </div>
   );
