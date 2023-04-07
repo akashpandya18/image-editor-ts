@@ -27,6 +27,7 @@ function ImageAnnot({ imageSrc }: props) {
     const y = event.clientY - rect!.top;
     const annotation = { x, y };
     setCurrentAnnotation(annotation);
+    setTag("");
   };
 
   const handleInputChange = (event: any) => {
@@ -58,13 +59,16 @@ function ImageAnnot({ imageSrc }: props) {
 
   const handleClearAllTags = (e: any) => {
     e.preventDefault();
+    setAnnotations([]);
+    setTags([]);
     const image = new Image();
     image.src = imageSrc;
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
-    context!.drawImage(image, 0, 0);
-    setAnnotations([]);
-    setTags([]);
+    context!.clearRect(0, 0, canvas!.width, canvas!.height);
+    setTimeout(() => {
+      context!.drawImage(image, 0, 0, image.width, image.height);
+    }, 100);
   };
 
   //for initial image load
