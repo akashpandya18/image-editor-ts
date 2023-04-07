@@ -1,23 +1,21 @@
 interface props {
-  enteredTag: string;
   position: { x: number; y: number };
 }
-export default function ConfirmSubmitTag({ enteredTag, position }: props) {
+export default function TempRedTag({ position }: props) {
   return (
     <>
       <div
         style={{
+          top: position.y - 10,
+          left: position.x - 10,
           position: "absolute",
-          zIndex: 99,
-          top: position.y,
-          left: position.x,
-          background: "#000",
+          zIndex: 9,
+          width: "20px",
+          height: "20px",
+          backgroundColor: "red",
+          borderRadius: "50%",
         }}
-      >
-        <label htmlFor='submit'>Sure?</label>
-        <label htmlFor='value'>{enteredTag}</label>
-        <button>✔️</button>
-      </div>
+      ></div>
     </>
   );
 }

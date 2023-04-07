@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import TagAnnotationForm from "../forms/TagAnnotForm";
-import { useOnClickOutside } from "usehooks-ts";
-import ConfirmSubmitTag from "../prompts/ConfirmSubmitTag";
+import TempRedTag from "../prompts/ConfirmSubmitTag";
 
 interface props {
   imageSrc: any;
@@ -18,54 +17,19 @@ function ImageAnnot({ imageSrc }: props) {
   const [tag, setTag] = useState("");
   const [annotations, setAnnotations] = useState<annotation[]>([]);
   const [tags, setTags] = useState<string[]>([]);
-
-  const [finalSet, setFinalSet] = useState([{ annotations, tags }]);
-
-  const [showInput, setShowInput] = useState(false);
-  const [showConfirmPrompt, setShowConfirmPrompt] = useState(false);
-
-  const handleClickOutside = () => {
-    // Your custom logic here
-    const x = currentAnnotation.x;
-    const y = currentAnnotation.y;
-    const canvas = canvasRef.current;
-    const context = canvas!.getContext("2d");
-    const image = new Image();
-    image.src = imageSrc;
-    // context!.drawImage(image, 0, 0);
-    // context!.clearRect(x, y, 20, 20);
-    console.log("clicked outside");
-  };
-
-  const handleClickInside = () => {
-    // Your custom logic here
-    console.log("clicked inside");
-  };
-
-  useOnClickOutside(ref, handleClickOutside);
+  const [tempRedPrompt, setTempRedPrompt] = useState(false);
 
   const handleCanvasClick = (event: any) => {
+    setTempRedPrompt(true);
     const canvas = canvasRef.current;
-    const context = canvas!.getContext("2d");
-
-    // const image = new Image();
-    // image.src = imageSrc;
-    // context!.drawImage(image, 0, 0);
-
     const rect = canvas!.getBoundingClientRect();
     const x = event.clientX - rect!.left;
     const y = event.clientY - rect!.top;
     const annotation = { x, y };
     setCurrentAnnotation(annotation);
-    setShowInput(true);
-    context!.beginPath();
-    context!.fillStyle = "red";
-    context!.arc(x, y, 5, 0, 2 * Math.PI);
-    context!.fill();
   };
 
   const handleInputChange = (event: any) => {
-    // handleClickInside();
     setTag(event.target.value);
   };
 
@@ -75,20 +39,32 @@ function ImageAnnot({ imageSrc }: props) {
     const y = currentAnnotation.y;
     const canvas = canvasRef.current;
     const ctx = canvas!.getContext("2d");
+    //tag
     ctx!.font = "24px Arial";
     ctx!.fillStyle = "white";
     ctx!.fillText(tag, x, y);
+    //dot
+    ctx!.beginPath();
+    ctx!.fillStyle = "green";
+    ctx!.arc(x, y, 5, 0, 2 * Math.PI);
+    ctx!.fill();
+
     setAnnotations([...annotations, { x, y }]);
     setTags([...tags, tag]);
-    setShowConfirmPrompt(true);
-    // setFinalSet([...finalSet, { annotations, tags }]);
     setTag("");
-    setShowInput(false);
     setCurrentAnnotation({ x: 0, y: 0 });
+    setTempRedPrompt(false);
   };
 
-  const handleClearAllTags = () => {
-    console.log(finalSet);
+  const handleClearAllTags = (e: any) => {
+    e.preventDefault();
+    const image = new Image();
+    image.src = imageSrc;
+    const canvas = canvasRef.current;
+    const context = canvas!.getContext("2d");
+    context!.drawImage(image, 0, 0);
+    setAnnotations([]);
+    setTags([]);
   };
 
   //for initial image load
@@ -114,18 +90,20 @@ function ImageAnnot({ imageSrc }: props) {
       }}
     >
       <canvas ref={canvasRef} onClick={(e) => handleCanvasClick(e)} />
-      {showInput && (
-        <TagAnnotationForm
-          refer={ref}
-          tags={tag}
-          handleInputChange={handleInputChange}
-          onSubmit={handleSubmitTag}
-          position={currentAnnotation}
-        />
+
+      {tempRedPrompt && (
+        <>
+          <TempRedTag position={currentAnnotation} />
+          <TagAnnotationForm
+            refer={ref}
+            tags={tag}
+            handleInputChange={handleInputChange}
+            onSubmit={handleSubmitTag}
+            position={currentAnnotation}
+          />
+        </>
       )}
-      {/* {showConfirmPrompt && (
-        <ConfirmSubmitTag enteredTag={tag} position={currentAnnotation} />
-      )} */}
+
       <button
         onClick={handleClearAllTags}
         style={{ marginTop: "10px", width: "200px" }}

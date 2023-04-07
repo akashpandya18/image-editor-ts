@@ -21,10 +21,9 @@ function TagAnnotationForm({
         ref={refer}
         style={{
           position: "absolute",
-          zIndex: 99,
+          zIndex: 9,
           top: position.y,
           left: position.x,
-          background: "#000",
         }}
       >
         <form onSubmit={onSubmit}>
