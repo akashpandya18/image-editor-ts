@@ -35,7 +35,8 @@ function App() {
               maxWidth: "1080px",
               maxHeight: "700px",
               borderRadius: "7px",
-              boxShadow: "0px 7px 12px 1px rgba(0, 0, 0, 0.2)",
+              padding: "1rem",
+              // boxShadow: "0px 1px 4px 0px rgba(0, 0, 0, 0.2)",
             }}
           >
             <ImageAnnot imageSrc={imgSrc} />
