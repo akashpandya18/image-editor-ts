@@ -49,6 +49,31 @@ export const Close = () => {
     </>
   );
 };
+export const Check = () => {
+  return (
+    <>
+      <svg
+        width='18'
+        height='18'
+        fill='none'
+        xmlns='http://www.w3.org/2000/svg'
+      >
+        <g clip-path='url(#clip0_489_197931)'>
+          <path
+            d='M3 11l2.2 2.933c.367.49.55.734.8.734s.433-.245.8-.734L15 3'
+            stroke='currentColor'
+            stroke-linecap='round'
+          />
+        </g>
+        <defs>
+          <clipPath id='clip0_489_197931'>
+            <path fill='currentColor' d='M0 0H18V18H0z' />
+          </clipPath>
+        </defs>
+      </svg>
+    </>
+  );
+};
 export const RotateLeft = () => {
   return (
     <>
@@ -308,6 +333,96 @@ export const TextonImage = () => {
           <rect height='18' rx='2' width='18' x='3' y='3' />
           <path d='M3 7h18M7 11.5h10M7 16h6' />
         </g>
+      </svg>
+    </>
+  );
+};
+export const ShowTags = () => {
+  return (
+    <>
+      <svg
+        width='24'
+        height='24'
+        fill='none'
+        xmlns='http://www.w3.org/2000/svg'
+      >
+        <g clip-path='url(#clip0_489_191387)'>
+          <path
+            d='M12 12.5h3c1.892 0 2.838 0 3.394-1.095.556-1.094.176-1.614-.584-2.654C16.552 7.031 14.42 6 12 6m0 6.5H9.5m2.5 0h2.5c0 1.5 0 3-2.5 3s-2.5-1.5-2.5-3M12 6C9.58 6 7.448 7.032 6.19 8.751c-.76 1.04-1.14 1.56-.584 2.654C6.162 12.5 7.108 12.5 9 12.5h.5M12 6V3M6.5 20L8 18m4 3v-2m5.5 1L16 18'
+            stroke='currentColor'
+            stroke-width='2'
+            stroke-linecap='round'
+            stroke-linejoin='round'
+          />
+        </g>
+        <defs>
+          <clipPath id='clip0_489_191387'>
+            <path fill='currentColor' d='M0 0H24V24H0z' />
+          </clipPath>
+        </defs>
+      </svg>
+    </>
+  );
+};
+export const HideTags = () => {
+  return (
+    <>
+      <svg
+        width='24'
+        height='24'
+        fill='none'
+        xmlns='http://www.w3.org/2000/svg'
+      >
+        <g clip-path='url(#clip0_489_191386)'>
+          <path
+            d='M12 12.5h3c1.892 0 2.838 0 3.394-1.095.556-1.094.176-1.614-.584-2.654C16.552 7.031 14.42 6 12 6m0 6.5H9.5m2.5 0h2.5c0 1.5 0 3-2.5 3s-2.5-1.5-2.5-3M12 6C9.58 6 7.448 7.032 6.19 8.751c-.76 1.04-1.14 1.56-.584 2.654C6.162 12.5 7.108 12.5 9 12.5h.5M12 6V3'
+            stroke='currentColor'
+            stroke-width='2'
+            stroke-linecap='round'
+            stroke-linejoin='round'
+          />
+        </g>
+        <defs>
+          <clipPath id='clip0_489_191386'>
+            <path fill='currentColor' d='M0 0H24V24H0z' />
+          </clipPath>
+        </defs>
+      </svg>
+    </>
+  );
+};
+export const ScreenShot = () => {
+  return (
+    <>
+      <svg
+        width='24'
+        height='24'
+        fill='none'
+        xmlns='http://www.w3.org/2000/svg'
+      >
+        <g clip-path='url(#clip0_489_191266)'>
+          <path
+            d='M3 10.238c0-1.282 0-1.923.283-2.397a2 2 0 0 1 .691-.691c.474-.283 1.115-.283 2.397-.283h.639c.08 0 .12 0 .158-.002a2 2 0 0 0 1.618-.932l.09-.13a2 2 0 0 1 1.528-.802L10.562 5h2.876l.158.001a2 2 0 0 1 1.527.803c.023.03.046.063.091.13l.091.129a2 2 0 0 0 1.685.804h.639c1.282 0 1.923 0 2.397.283.284.17.521.407.69.691.284.474.284 1.115.284 2.397V15c0 1.886 0 2.828-.586 3.414C19.828 19 18.886 19 17 19H7c-1.886 0-2.828 0-3.414-.586C3 17.828 3 16.886 3 15v-4.762z'
+            stroke='currentColor'
+            stroke-width='2'
+            stroke-linecap='round'
+          />
+          <path
+            d='M15.143 12.571a3.143 3.143 0 1 1-6.286 0 3.143 3.143 0 0 1 6.286 0z'
+            stroke='currentColor'
+            stroke-width='2'
+            stroke-linecap='round'
+          />
+          <path
+            d='M16.571 10a.571.571 0 1 1 1.143 0 .571.571 0 1 1-1.143 0z'
+            fill='currentColor'
+          />
+        </g>
+        <defs>
+          <clipPath id='clip0_489_191266'>
+            <path fill='currentColor' d='M0 0H24V24H0z' />
+          </clipPath>
+        </defs>
       </svg>
     </>
   );

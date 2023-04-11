@@ -16,6 +16,7 @@ input:focus {
   background: #2a2a2a;
   color: #fff;
   border: none;
+  cursor: pointer;
   padding: 0.5rem;
   margin-top: 10px;
   border-radius: 7px;
@@ -26,6 +27,7 @@ input:focus {
   background: #2a2a2a;
   color: #fff;
   border: none;
+  cursor: pointer;
   padding: 0.5rem;
   margin-top: 10px;
   border-radius: 7px;
