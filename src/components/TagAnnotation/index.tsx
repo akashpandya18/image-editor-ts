@@ -34,6 +34,7 @@ function ImageAnnot({ imageSrcMain }: props) {
   const [deletePos, setDeletePos] = useState({ xN: 0, yN: 0 });
   const [deleteTagId, setDeleteTagId] = useState("");
   const [showAllTags, setShowAllTags] = useState(false);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   const [showH, setShowH] = useState(false);
   const [hoverTag, setHoverTag] = useState("");
@@ -282,16 +283,34 @@ function ImageAnnot({ imageSrcMain }: props) {
 
   //for initial image load
   useEffect(() => {
+    const img = new Image();
+    img.src = imageSrcMain;
+
+    img.onload = () => {
+      const { width, height } = img;
+      if (width > 1000) {
+        const ratio = width / height;
+        const newHeight = 1000 / ratio;
+        const newWidth = 563 * ratio;
+        setDimensions({ width: newWidth, height: newHeight });
+      } else {
+        setDimensions({ width, height });
+      }
+    };
+  }, [imageSrcMain]);
+
+  useEffect(() => {
     const canvas = canvasRef.current;
+    const { width, height } = dimensions;
+    canvas!.width = width;
+    canvas!.height = height;
     const ctx = canvas!.getContext("2d");
     const image = new Image();
     image.src = imageSrcMain;
     image.onload = () => {
-      image.width = canvas!.width;
-      image.height = canvas!.height;
-      ctx!.drawImage(image, 0, 0, image.width, image.height);
+      ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
     };
-  }, [imageSrcMain]);
+  }, [dimensions, imageSrcMain]);
 
   return (
     <div
@@ -309,8 +328,6 @@ function ImageAnnot({ imageSrcMain }: props) {
           borderRadius: "7px",
           boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
         }}
-        width={1000}
-        height={562}
         onMouseMove={handleCanvasMouseMove}
       />
 
@@ -343,8 +360,9 @@ function ImageAnnot({ imageSrcMain }: props) {
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
-          justifyContent: "space-between",
-          width: "20%",
+          justifyContent: "left",
+          width: "100%",
+          gap: "10px",
         }}
       >
         <button

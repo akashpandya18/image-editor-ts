@@ -25,8 +25,9 @@ function App() {
             display: "flex",
             flexDirection: "row",
             alignItems: "flex-start",
-            justifyContent: "space-between",
-            width: "78%",
+            justifyContent: "left",
+            width: "90%",
+            gap: "10px",
           }}
         >
           <Controls />
