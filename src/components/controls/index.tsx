@@ -1,12 +1,12 @@
 import {
-  Blur,
-  BrightnessUp,
+  // Blur,
+  // BrightnessUp,
   Crop,
   Flip,
-  RotateRight,
+  // RotateRight,
   Tag,
-  TextonImage,
-  Zoom,
+  TextOnImage,
+  // Zoom,
 } from "../../assets/icons";
 import UniversalSlider from "./sliders";
 
@@ -17,21 +17,22 @@ interface controlsType {
   icon: any;
 }
 
-export default function Controls() {
-  const controls = [
-    { id: 1, name: "Blur", type: "blur", icon: <Blur /> },
-    { id: 2, name: "Zoom", type: "zoom", icon: <Zoom /> },
-    { id: 3, name: "Rotate", type: "rotate", icon: <RotateRight /> },
-    { id: 4, name: "Brightness", type: "brightness", icon: <BrightnessUp /> },
-  ];
+interface props {
+  blur: number;
+  setBlur: Function;
+  controls: controlsType[];
+  brightness: number;
+  setBrightness: Function;
+}
 
+export default function Controls({ controls, blur, setBlur, brightness, setBrightness }: props): JSX.Element {
   const tools = [
     { id: 1, name: "Tag/Annot", type: "tag-annotation", icon: <Tag /> },
     {
       id: 2,
       name: "Text on Image",
       type: "text-on-image",
-      icon: <TextonImage />,
+      icon: <TextOnImage />,
     },
     { id: 3, name: "Crop", type: "crop", icon: <Crop /> },
     { id: 4, name: "Flip", type: "flip", icon: <Flip /> },
@@ -101,6 +102,7 @@ export default function Controls() {
           })}
         </div>
       </div>
+
       <div
         style={{
           padding: "1rem",
@@ -141,7 +143,7 @@ export default function Controls() {
                   {x.icon}
                 </div>
                 <div>
-                  <UniversalSlider label={x.name} />
+                  <UniversalSlider label={x.name} id={x.type} blur={blur} setBlur={setBlur} brightness={brightness} setBrightness={setBrightness} />
                 </div>
               </div>
             );

@@ -1,14 +1,14 @@
-import { useState, useEffect, useRef } from "react";
+import {useEffect, useRef, useState} from "react";
 import TagAnnotationForm from "../forms/TagAnnotForm";
 import TempRedTag from "../prompts/ConfirmSubmitTag";
-import { HideTags, ScreenShot, ShowTags, Tornado } from "../../assets/icons";
-import { customAlphabet } from "nanoid";
-import { DeleteTag } from "../prompts/deleteTag";
+import {HideTags, ScreenShot, ShowTags, Tornado} from "../../assets/icons";
+import {customAlphabet} from "nanoid";
+import {DeleteTag} from "../prompts/deleteTag";
 import ShowTagOnHover from "../prompts/showTagOnHover";
-import ShowAllTags from "../prompts/showAllTags";
 
 interface props {
   imageSrcMain: any;
+  imageFilter: string;
 }
 interface annotation {
   id: string;
@@ -17,7 +17,7 @@ interface annotation {
   tag: string;
 }
 
-function ImageAnnot({ imageSrcMain }: props) {
+function ImageAnnot({ imageSrcMain, imageFilter }: props) {
   const ref = useRef(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [currentAnnotation, setCurrentAnnotation] = useState({ x: 0, y: 0 });
@@ -55,8 +55,7 @@ function ImageAnnot({ imageSrcMain }: props) {
     const clickedDot = annotations.find((annotation) => {
       ctx?.beginPath();
       ctx?.arc(annotation.x, annotation.y, 10, 0, 2 * Math.PI);
-      const inPath = ctx?.isPointInPath(xFind, yFind);
-      return inPath;
+      return ctx?.isPointInPath(xFind, yFind);
     });
 
     // Check if the click was within the bounds of the tags
@@ -283,6 +282,7 @@ function ImageAnnot({ imageSrcMain }: props) {
         style={{
           borderRadius: "7px",
           boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
+          filter: imageFilter
         }}
         width={1000}
         height={562}
@@ -341,6 +341,7 @@ function ImageAnnot({ imageSrcMain }: props) {
         >
           <Tornado />
         </button>
+
         <button
           onClick={() => {
             showAllTags ? hideTags() : showTags();
@@ -358,6 +359,7 @@ function ImageAnnot({ imageSrcMain }: props) {
         >
           {showAllTags ? <HideTags /> : <ShowTags />}
         </button>
+
         <button
           onClick={handleScreenShot}
           style={{
