@@ -12,6 +12,7 @@ import { customAlphabet } from "nanoid";
 import { DeleteTag } from "../prompts/deleteTag";
 import ShowTagOnHover from "../prompts/showTagOnHover";
 import ShowAllTags from "../prompts/showAllTags";
+import MainCanvasControls from "../controls/mainCanvasControls";
 
 interface props {
   imageSrcMain: any;
@@ -89,17 +90,64 @@ function ImageAnnot({ imageSrcMain }: props) {
     const y = currentAnnotation.y;
     const canvas = canvasRef.current;
     const ctx = canvas!.getContext("2d");
+    const image = new Image();
+    image.src = imageSrcMain;
+    image.width = canvas!.width;
+    image.height = canvas!.height;
 
     if (tag !== "") {
       //dot
       ctx!.beginPath();
-      ctx!.fillStyle = "white";
+      ctx!.fillStyle = "yellow";
       ctx!.arc(x, y, 10, 0, 2 * Math.PI);
       ctx!.fill();
+      const tempAnnot = [...annotations, { id, x, y, tag }];
       setAnnotations([...annotations, { id, x, y, tag }]);
       setTag("");
       setCurrentAnnotation({ x: 0, y: 0 });
       setTempRedPrompt(false);
+
+      if (showAllTags) {
+        ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
+        setTimeout(() => {
+          ctx!.drawImage(image, 0, 0, image.width, image.height);
+          tempAnnot.forEach((annot: any) => {
+            const { x, y, tag } = annot;
+            //tag
+            ctx!.font = "24px Arial";
+            // Draw the background color rectangle
+            let textWidth = ctx!.measureText(tag).width;
+
+            //tags
+            ctx!.beginPath();
+            ctx!.fillStyle = "yellow";
+            ctx!.arc(x, y, 10, 0, 2 * Math.PI);
+            ctx!.fill();
+
+            if (x - image.width > -200 && y - image.height < -100) {
+              ctx!.fillStyle = "#2A2A2A";
+              ctx!.fillRect(x - textWidth - 20, y, textWidth + 20, 40);
+              ctx!.fillStyle = "#fff";
+              ctx!.fillText(tag, x - textWidth - 10, y + 25);
+            } else if (x - image.width < -200 && y - image.height > -100) {
+              ctx!.fillStyle = "#2A2A2A";
+              ctx!.fillRect(x, y - 40, textWidth + 20, 40);
+              ctx!.fillStyle = "#fff";
+              ctx!.fillText(tag, x + 10, y - 15);
+            } else if (x - image.width > -200 && y - image.height > -100) {
+              ctx!.fillStyle = "#2A2A2A";
+              ctx!.fillRect(x - textWidth - 20, y - 40, textWidth + 20, 40);
+              ctx!.fillStyle = "#fff";
+              ctx!.fillText(tag, x - textWidth - 10, y - 15);
+            } else {
+              ctx!.fillStyle = "#2A2A2A";
+              ctx!.fillRect(x, y, textWidth + 20, 40);
+              ctx!.fillStyle = "#fff";
+              ctx!.fillText(tag, x + 10, y + 25);
+            }
+          });
+        }, 10);
+      }
     }
 
     setTag("");
@@ -132,6 +180,7 @@ function ImageAnnot({ imageSrcMain }: props) {
 
   const handleClearSingleTag = (e: any) => {
     e.preventDefault();
+    setShowAllTags(false);
 
     const filteredArray = annotations.filter(
       (item: any) => item.id !== deleteTagId
@@ -153,7 +202,7 @@ function ImageAnnot({ imageSrcMain }: props) {
         // populate dots again
         filteredArray.forEach((annot) => {
           context!.beginPath();
-          context!.fillStyle = "white";
+          context!.fillStyle = "yellow";
           context!.arc(annot.x, annot.y, 10, 0, 2 * Math.PI);
           context!.fill();
         });
@@ -245,7 +294,7 @@ function ImageAnnot({ imageSrcMain }: props) {
           context!.fillText(tag, x + 10, y + 25);
         }
       });
-    }, 100);
+    }, 10);
   };
 
   const hideTags = () => {
@@ -263,11 +312,11 @@ function ImageAnnot({ imageSrcMain }: props) {
       context!.drawImage(image, 0, 0, image.width, image.height);
       annotations.forEach((annot: any) => {
         context!.beginPath();
-        context!.fillStyle = "white";
+        context!.fillStyle = "yellow";
         context!.arc(annot.x, annot.y, 10, 0, 2 * Math.PI);
         context!.fill();
       });
-    }, 100);
+    }, 10);
   };
 
   const handleScreenShot = () => {
@@ -355,78 +404,13 @@ function ImageAnnot({ imageSrcMain }: props) {
 
       {showH && <ShowTagOnHover position={hoverPos} tag={hoverTag} />}
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "left",
-          width: "100%",
-          gap: "10px",
-        }}
-      >
-        <button
-          onClick={handleClearAllTags}
-          style={{
-            marginTop: "10px",
-            border: "none",
-            borderRadius: "7px",
-            padding: "10px",
-            color: "#fff",
-            cursor: "pointer",
-            backgroundColor: "#2a2a2a",
-            boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.2)",
-          }}
-        >
-          <Tornado />
-        </button>
-        <button
-          onClick={() => {
-            showAllTags ? hideTags() : showTags();
-          }}
-          style={{
-            marginTop: "10px",
-            border: "none",
-            borderRadius: "7px",
-            padding: "10px",
-            color: "#fff",
-            cursor: "pointer",
-            backgroundColor: "#2a2a2a",
-            boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.2)",
-          }}
-        >
-          {showAllTags ? <HideTags /> : <ShowTags />}
-        </button>
-        <button
-          onClick={handleScreenShot}
-          style={{
-            marginTop: "10px",
-            border: "none",
-            borderRadius: "7px",
-            padding: "10px",
-            color: "#fff",
-            cursor: "pointer",
-            backgroundColor: "#2a2a2a",
-            boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.2)",
-          }}
-        >
-          <ScreenShot />
-        </button>
-        <button
-          style={{
-            marginTop: "10px",
-            border: "none",
-            borderRadius: "7px",
-            padding: "10px",
-            color: "#fff",
-            cursor: "pointer",
-            backgroundColor: "#2a2a2a",
-            boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.2)",
-          }}
-        >
-          <Draw />
-        </button>
-      </div>
+      <MainCanvasControls
+        clearFunction={handleClearAllTags}
+        showHideFunction={() => (showAllTags ? hideTags() : showTags())}
+        screenShotFunction={handleScreenShot}
+        drawFunction={() => console.log("draw")}
+        iconTag={showAllTags ? <HideTags /> : <ShowTags />}
+      />
     </div>
   );
 }
