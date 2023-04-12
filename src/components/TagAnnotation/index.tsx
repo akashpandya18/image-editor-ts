@@ -1,7 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import TagAnnotationForm from "../forms/TagAnnotForm";
 import TempRedTag from "../prompts/ConfirmSubmitTag";
-import { HideTags, ScreenShot, ShowTags, Tornado } from "../../assets/icons";
+import {
+  Draw,
+  HideTags,
+  ScreenShot,
+  ShowTags,
+  Tornado,
+} from "../../assets/icons";
 import { customAlphabet } from "nanoid";
 import { DeleteTag } from "../prompts/deleteTag";
 import ShowTagOnHover from "../prompts/showTagOnHover";
@@ -204,20 +210,39 @@ function  ImageAnnot({ imageSrcMain }: props) {
     setTimeout(() => {
       context!.drawImage(image, 0, 0, image.width, image.height);
       annotations.forEach((annot: any) => {
+        const { x, y, tag } = annot;
         //tag
         context!.font = "24px Arial";
-        context!.fillStyle = "#2A2A2A";
         // Draw the background color rectangle
-        let textWidth = context!.measureText(annot.tag).width;
-        context!.fillRect(annot.x, annot.y, textWidth + 20, 40);
-        // Draw the text
-        context!.fillStyle = "#fff";
-        context!.fillText(annot.tag, annot.x + 10, annot.y + 25);
+        let textWidth = context!.measureText(tag).width;
+
         //tags
         context!.beginPath();
-        context!.fillStyle = "white";
-        context!.arc(annot.x, annot.y, 10, 0, 2 * Math.PI);
+        context!.fillStyle = "yellow";
+        context!.arc(x, y, 10, 0, 2 * Math.PI);
         context!.fill();
+
+        if (x - image.width > -200 && y - image.height < -100) {
+          context!.fillStyle = "#2A2A2A";
+          context!.fillRect(x - textWidth - 20, y, textWidth + 20, 40);
+          context!.fillStyle = "#fff";
+          context!.fillText(tag, x - textWidth - 10, y + 25);
+        } else if (x - image.width < -200 && y - image.height > -100) {
+          context!.fillStyle = "#2A2A2A";
+          context!.fillRect(x, y - 40, textWidth + 20, 40);
+          context!.fillStyle = "#fff";
+          context!.fillText(tag, x + 10, y - 15);
+        } else if (x - image.width > -200 && y - image.height > -100) {
+          context!.fillStyle = "#2A2A2A";
+          context!.fillRect(x - textWidth - 20, y - 40, textWidth + 20, 40);
+          context!.fillStyle = "#fff";
+          context!.fillText(tag, x - textWidth - 10, y - 15);
+        } else {
+          context!.fillStyle = "#2A2A2A";
+          context!.fillRect(x, y, textWidth + 20, 40);
+          context!.fillStyle = "#fff";
+          context!.fillText(tag, x + 10, y + 25);
+        }
       });
     }, 100);
   };
@@ -313,17 +338,13 @@ function  ImageAnnot({ imageSrcMain }: props) {
 
       {showH && <ShowTagOnHover position={hoverPos} tag={hoverTag} />}
 
-      {/* {showAllTags && annotations.length > 0 && (
-        <ShowAllTags data={annotations} />
-      )} */}
-
       <div
         style={{
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
-          width: "15%",
+          width: "20%",
         }}
       >
         <button
@@ -372,6 +393,20 @@ function  ImageAnnot({ imageSrcMain }: props) {
           }}
         >
           <ScreenShot />
+        </button>
+        <button
+          style={{
+            marginTop: "10px",
+            border: "none",
+            borderRadius: "7px",
+            padding: "10px",
+            color: "#fff",
+            cursor: "pointer",
+            backgroundColor: "#2a2a2a",
+            boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.2)",
+          }}
+        >
+          <Draw />
         </button>
       </div>
     </div>
