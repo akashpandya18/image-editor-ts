@@ -17,7 +17,7 @@ interface annotation {
   tag: string;
 }
 
-function ImageAnnot({ imageSrcMain }: props) {
+function  ImageAnnot({ imageSrcMain }: props) {
   const ref = useRef(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [currentAnnotation, setCurrentAnnotation] = useState({ x: 0, y: 0 });

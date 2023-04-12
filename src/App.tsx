@@ -3,6 +3,7 @@ import ImageAnnot from "./components/TagAnnotation";
 import { useState } from "react";
 import FileUpload from "./utils/FileUpload";
 import Controls from "./components/controls";
+import Crop from "./components/crop"
 
 function App() {
   const [imgSrc, setImgSrc] = useState("");
@@ -36,10 +37,10 @@ function App() {
               maxHeight: "700px",
               borderRadius: "7px",
               padding: "1rem",
-              // boxShadow: "0px 1px 4px 0px rgba(0, 0, 0, 0.2)",
             }}
           >
-            <ImageAnnot imageSrcMain={imgSrc} />
+            {/* <ImageAnnot imageSrcMain={imgSrc} /> */}
+            <Crop imageSrcMain={imgSrc} />
           </div>
         </div>
       ) : (
