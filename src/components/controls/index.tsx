@@ -1,12 +1,8 @@
 import {
-  // Blur,
-  // BrightnessUp,
   Crop,
   Flip,
-  // RotateRight,
   Tag,
-  TextOnImage,
-  // Zoom,
+  TextOnImage
 } from "../../assets/icons";
 import UniversalSlider from "./sliders";
 
@@ -18,14 +14,24 @@ interface controlsType {
 }
 
 interface props {
+  controls: controlsType[];
   blur: number;
   setBlur: Function;
-  controls: controlsType[];
   brightness: number;
   setBrightness: Function;
+  rotate: number;
+  setRotate: Function;
 }
 
-export default function Controls({ controls, blur, setBlur, brightness, setBrightness }: props): JSX.Element {
+export default function Controls({
+  controls,
+  blur,
+  setBlur,
+  brightness,
+  setBrightness,
+  rotate,
+  setRotate
+}: props): JSX.Element {
   const tools = [
     { id: 1, name: "Tag/Annot", type: "tag-annotation", icon: <Tag /> },
     {
@@ -56,7 +62,6 @@ export default function Controls({ controls, blur, setBlur, brightness, setBrigh
           height: "auto",
           borderRadius: "7px",
           backgroundColor: "#fafafa",
-          // boxShadow: "0px 1px 4px 0px rgba(0, 0, 0, 0.2)",
         }}
       >
         <div
@@ -143,7 +148,16 @@ export default function Controls({ controls, blur, setBlur, brightness, setBrigh
                   {x.icon}
                 </div>
                 <div>
-                  <UniversalSlider label={x.name} id={x.type} blur={blur} setBlur={setBlur} brightness={brightness} setBrightness={setBrightness} />
+                  <UniversalSlider
+                    label={x.name}
+                    id={x.type}
+                    blur={blur}
+                    setBlur={setBlur}
+                    brightness={brightness}
+                    setBrightness={setBrightness}
+                    rotate={rotate}
+                    setRotate={setRotate}
+                  />
                 </div>
               </div>
             );

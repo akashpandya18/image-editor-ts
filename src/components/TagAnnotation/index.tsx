@@ -1,23 +1,25 @@
-import {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TagAnnotationForm from "../forms/TagAnnotForm";
 import TempRedTag from "../prompts/ConfirmSubmitTag";
 import {
-  Draw,
   HideTags,
-  ScreenShot,
   ShowTags,
-  Tornado,
 } from "../../assets/icons";
 import { customAlphabet } from "nanoid";
 import { DeleteTag } from "../prompts/deleteTag";
 import ShowTagOnHover from "../prompts/showTagOnHover";
-import ShowAllTags from "../prompts/showAllTags";
 import MainCanvasControls from "../controls/mainCanvasControls";
 
 interface props {
   imageSrcMain: any;
-  imageFilter: string;
+  blur: number;
+  setBlur: Function;
+  brightness: number;
+  setBrightness: Function;
+  rotate: number;
+  setRotate: Function;
 }
+
 interface annotation {
   id: string;
   x: number;
@@ -25,9 +27,18 @@ interface annotation {
   tag: string;
 }
 
-function ImageAnnot({ imageSrcMain, imageFilter }: props) {
+function ImageAnnot({
+  imageSrcMain,
+  blur,
+  setBlur,
+  brightness,
+  setBrightness,
+  rotate,
+  setRotate
+}: props) {
   const ref = useRef(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
   const [currentAnnotation, setCurrentAnnotation] = useState({ x: 0, y: 0 });
   const [tag, setTag] = useState("");
   const [annotations, setAnnotations] = useState<annotation[]>([]);
@@ -37,7 +48,6 @@ function ImageAnnot({ imageSrcMain, imageFilter }: props) {
   const [deleteTagId, setDeleteTagId] = useState("");
   const [showAllTags, setShowAllTags] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-
   const [showH, setShowH] = useState(false);
   const [hoverTag, setHoverTag] = useState("");
   const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 });
@@ -166,6 +176,9 @@ function ImageAnnot({ imageSrcMain, imageFilter }: props) {
     setDeleteTagId("");
     setShowAllTags(false);
     setShowH(false);
+    setBlur(0);
+    setRotate(0);
+    setBrightness(1);
     const image = new Image();
     image.src = imageSrcMain;
     const canvas = canvasRef.current;
@@ -216,9 +229,7 @@ function ImageAnnot({ imageSrcMain, imageFilter }: props) {
     }, 10);
   };
 
-  const handleCanvasMouseMove = (
-    event: React.MouseEvent<HTMLCanvasElement>
-  ) => {
+  const handleCanvasMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
     event.preventDefault();
     const canvas = canvasRef.current;
     const ctx = canvas!.getContext("2d");
@@ -329,7 +340,6 @@ function ImageAnnot({ imageSrcMain, imageFilter }: props) {
     link.href = image;
     link.click();
   };
-
   //for initial image load
   useEffect(() => {
     const img = new Image();
@@ -361,6 +371,27 @@ function ImageAnnot({ imageSrcMain, imageFilter }: props) {
     };
   }, [dimensions, imageSrcMain]);
 
+  useEffect(() => {
+    let blurVal = `${blur*10}px`;
+    // let rotateVal = `${rotate}deg`;
+    const image = new Image();
+    image.src = imageSrcMain;
+    const canvas = canvasRef.current;
+    const context = canvas!.getContext("2d");
+
+    image.width = canvas!.width;
+    image.height = canvas!.height;
+
+    context!.clearRect(0, 0, canvas!.width, canvas!.height);
+    setTimeout(() => {
+      context!.drawImage(image, 0, 0, image.width, image.height);
+      context!.filter = `blur(${blurVal}) brightness(${brightness})`;
+      // canvas!.delete('all');
+      // canvas!.style.transform = `rotate(${rotateVal})`;
+      // context!.rotate(rotate);
+    }, 10);
+  },[blur, brightness, rotate]);
+
   return (
     <div
       style={{
@@ -375,8 +406,7 @@ function ImageAnnot({ imageSrcMain, imageFilter }: props) {
         onClick={(e) => handleCanvasClick(e)}
         style={{
           borderRadius: "7px",
-          boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
-          filter: imageFilter
+          boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)"
         }}
         onMouseMove={handleCanvasMouseMove}
       />

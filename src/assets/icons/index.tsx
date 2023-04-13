@@ -183,8 +183,8 @@ export const BrightnessUp = () => {
         <path
           d='M12 4.5V3m0 18v-1.5M4.5 12H3m18 0h-1.5m-1-6.5l-1 1m-11 11l-1 1m12-1l1 1m-12-12l-1-1'
           stroke='currentColor'
-          stroke-width='2'
-          stroke-linecap='round'
+          strokeWidth='2'
+          strokeLinecap='round'
         />
       </svg>
     </>
