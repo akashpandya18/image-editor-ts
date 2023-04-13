@@ -1,15 +1,11 @@
 import { useState } from "react";
 import {
-  Blur,
-  BrightnessUp,
   Crop,
   Draw,
   Flip,
   More,
-  RotateRight,
   Tag,
-  TextonImage,
-  Zoom,
+  TextOnImage
 } from "../../assets/icons";
 import UniversalSlider from "./sliders";
 
@@ -30,8 +26,19 @@ interface props {
   setRotate: Function;
 }
 
-export default function Controls() {
-  const [showControls, setShowControls] = useState(false);
+const tools = [
+  { id: 1, name: "Tag/Annot", type: "tag-annotation", icon: <Tag /> },
+  {
+    id: 2,
+    name: "Text on Image",
+    type: "text-on-image",
+    icon: <TextOnImage />,
+  },
+  { id: 3, name: "Crop", type: "crop", icon: <Crop /> },
+  { id: 4, name: "Flip", type: "flip", icon: <Flip /> },
+  { id: 5, name: "Draw", type: "draw", icon: <Draw /> },
+  { id: 6, name: "More", type: "more", icon: <More /> },
+];
 
 export default function Controls({
   controls,
@@ -42,19 +49,7 @@ export default function Controls({
   rotate,
   setRotate
 }: props): JSX.Element {
-  const tools = [
-    { id: 1, name: "Tag/Annot", type: "tag-annotation", icon: <Tag /> },
-    {
-      id: 2,
-      name: "Text on Image",
-      type: "text-on-image",
-      icon: <TextOnImage />,
-    },
-    { id: 3, name: "Crop", type: "crop", icon: <Crop /> },
-    { id: 4, name: "Flip", type: "flip", icon: <Flip /> },
-    { id: 5, name: "Draw", type: "draw", icon: <Draw /> },
-    { id: 6, name: "More", type: "more", icon: <More /> },
-  ];
+  const [showControls, setShowControls] = useState(false);
 
   return (
     <div
@@ -96,7 +91,7 @@ export default function Controls({
                 }}
               >
                 <div
-                  onClick={(e: any) => {
+                  onClick={() => {
                     switch (x.type) {
                       case "tag-annotation":
                         break;
@@ -202,4 +197,4 @@ export default function Controls({
       )}
     </div>
   );
-}
+};
