@@ -1,15 +1,11 @@
 import { useState } from "react";
 import {
-  Blur,
-  BrightnessUp,
   Crop,
   Draw,
   Flip,
   More,
-  RotateRight,
   Tag,
-  TextonImage,
-  Zoom,
+  TextOnImage
 } from "../../assets/icons";
 import UniversalSlider from "./sliders";
 
@@ -20,29 +16,40 @@ interface controlsType {
   icon: any;
 }
 
-export default function Controls() {
+interface props {
+  controls: controlsType[];
+  blur: number;
+  setBlur: Function;
+  brightness: number;
+  setBrightness: Function;
+  rotate: number;
+  setRotate: Function;
+}
+
+const tools = [
+  { id: 1, name: "Tag/Annot", type: "tag-annotation", icon: <Tag /> },
+  {
+    id: 2,
+    name: "Text on Image",
+    type: "text-on-image",
+    icon: <TextOnImage />,
+  },
+  { id: 3, name: "Crop", type: "crop", icon: <Crop /> },
+  { id: 4, name: "Flip", type: "flip", icon: <Flip /> },
+  { id: 5, name: "Draw", type: "draw", icon: <Draw /> },
+  { id: 6, name: "More", type: "more", icon: <More /> },
+];
+
+export default function Controls({
+  controls,
+  blur,
+  setBlur,
+  brightness,
+  setBrightness,
+  rotate,
+  setRotate
+}: props): JSX.Element {
   const [showControls, setShowControls] = useState(false);
-
-  const controls = [
-    { id: 1, name: "Blur", type: "blur", icon: <Blur /> },
-    { id: 2, name: "Zoom", type: "zoom", icon: <Zoom /> },
-    { id: 3, name: "Rotate", type: "rotate", icon: <RotateRight /> },
-    { id: 4, name: "Brightness", type: "brightness", icon: <BrightnessUp /> },
-  ];
-
-  const tools = [
-    { id: 1, name: "Tag/Annot", type: "tag-annotation", icon: <Tag /> },
-    {
-      id: 2,
-      name: "Text on Image",
-      type: "text-on-image",
-      icon: <TextonImage />,
-    },
-    { id: 3, name: "Crop", type: "crop", icon: <Crop /> },
-    { id: 4, name: "Flip", type: "flip", icon: <Flip /> },
-    { id: 5, name: "Draw", type: "draw", icon: <Draw /> },
-    { id: 6, name: "More", type: "more", icon: <More /> },
-  ];
 
   return (
     <div
@@ -63,7 +70,6 @@ export default function Controls() {
           height: "auto",
           borderRadius: "7px",
           backgroundColor: "#fafafa",
-          // boxShadow: "0px 1px 4px 0px rgba(0, 0, 0, 0.2)",
         }}
       >
         <div
@@ -85,7 +91,7 @@ export default function Controls() {
                 }}
               >
                 <div
-                  onClick={(e: any) => {
+                  onClick={() => {
                     switch (x.type) {
                       case "tag-annotation":
                         break;
@@ -131,6 +137,7 @@ export default function Controls() {
           })}
         </div>
       </div>
+
       {showControls && (
         <div
           style={{
@@ -138,8 +145,7 @@ export default function Controls() {
             width: "400px",
             height: "auto",
             borderRadius: "7px",
-            backgroundColor: "#fafafa",
-            // boxShadow: "0px 1px 4px 0px rgba(0, 0, 0, 0.2)",
+            backgroundColor: "#fafafa"
           }}
         >
           <div
@@ -172,7 +178,16 @@ export default function Controls() {
                     {x.icon}
                   </div>
                   <div>
-                    <UniversalSlider label={x.name} />
+                    <UniversalSlider
+                      label={x.name}
+                      id={x.type}
+                      blur={blur}
+                      setBlur={setBlur}
+                      brightness={brightness}
+                      setBrightness={setBrightness}
+                      rotate={rotate}
+                      setRotate={setRotate}
+                    />
                   </div>
                 </div>
               );
@@ -182,4 +197,4 @@ export default function Controls() {
       )}
     </div>
   );
-}
+};

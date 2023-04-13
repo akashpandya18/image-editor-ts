@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TagAnnotationForm from "../forms/TagAnnotForm";
 import TempRedTag from "../prompts/ConfirmSubmitTag";
 import { HideTags, ShowTags } from "../../assets/icons";
@@ -10,17 +10,33 @@ import Draw from "../draw";
 
 interface props {
   imageSrcMain: any;
-}
+  blur: number;
+  setBlur: Function;
+  brightness: number;
+  setBrightness: Function;
+  rotate: number;
+  setRotate: Function;
+};
+
 interface annotation {
   id: string;
   x: number;
   y: number;
   tag: string;
-}
+};
 
-function ImageAnnot({ imageSrcMain }: props) {
+function ImageAnnot({
+  imageSrcMain,
+  blur,
+  setBlur,
+  brightness,
+  setBrightness,
+  rotate,
+  setRotate
+}: props) {
   const ref = useRef(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
   const [currentAnnotation, setCurrentAnnotation] = useState({ x: 0, y: 0 });
   const [tag, setTag] = useState("");
   const [annotations, setAnnotations] = useState<annotation[]>([]);
@@ -30,11 +46,9 @@ function ImageAnnot({ imageSrcMain }: props) {
   const [deleteTagId, setDeleteTagId] = useState("");
   const [showAllTags, setShowAllTags] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-
   const [showH, setShowH] = useState(false);
   const [hoverTag, setHoverTag] = useState("");
   const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 });
-
   const [draw, setDraw] = useState(false);
 
   const nanoid = customAlphabet("1234567890abcdef", 10);
@@ -59,8 +73,7 @@ function ImageAnnot({ imageSrcMain }: props) {
     const clickedDot = annotations.find((annotation) => {
       ctx?.beginPath();
       ctx?.arc(annotation.x, annotation.y, 10, 0, 2 * Math.PI);
-      const inPath = ctx?.isPointInPath(xFind, yFind);
-      return inPath;
+      return ctx?.isPointInPath(xFind, yFind);
     });
 
     // Check if the click was within the bounds of the tags
@@ -153,6 +166,7 @@ function ImageAnnot({ imageSrcMain }: props) {
 
   const handleClearAllTags = (e: any) => {
     e.preventDefault();
+
     setAnnotations([]);
     setTempRedPrompt(false);
     setCurrentAnnotation({ x: 0, y: 0 });
@@ -162,6 +176,10 @@ function ImageAnnot({ imageSrcMain }: props) {
     setDeleteTagId("");
     setShowAllTags(false);
     setShowH(false);
+    setBlur(0);
+    setRotate(0);
+    setBrightness(1);
+
     const image = new Image();
     image.src = imageSrcMain;
     const canvas = canvasRef.current;
@@ -212,9 +230,7 @@ function ImageAnnot({ imageSrcMain }: props) {
     }, 10);
   };
 
-  const handleCanvasMouseMove = (
-    event: React.MouseEvent<HTMLCanvasElement>
-  ) => {
+  const handleCanvasMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
     event.preventDefault();
     const canvas = canvasRef.current;
     const ctx = canvas!.getContext("2d");
@@ -325,7 +341,6 @@ function ImageAnnot({ imageSrcMain }: props) {
     link.href = image;
     link.click();
   };
-
   //for initial image load
   useEffect(() => {
     const img = new Image();
@@ -357,6 +372,54 @@ function ImageAnnot({ imageSrcMain }: props) {
     };
   }, [dimensions, imageSrcMain]);
 
+  useEffect(() => {
+    // console.log("blur", {blur});
+    let blurVal = `${blur*10}px`;
+    // let rotateVal = `${rotate}deg`;
+    const image = new Image();
+    image.src = imageSrcMain;
+    const canvas = canvasRef.current;
+    const context = canvas!.getContext("2d");
+
+    // const cx = canvas!.width/2;
+    // const cy = canvas!.height/2;
+    // let x = 0;
+    // let y = 0;
+    // let w = canvas!.width;
+    // let h = canvas!.height;
+    // let deg = rotate;
+
+    image.width = canvas!.width;
+    image.height = canvas!.height;
+
+    context!.clearRect(0, 0, canvas!.width, canvas!.height);
+
+    // function clear() {
+    //   context!.save();
+    //   context!.setTransform(1, 0, 0, 1, 0, 0);
+    //   context!.clearRect(0, 0, canvas!.width, canvas!.height);
+    //   context!.restore();
+    // }
+
+    // function renderSquare() {
+    //   context!.save();
+    //   context!.translate(cx, cy); // pivot point
+    //   context!.rotate(deg); // rotate square in radians
+    //   context!.fillRect(x, y, w, h);
+    //   context!.restore();
+    // }
+
+    setTimeout(() => {
+      context!.drawImage(image, 0, 0, image.width, image.height);
+      // console.log("blurVal", {blurVal});
+      context!.filter = `blur(${blurVal}) brightness(${brightness})`;
+      // canvas!.style.transform = `rotate(${rotateVal})`;
+      // clear();
+      // renderSquare();
+      // console.log("context", context);
+    }, 10);
+  },[imageSrcMain, blur, brightness, rotate]);
+
   return (
     <div
       style={{
@@ -371,7 +434,7 @@ function ImageAnnot({ imageSrcMain }: props) {
         onClick={(e) => handleCanvasClick(e)}
         style={{
           borderRadius: "7px",
-          boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
+          boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)"
         }}
         onMouseMove={handleCanvasMouseMove}
       />
