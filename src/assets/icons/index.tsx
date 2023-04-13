@@ -77,42 +77,42 @@ export const Check = () => {
   );
 };
 
-export const RotateLeft = () => {
-  return (
-    <>
-      <svg
-        width='24'
-        height='24'
-        fill='none'
-        xmlns='http://www.w3.org/2000/svg'
-      >
-        <g clipPath='url(#clip0_489_191207)'>
-          <g clipPath='url(#clip1_489_191207)'>
-            <path
-              d='M4.122 13.286c0 4.26 2.96 7.714 7.378 7.714s8-3.058 8-7.714c0-4.656-3.582-7.715-8-7.715h-7m0 0L7.167 3M4.5 5.571l2.667 2.572'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-            />
-          </g>
-        </g>
-        <defs>
-          <clipPath id='clip0_489_191207'>
-            <path fill='currentColor' d='M0 0H24V24H0z' />
-          </clipPath>
-          <clipPath id='clip1_489_191207'>
-            <path
-              fill='currentColor'
-              transform='matrix(-1 0 0 1 24 0)'
-              d='M0 0H24V24H0z'
-            />
-          </clipPath>
-        </defs>
-      </svg>
-    </>
-  );
-};
+// export const RotateLeft = () => {
+//   return (
+//     <>
+//       <svg
+//         width='24'
+//         height='24'
+//         fill='none'
+//         xmlns='http://www.w3.org/2000/svg'
+//       >
+//         <g clipPath='url(#clip0_489_191207)'>
+//           <g clipPath='url(#clip1_489_191207)'>
+//             <path
+//               d='M4.122 13.286c0 4.26 2.96 7.714 7.378 7.714s8-3.058 8-7.714c0-4.656-3.582-7.715-8-7.715h-7m0 0L7.167 3M4.5 5.571l2.667 2.572'
+//               stroke='currentColor'
+//               strokeWidth='2'
+//               strokeLinecap='round'
+//               strokeLinejoin='round'
+//             />
+//           </g>
+//         </g>
+//         <defs>
+//           <clipPath id='clip0_489_191207'>
+//             <path fill='currentColor' d='M0 0H24V24H0z' />
+//           </clipPath>
+//           <clipPath id='clip1_489_191207'>
+//             <path
+//               fill='currentColor'
+//               transform='matrix(-1 0 0 1 24 0)'
+//               d='M0 0H24V24H0z'
+//             />
+//           </clipPath>
+//         </defs>
+//       </svg>
+//     </>
+//   );
+// };
 
 export const RotateRight = () => {
   return (
@@ -191,24 +191,24 @@ export const BrightnessUp = () => {
   );
 };
 
-export const BrightnessDown = () => {
-  return (
-    <>
-      <svg
-        width='24'
-        height='24'
-        fill='none'
-        xmlns='http://www.w3.org/2000/svg'
-      >
-        <circle cx='12' cy='12' r='4' stroke='currentColor' strokeWidth='2' />
-        <path
-          d='M7.5 17.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-2-5.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm2-5.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm5.5-2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm5.5 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm2 5.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-2 5.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-5.5 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0z'
-          fill='currentColor'
-        />
-      </svg>
-    </>
-  );
-};
+// export const BrightnessDown = () => {
+//   return (
+//     <>
+//       <svg
+//         width='24'
+//         height='24'
+//         fill='none'
+//         xmlns='http://www.w3.org/2000/svg'
+//       >
+//         <circle cx='12' cy='12' r='4' stroke='currentColor' strokeWidth='2' />
+//         <path
+//           d='M7.5 17.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-2-5.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm2-5.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm5.5-2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm5.5 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm2 5.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-2 5.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-5.5 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0z'
+//           fill='currentColor'
+//         />
+//       </svg>
+//     </>
+//   );
+// };
 
 export const Crop = () => {
   return (
