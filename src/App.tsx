@@ -1,8 +1,8 @@
-import "./App.css";
-import ImageAnnot from "./components/TagAnnotation";
-import { useState } from "react";
-import FileUpload from "./utils/FileUpload";
-import Controls from "./components/controls";
+import "./App.css"
+import ImageAnnot from "./components/TagAnnotation"
+import { useState } from "react"
+import FileUpload from "./utils/FileUpload"
+import Controls from "./components/controls"
 import ImageCrop from "./components/crop"
 
 function App() {
@@ -17,11 +17,11 @@ function App() {
   //   }
   // };
 
-  const [croppedImage, setCroppedImage] = useState<string | undefined>();
+  const [croppedImage, setCroppedImage] = useState<string | undefined>()
 
   const handleCrop = (croppedImage: string) => {
-    setCroppedImage(croppedImage);
-  };
+    setCroppedImage(croppedImage)
+  }
 
   return (
     <div className='App'>
@@ -50,13 +50,13 @@ function App() {
       ) : (
         <FileUpload onSelectFile={onSelectFile} />
       )} */}
-       <div>
-      <ImageCrop  />
-      {croppedImage && <img src={croppedImage} />}
-    </div>
+      <div>
+        <ImageCrop />
+        {croppedImage && <img src={croppedImage} />}
+      </div>
 
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
