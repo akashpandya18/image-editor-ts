@@ -14,6 +14,7 @@ const controls = [
 
 function App() {
   const [imgSrc, setImgSrc] = useState("");
+  const [currentTool, setCurrentTool] = useState("tag-annot");
   const [blur, setBlur] = useState<number>(0);
   const [rotate, setRotate] = useState<number>(0);
   const [brightness, setBrightness] = useState<number>(1);
@@ -26,6 +27,10 @@ function App() {
       );
       reader.readAsDataURL(e.target.files[0]);
     }
+  };
+
+  const SetTools = () => {
+    return <></>;
   };
 
   return (

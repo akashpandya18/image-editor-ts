@@ -1,8 +1,15 @@
+import { useState } from "react";
 import {
+  Blur,
+  BrightnessUp,
   Crop,
+  Draw,
   Flip,
+  More,
+  RotateRight,
   Tag,
-  TextOnImage
+  TextonImage,
+  Zoom,
 } from "../../assets/icons";
 import UniversalSlider from "./sliders";
 
@@ -23,6 +30,9 @@ interface props {
   setRotate: Function;
 }
 
+export default function Controls() {
+  const [showControls, setShowControls] = useState(false);
+
 export default function Controls({
   controls,
   blur,
@@ -42,6 +52,8 @@ export default function Controls({
     },
     { id: 3, name: "Crop", type: "crop", icon: <Crop /> },
     { id: 4, name: "Flip", type: "flip", icon: <Flip /> },
+    { id: 5, name: "Draw", type: "draw", icon: <Draw /> },
+    { id: 6, name: "More", type: "more", icon: <More /> },
   ];
 
   return (
@@ -51,7 +63,8 @@ export default function Controls({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "space-between",
-        height: "420px",
+        height: "auto",
+        gap: "10px",
         padding: "1rem 0",
       }}
     >
@@ -67,8 +80,8 @@ export default function Controls({
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-            gap: "0.5rem",
+            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+            gap: "1rem",
           }}
         >
           {tools.map((x: controlsType) => {
@@ -83,6 +96,25 @@ export default function Controls({
                 }}
               >
                 <div
+                  onClick={(e: any) => {
+                    switch (x.type) {
+                      case "tag-annotation":
+                        break;
+                      case "text-on-image":
+                        break;
+                      case "crop":
+                        break;
+                      case "flip":
+                        break;
+                      case "draw":
+                        break;
+                      case "more":
+                        setShowControls(!showControls);
+                        break;
+                      default:
+                        break;
+                    }
+                  }}
                   style={{
                     display: "block",
                     borderRadius: "7px",
@@ -90,6 +122,8 @@ export default function Controls({
                     color: "#fff",
                     padding: "1rem",
                     width: "24px",
+                    cursor: "pointer",
+                    boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.2)",
                   }}
                 >
                   {x.icon}
@@ -98,6 +132,7 @@ export default function Controls({
                   style={{
                     textAlign: "center",
                     marginTop: "4px",
+                    color: "#3a3a3a",
                   }}
                 >
                   {x.name}
@@ -108,62 +143,63 @@ export default function Controls({
         </div>
       </div>
 
-      <div
-        style={{
-          padding: "1rem",
-          width: "400px",
-          height: "auto",
-          borderRadius: "7px",
-          backgroundColor: "#fafafa",
-          // boxShadow: "0px 1px 4px 0px rgba(0, 0, 0, 0.2)",
-        }}
-      >
+      {showControls && (
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(1, minmax(0, 1fr))",
-            gap: "0.5rem",
+            padding: "1rem",
+            width: "400px",
+            height: "auto",
+            borderRadius: "7px",
+            backgroundColor: "#fafafa"
           }}
         >
-          {controls.map((x: controlsType) => {
-            return (
-              <div
-                key={x.id}
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(1, minmax(0, 1fr))",
+              gap: "0.5rem",
+            }}
+          >
+            {controls.map((x: controlsType) => {
+              return (
                 <div
+                  key={x.id}
                   style={{
-                    display: "block",
-                    borderRadius: "7px",
-                    backgroundColor: "#000",
-                    color: "#fff",
-                    padding: "1rem",
-                    width: "24px",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
                   }}
                 >
-                  {x.icon}
+                  <div
+                    style={{
+                      display: "block",
+                      borderRadius: "7px",
+                      backgroundColor: "#000",
+                      color: "#fff",
+                      padding: "1rem",
+                      width: "24px",
+                    }}
+                  >
+                    {x.icon}
+                  </div>
+                  <div>
+                    <UniversalSlider
+                      label={x.name}
+                      id={x.type}
+                      blur={blur}
+                      setBlur={setBlur}
+                      brightness={brightness}
+                      setBrightness={setBrightness}
+                      rotate={rotate}
+                      setRotate={setRotate}
+                    />
+                  </div>
                 </div>
-                <div>
-                  <UniversalSlider
-                    label={x.name}
-                    id={x.type}
-                    blur={blur}
-                    setBlur={setBlur}
-                    brightness={brightness}
-                    setBrightness={setBrightness}
-                    rotate={rotate}
-                    setRotate={setRotate}
-                  />
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

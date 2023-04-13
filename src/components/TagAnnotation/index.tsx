@@ -1,14 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import TagAnnotationForm from "../forms/TagAnnotForm";
 import TempRedTag from "../prompts/ConfirmSubmitTag";
-import {
-  HideTags,
-  ShowTags,
-} from "../../assets/icons";
+import { HideTags, ShowTags } from "../../assets/icons";
 import { customAlphabet } from "nanoid";
 import { DeleteTag } from "../prompts/deleteTag";
 import ShowTagOnHover from "../prompts/showTagOnHover";
 import MainCanvasControls from "../controls/mainCanvasControls";
+import Draw from "../draw";
 
 interface props {
   imageSrcMain: any;
@@ -18,14 +16,14 @@ interface props {
   setBrightness: Function;
   rotate: number;
   setRotate: Function;
-}
+};
 
 interface annotation {
   id: string;
   x: number;
   y: number;
   tag: string;
-}
+};
 
 function ImageAnnot({
   imageSrcMain,
@@ -51,6 +49,7 @@ function ImageAnnot({
   const [showH, setShowH] = useState(false);
   const [hoverTag, setHoverTag] = useState("");
   const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 });
+  const [draw, setDraw] = useState(false);
 
   const nanoid = customAlphabet("1234567890abcdef", 10);
   const id = nanoid(5);
@@ -167,6 +166,7 @@ function ImageAnnot({
 
   const handleClearAllTags = (e: any) => {
     e.preventDefault();
+
     setAnnotations([]);
     setTempRedPrompt(false);
     setCurrentAnnotation({ x: 0, y: 0 });
@@ -179,6 +179,7 @@ function ImageAnnot({
     setBlur(0);
     setRotate(0);
     setBrightness(1);
+
     const image = new Image();
     image.src = imageSrcMain;
     const canvas = canvasRef.current;
@@ -462,11 +463,12 @@ function ImageAnnot({
 
       {showH && <ShowTagOnHover position={hoverPos} tag={hoverTag} />}
 
+      {draw && <Draw width={dimensions.width} height={dimensions.height} />}
+
       <MainCanvasControls
         clearFunction={handleClearAllTags}
         showHideFunction={() => (showAllTags ? hideTags() : showTags())}
         screenShotFunction={handleScreenShot}
-        drawFunction={() => console.log("draw")}
         iconTag={showAllTags ? <HideTags /> : <ShowTags />}
       />
     </div>
