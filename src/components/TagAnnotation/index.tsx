@@ -1,18 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import TagAnnotationForm from "../forms/TagAnnotForm";
 import TempRedTag from "../prompts/ConfirmSubmitTag";
-import {
-  Draw,
-  HideTags,
-  ScreenShot,
-  ShowTags,
-  Tornado,
-} from "../../assets/icons";
+import { HideTags, ShowTags } from "../../assets/icons";
 import { customAlphabet } from "nanoid";
 import { DeleteTag } from "../prompts/deleteTag";
 import ShowTagOnHover from "../prompts/showTagOnHover";
-import ShowAllTags from "../prompts/showAllTags";
 import MainCanvasControls from "../controls/mainCanvasControls";
+import Draw from "../draw";
 
 interface props {
   imageSrcMain: any;
@@ -40,6 +34,8 @@ function ImageAnnot({ imageSrcMain }: props) {
   const [showH, setShowH] = useState(false);
   const [hoverTag, setHoverTag] = useState("");
   const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 });
+
+  const [draw, setDraw] = useState(false);
 
   const nanoid = customAlphabet("1234567890abcdef", 10);
   const id = nanoid(5);
@@ -404,11 +400,12 @@ function ImageAnnot({ imageSrcMain }: props) {
 
       {showH && <ShowTagOnHover position={hoverPos} tag={hoverTag} />}
 
+      {draw && <Draw width={dimensions.width} height={dimensions.height} />}
+
       <MainCanvasControls
         clearFunction={handleClearAllTags}
         showHideFunction={() => (showAllTags ? hideTags() : showTags())}
         screenShotFunction={handleScreenShot}
-        drawFunction={() => console.log("draw")}
         iconTag={showAllTags ? <HideTags /> : <ShowTags />}
       />
     </div>

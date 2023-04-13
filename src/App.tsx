@@ -6,6 +6,7 @@ import Controls from "./components/controls";
 
 function App() {
   const [imgSrc, setImgSrc] = useState("");
+  const [currentTool, setCurrentTool] = useState("tag-annot");
 
   const onSelectFile = (e: any) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -15,6 +16,10 @@ function App() {
       );
       reader.readAsDataURL(e.target.files[0]);
     }
+  };
+
+  const SetTools = () => {
+    return <></>;
   };
 
   return (

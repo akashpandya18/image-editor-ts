@@ -4,21 +4,18 @@ interface props {
   clearFunction: (e: any) => void;
   showHideFunction: any;
   screenShotFunction: (e: any) => void;
-  drawFunction: (e: any) => void;
   iconTag: any;
 }
 export default function MainCanvasControls({
   clearFunction,
   showHideFunction,
   screenShotFunction,
-  drawFunction,
   iconTag,
 }: props) {
   const controls = [
     { id: 1, name: "Clear", type: "clear", icon: <Tornado /> },
     { id: 2, name: "ShowHideTags", type: "show-hide-tags", icon: iconTag },
     { id: 3, name: "ScreenShot", type: "screenshot", icon: <ScreenShot /> },
-    { id: 4, name: "Draw", type: "draw", icon: <Draw /> },
   ];
 
   return (
@@ -58,10 +55,6 @@ export default function MainCanvasControls({
                     case "screenshot":
                       screenShotFunction(e);
                       break;
-                    case "draw":
-                      drawFunction(e);
-                      break;
-
                     default:
                       console.log("no case");
                       break;
