@@ -49,7 +49,9 @@ function ImageAnnot({
   const [showH, setShowH] = useState(false);
   const [hoverTag, setHoverTag] = useState("");
   const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 });
-  const [draw, setDraw] = useState(false);
+  const [draw,
+    // setDraw
+  ] = useState(false);
 
   const nanoid = customAlphabet("1234567890abcdef", 10);
   const id = nanoid(5);
@@ -58,6 +60,7 @@ function ImageAnnot({
     setTempRedPrompt(true);
     setDeleteTag(false);
     setDeleteTagId("");
+
     const canvas = canvasRef.current;
     const ctx = canvas!.getContext("2d");
     const rect = canvas!.getBoundingClientRect();
@@ -230,9 +233,7 @@ function ImageAnnot({
     }, 10);
   };
 
-  const handleCanvasMouseMove = (
-    event: React.MouseEvent<HTMLCanvasElement>
-  ) => {
+  const handleCanvasMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
     event.preventDefault();
     const canvas = canvasRef.current;
     const ctx = canvas!.getContext("2d");
@@ -245,6 +246,7 @@ function ImageAnnot({
       ctx?.arc(annotation.x, annotation.y, 10, 0, 2 * Math.PI);
       return ctx?.isPointInPath(x, y);
     });
+
     if (hoveredDot) {
       canvas!.style.cursor = "pointer";
       let x = hoveredDot.x;
@@ -375,9 +377,7 @@ function ImageAnnot({
   }, [dimensions, imageSrcMain]);
 
   useEffect(() => {
-    // console.log("blur", {blur});
     let blurVal = `${blur * 10}px`;
-    // let rotateVal = `${rotate}deg`;
     const image = new Image();
     image.src = imageSrcMain;
     const canvas = canvasRef.current;
@@ -413,9 +413,7 @@ function ImageAnnot({
 
     setTimeout(() => {
       context!.drawImage(image, 0, 0, image.width, image.height);
-      // console.log("blurVal", {blurVal});
       context!.filter = `blur(${blurVal}) brightness(${brightness})`;
-      // canvas!.style.transform = `rotate(${rotateVal})`;
       // clear();
       // renderSquare();
       // console.log("context", context);
@@ -423,59 +421,57 @@ function ImageAnnot({
   }, [imageSrcMain, blur, brightness, rotate]);
 
   return (
-    <>
-      <div
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start"
+      }}
+    >
+      <canvas
+        ref={canvasRef}
+        onClick={(e) => handleCanvasClick(e)}
         style={{
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
+          borderRadius: "7px",
+          boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)"
         }}
-      >
-        <canvas
-          ref={canvasRef}
-          onClick={(e) => handleCanvasClick(e)}
-          style={{
-            borderRadius: "7px",
-            boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
-          }}
-          onMouseMove={handleCanvasMouseMove}
-        />
+        onMouseMove={handleCanvasMouseMove}
+      />
 
-        {tempRedPrompt && (
-          <>
-            <TempRedTag position={currentAnnotation} />
-            <TagAnnotationForm
-              refer={ref}
-              tags={tag}
-              handleCloseInput={setTempRedPrompt}
-              handleInputChange={handleInputChange}
-              onSubmit={handleSubmitTag}
-              position={currentAnnotation}
-            />
-          </>
-        )}
-
-        {deleteTag && (
-          <DeleteTag
-            position={deletePos}
-            setPromptOff={() => setDeleteTag(false)}
-            deleteTagSubmit={handleClearSingleTag}
+      {tempRedPrompt && (
+        <>
+          <TempRedTag position={currentAnnotation} />
+          <TagAnnotationForm
+            refer={ref}
+            tags={tag}
+            handleCloseInput={setTempRedPrompt}
+            handleInputChange={handleInputChange}
+            onSubmit={handleSubmitTag}
+            position={currentAnnotation}
           />
-        )}
+        </>
+      )}
 
-        {showH && <ShowTagOnHover position={hoverPos} tag={hoverTag} />}
-
-        {draw && <Draw width={dimensions.width} height={dimensions.height} />}
-
-        <MainCanvasControls
-          clearFunction={handleClearAllTags}
-          showHideFunction={() => (showAllTags ? hideTags() : showTags())}
-          screenShotFunction={handleScreenShot}
-          iconTag={showAllTags ? <HideTags /> : <ShowTags />}
+      {deleteTag && (
+        <DeleteTag
+          position={deletePos}
+          setPromptOff={() => setDeleteTag(false)}
+          deleteTagSubmit={handleClearSingleTag}
         />
-      </div>
-    </>
+      )}
+
+      {showH && <ShowTagOnHover position={hoverPos} tag={hoverTag} />}
+
+      {draw && <Draw width={dimensions.width} height={dimensions.height} />}
+
+      <MainCanvasControls
+        clearFunction={handleClearAllTags}
+        showHideFunction={() => (showAllTags ? hideTags() : showTags())}
+        screenShotFunction={handleScreenShot}
+        iconTag={showAllTags ? <HideTags /> : <ShowTags />}
+      />
+    </div>
   );
 }
 

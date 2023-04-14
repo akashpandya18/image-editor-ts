@@ -17,7 +17,7 @@ function App() {
   };
 
   return (
-    <div className='App'>
+    <div className={"App"}>
       {imgSrc ? (
         <div
           style={{
@@ -26,7 +26,7 @@ function App() {
             alignItems: "flex-start",
             justifyContent: "left",
             width: "90%",
-            gap: "10px",
+            gap: "10px"
           }}
         >
           <Controls imgSrc={imgSrc} />

@@ -16,11 +16,10 @@ interface UseOnDrawResult {
   onCanvasMouseDown: () => void;
 }
 
-export function useOnDraw(onDraw?: OnDrawFunction): UseOnDrawResult {
+export default function useOnDraw(onDraw?: OnDrawFunction): UseOnDrawResult {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const isDrawingRef = useRef<boolean>(false);
   const prevPointRef = useRef<Point | null>(null);
-
   const mouseMoveListenerRef = useRef<((e: MouseEvent) => void) | null>(null);
   const mouseUpListenerRef = useRef<(() => void) | null>(null);
 
@@ -41,12 +40,13 @@ export function useOnDraw(onDraw?: OnDrawFunction): UseOnDrawResult {
         const boundingRect = canvasRef.current.getBoundingClientRect();
         return {
           x: clientX - boundingRect.left,
-          y: clientY - boundingRect.top,
+          y: clientY - boundingRect.top
         };
       } else {
         return null;
       }
     }
+
     function initMouseMoveListener() {
       const mouseMoveListener = (e: MouseEvent) => {
         if (isDrawingRef.current && canvasRef.current) {
@@ -85,6 +85,6 @@ export function useOnDraw(onDraw?: OnDrawFunction): UseOnDrawResult {
 
   return {
     setCanvasRef,
-    onCanvasMouseDown,
+    onCanvasMouseDown
   };
-}
+};

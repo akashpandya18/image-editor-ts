@@ -1,3 +1,9 @@
+:root {
+  --gray300: rgb(209 213 219);
+  --gray400: rgb(156 163 175);
+  --gray900: rgb(17 24 39);
+}
+
 .upload-file-btn {
   position: relative;
   display: block;

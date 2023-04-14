@@ -21,4 +21,4 @@
 //   });
 // }
 
-// export default useOnClickOutside;
+export default function useOnClickOutside() {};

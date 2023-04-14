@@ -1,4 +1,4 @@
-import { Draw, ScreenShot, Tornado } from "../../../assets/icons";
+import { ScreenShot, Tornado } from "../../../assets/icons";
 
 interface props {
   clearFunction: (e: any) => void;
@@ -6,11 +6,12 @@ interface props {
   screenShotFunction: (e: any) => void;
   iconTag: any;
 }
+
 export default function MainCanvasControls({
   clearFunction,
   showHideFunction,
   screenShotFunction,
-  iconTag,
+  iconTag
 }: props) {
   const controls = [
     { id: 1, name: "Clear", type: "clear", icon: <Tornado /> },
@@ -19,54 +20,52 @@ export default function MainCanvasControls({
   ];
 
   return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "left",
-          width: "100%",
-          gap: "10px",
-          marginTop: "1rem",
-        }}
-      >
-        {controls.map((item: any) => {
-          return (
-            <div key={item.id}>
-              <button
-                style={{
-                  border: "none",
-                  borderRadius: "7px",
-                  padding: "10px",
-                  color: "#fff",
-                  cursor: "pointer",
-                  backgroundColor: "#2a2a2a",
-                  boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.2)",
-                }}
-                onClick={(e: any) => {
-                  switch (item.type) {
-                    case "clear":
-                      clearFunction(e);
-                      break;
-                    case "show-hide-tags":
-                      showHideFunction();
-                      break;
-                    case "screenshot":
-                      screenShotFunction(e);
-                      break;
-                    default:
-                      console.log("no case");
-                      break;
-                  }
-                }}
-              >
-                {item.icon}
-              </button>
-            </div>
-          );
-        })}
-      </div>
-    </>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "left",
+        width: "100%",
+        gap: "10px",
+        marginTop: "1rem"
+      }}
+    >
+      {controls.map((item: any) => {
+        return (
+          <div key={item.id}>
+            <button
+              style={{
+                border: "none",
+                borderRadius: "7px",
+                padding: "10px",
+                color: "#fff",
+                cursor: "pointer",
+                backgroundColor: "#2a2a2a",
+                boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.2)"
+              }}
+              onClick={(e: any) => {
+                switch (item.type) {
+                  case "clear":
+                    clearFunction(e);
+                    break;
+                  case "show-hide-tags":
+                    showHideFunction();
+                    break;
+                  case "screenshot":
+                    screenShotFunction(e);
+                    break;
+                  default:
+                    console.log("no case");
+                    break;
+                }
+              }}
+            >
+              {item.icon}
+            </button>
+          </div>
+        );
+      })}
+    </div>
   );
-}
+};

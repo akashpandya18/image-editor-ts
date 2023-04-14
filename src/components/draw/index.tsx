@@ -1,10 +1,14 @@
 import React from "react";
-import { useOnDraw } from "../../hooks/useOnDraw";
+import useOnDraw from "../../hooks/useOnDraw";
 
 interface CanvasProps {
   width: number;
   height: number;
 }
+
+const canvasStyle = {
+  border: "1px solid black"
+};
 
 const Draw: React.FC<CanvasProps> = ({ width, height }) => {
   const { setCanvasRef, onCanvasMouseDown } = useOnDraw(onDraw);
@@ -28,6 +32,7 @@ const Draw: React.FC<CanvasProps> = ({ width, height }) => {
     ctx.beginPath();
     ctx.lineWidth = width;
     ctx.strokeStyle = color;
+
     if (start) {
       ctx.moveTo(start.x, start.y);
       ctx.lineTo(end.x, end.y);
@@ -52,7 +57,3 @@ const Draw: React.FC<CanvasProps> = ({ width, height }) => {
 };
 
 export default Draw;
-
-const canvasStyle = {
-  border: "1px solid black",
-};

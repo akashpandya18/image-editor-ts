@@ -9,7 +9,7 @@ import {
   RotateRight,
   Tag,
   TextOnImage,
-  Zoom,
+  Zoom
 } from "../../assets/icons";
 import UniversalSlider from "./sliders";
 import ImageAnnot from "../TagAnnotation";
@@ -29,21 +29,16 @@ const controls: controlsType[] = [
   { id: 1, name: "Blur", type: "blur", icon: <Blur /> },
   { id: 2, name: "Zoom", type: "zoom", icon: <Zoom /> },
   { id: 3, name: "Rotate", type: "rotate", icon: <RotateRight /> },
-  { id: 4, name: "Brightness", type: "brightness", icon: <BrightnessUp /> },
+  { id: 4, name: "Brightness", type: "brightness", icon: <BrightnessUp /> }
 ];
 
 const tools: controlsType[] = [
   { id: 1, name: "Tag/Annot", type: "tag-annotation", icon: <Tag /> },
-  {
-    id: 2,
-    name: "Text on Image",
-    type: "text-on-image",
-    icon: <TextOnImage />,
-  },
+  { id: 2, name: "Text on Image", type: "text-on-image", icon: <TextOnImage /> },
   { id: 3, name: "Crop", type: "crop", icon: <Crop /> },
   { id: 4, name: "Flip", type: "flip", icon: <Flip /> },
   { id: 5, name: "Draw", type: "draw", icon: <Draw /> },
-  { id: 6, name: "More", type: "more", icon: <More /> },
+  { id: 6, name: "More", type: "more", icon: <More /> }
 ];
 
 export default function Controls({ imgSrc }: props): JSX.Element {
@@ -99,10 +94,8 @@ export default function Controls({ imgSrc }: props): JSX.Element {
           console.log("flip")
         ) : currentTool === "draw" ? (
           console.log("draw")
-        ) : currentTool === "more" ? (
+        ) : currentTool === "more" && (
           setShowControls(!showControls)
-        ) : (
-          console.log("none")
         )}
       </>
     );
@@ -118,7 +111,7 @@ export default function Controls({ imgSrc }: props): JSX.Element {
           justifyContent: "space-between",
           height: "auto",
           gap: "10px",
-          padding: "1rem 0",
+          padding: "1rem 0"
         }}
       >
         <div
@@ -127,14 +120,14 @@ export default function Controls({ imgSrc }: props): JSX.Element {
             width: "400px",
             height: "auto",
             borderRadius: "7px",
-            backgroundColor: "#fafafa",
+            backgroundColor: "#fafafa"
           }}
         >
           <div
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-              gap: "1rem",
+              gap: "1rem"
             }}
           >
             {tools.map((x: controlsType) => {
@@ -145,7 +138,7 @@ export default function Controls({ imgSrc }: props): JSX.Element {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    justifyContent: "space-between",
+                    justifyContent: "space-between"
                   }}
                 >
                   <div
@@ -158,7 +151,7 @@ export default function Controls({ imgSrc }: props): JSX.Element {
                       padding: "1rem",
                       width: "24px",
                       cursor: "pointer",
-                      boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.2)",
+                      boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.2)"
                     }}
                   >
                     {x.icon}
@@ -167,7 +160,7 @@ export default function Controls({ imgSrc }: props): JSX.Element {
                     style={{
                       textAlign: "center",
                       marginTop: "4px",
-                      color: "#3a3a3a",
+                      color: "#3a3a3a"
                     }}
                   >
                     {x.name}
@@ -185,14 +178,14 @@ export default function Controls({ imgSrc }: props): JSX.Element {
               width: "400px",
               height: "auto",
               borderRadius: "7px",
-              backgroundColor: "#fafafa",
+              backgroundColor: "#fafafa"
             }}
           >
             <div
               style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(1, minmax(0, 1fr))",
-                gap: "0.5rem",
+                gap: "0.5rem"
               }}
             >
               {controls.map((x: controlsType) => {
@@ -202,7 +195,7 @@ export default function Controls({ imgSrc }: props): JSX.Element {
                     style={{
                       display: "flex",
                       flexDirection: "row",
-                      alignItems: "center",
+                      alignItems: "center"
                     }}
                   >
                     <div
@@ -212,7 +205,7 @@ export default function Controls({ imgSrc }: props): JSX.Element {
                         backgroundColor: "#000",
                         color: "#fff",
                         padding: "1rem",
-                        width: "24px",
+                        width: "24px"
                       }}
                     >
                       {x.icon}
@@ -236,16 +229,17 @@ export default function Controls({ imgSrc }: props): JSX.Element {
           </div>
         )}
       </div>
+
       <div
         style={{
           maxWidth: "1080px",
           maxHeight: "700px",
           borderRadius: "7px",
-          padding: "1rem",
+          padding: "1rem"
         }}
       >
         <ShowSelectedTool />
       </div>
     </>
   );
-}
+};

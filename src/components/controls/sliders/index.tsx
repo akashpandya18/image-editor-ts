@@ -25,7 +25,6 @@ export default function UniversalSlider({
   const [zoom, setZoom] = useState<number>(1);
 
   const handleBrightnessChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // console.log("eee", e.target.value);
     e.preventDefault();
     if (e.target.id === "blur") {
       setBlur(Number(e.target.value));
@@ -43,7 +42,6 @@ export default function UniversalSlider({
 
   const inputValue = () => {
     if (id === "blur") {
-      // console.log("blur===>>>", {blur});
       return blur;
     }
     if (id === "zoom") {
@@ -58,12 +56,12 @@ export default function UniversalSlider({
   };
 
   return (
-    <div className='brightness-slider'>
-      <label className='brightness-label' htmlFor='brightness'>
+    <div className={"brightness-slider"}>
+      <label className={"brightness-label"} htmlFor={"brightness"}>
         {label} :
       </label>
       <input
-        type='range'
+        type={"range"}
         id={id}
         name={id}
         min={id === "rotate" ? -180 : 0}
