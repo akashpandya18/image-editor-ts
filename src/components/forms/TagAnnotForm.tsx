@@ -44,6 +44,7 @@ function TagAnnotationForm({
             value={tags}
             onChange={(e) => handleInputChange(e)}
             autoFocus
+            autoComplete='off'
           />
           <div
             style={{

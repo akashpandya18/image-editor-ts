@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 
 const ImageCropper = () => {
-  const [image, setImage] = useState(null)
+  const [image, setImage] = useState("")
   const [croppedImage, setCroppedImage] = useState(null)
   const [cropping, setCropping] = useState(false)
-  const [croppedArea, setCroppedArea] = useState(null)
+  const [croppedArea, setCroppedArea] = useState({
+    x: 0,
+    y: 0
+  })
   const [currentCropped, setCurrentCropped] = useState()
   const [isDragging, setIsDragging] = useState(false)
   const imgRef = useRef<HTMLCanvasElement>()
@@ -55,7 +58,7 @@ const ImageCropper = () => {
       setCropping(true)
     }
 
-    setCroppedArea({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY } as any)
+    setCroppedArea({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
 
 
 
@@ -65,14 +68,26 @@ const ImageCropper = () => {
   }
 
   function handleMouseMove(e) {
+
+    const canvas = canvasRef.current
+    const ctx = canvas!.getContext('2d')
+    ctx!.strokeStyle = 'red'
+    ctx!.setLineDash([10, 10])
+    ctx!.lineWidth = 2
+    const { x, y } = croppedArea
+
+    const width = e.nativeEvent.offsetX - x
+    const height = e.nativeEvent.offsetY - y
+
+    if (isDragging) {
+      console.log('isDragging')
+      ctx!.strokeRect(x, y, width, height)
+    }
+
     if (cropping) {
-      const canvas = canvasRef.current
-      const ctx = canvas!.getContext('2d')
 
       ctx!.clearRect(0, 0, canvas!.width, canvas!.height)
       ctx!.drawImage(imgRef.current, 0, 0)
-
-      const { x, y } = croppedArea
 
       // console.log('e.nativeEvent.offsetX', e.nativeEvent.offsetX , x)
       setCurrentCropped({
@@ -81,15 +96,8 @@ const ImageCropper = () => {
         mouseX: e.nativeEvent.offsetX,
         mouseY: e.nativeEvent.offsetY
       })
-
-      const width = e.nativeEvent.offsetX - x
-      const height = e.nativeEvent.offsetY - y
-      ctx!.strokeStyle = 'red'
-      ctx!.setLineDash([10, 10])
-      ctx!.lineWidth = 2
       ctx!.strokeRect(x, y, width, height)
     }
-
   }
 
 
@@ -121,6 +129,11 @@ const ImageCropper = () => {
 
 
   function handleMouseUp(e: any) {
+
+    if (isDragging) {
+      setIsDragging(false)
+    }
+
     setCropping(false)
     const { x, y } = croppedArea
     const width = e.nativeEvent.offsetX - x

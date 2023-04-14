@@ -31,11 +31,20 @@ function App() {
             display: "flex",
             flexDirection: "row",
             alignItems: "flex-start",
-            justifyContent: "space-between",
-            width: "78%",
+            justifyContent: "left",
+            width: "90%",
+            gap: "10px",
           }}
         >
-          <Controls />
+          <Controls
+            controls={controls}
+            blur={blur}
+            setBlur={setBlur}
+            brightness={brightness}
+            setBrightness={setBrightness}
+            rotate={rotate}
+            setRotate={setRotate}
+          />
           <div
             style={{
               maxWidth: "1080px",
