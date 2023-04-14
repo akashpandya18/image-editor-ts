@@ -15,6 +15,7 @@ import ImageAnnot from "../TagAnnotation";
 import "./index.css";
 import { Button } from "./buttons";
 import { controls, handleToolClick, tools } from "../../utils/data";
+import FlipImage from "../flip";
 
 interface controlsType {
   id: number;
@@ -51,7 +52,7 @@ export default function Controls({ imgSrc }: props): JSX.Element {
         ) : currentTool === "crop" ? (
           console.log("crop")
         ) : currentTool === "flip" ? (
-          console.log("flip")
+          <FlipImage imageUrl={imgSrc} />
         ) : currentTool === "draw" ? (
           console.log("draw")
         ) : (
