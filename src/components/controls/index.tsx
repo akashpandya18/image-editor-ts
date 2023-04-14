@@ -1,21 +1,11 @@
-import { useState } from "react";
-import {
-  Blur,
-  BrightnessUp,
-  Crop,
-  Draw,
-  Flip,
-  RotateRight,
-  Tag,
-  TextOnImage,
-  Zoom,
-} from "../../assets/icons";
+import { useState, useEffect, useRef } from "react";
 import UniversalSlider from "./sliders";
 import ImageAnnot from "../TagAnnotation";
 import "./index.css";
 import { Button } from "./buttons";
 import { controls, handleToolClick, tools } from "../../utils/data";
 import FlipImage from "../flip";
+import Draw from "../draw";
 
 interface controlsType {
   id: number;
@@ -26,35 +16,44 @@ interface controlsType {
 interface props {
   imgSrc: string;
 }
+interface CanvasState {}
 
 export default function Controls({ imgSrc }: props): JSX.Element {
+  const [canvasState, setCanvasState] = useState<CanvasState>({});
   const [currentTool, setCurrentTool] = useState<string>("tag-annotation");
   const [blur, setBlur] = useState<number>(0);
   const [rotate, setRotate] = useState<number>(0);
   const [brightness, setBrightness] = useState<number>(1);
   const [activeIndex, setActiveIndex] = useState<number>(0);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   function ShowSelectedTool() {
     return (
       <>
         {currentTool === "tag-annotation" ? (
-          <ImageAnnot
-            imageSrcMain={imgSrc}
-            blur={blur}
-            setBlur={setBlur}
-            brightness={brightness}
-            setBrightness={setBrightness}
-            rotate={rotate}
-            setRotate={setRotate}
-          />
+          <div className='selectedTools-div'>
+            <ImageAnnot
+              imageSrcMain={imgSrc}
+              blur={blur}
+              setBlur={setBlur}
+              brightness={brightness}
+              setBrightness={setBrightness}
+              rotate={rotate}
+              setRotate={setRotate}
+            />
+          </div>
         ) : currentTool === "text-on-image" ? (
           console.log("ToI")
         ) : currentTool === "crop" ? (
           console.log("crop")
         ) : currentTool === "flip" ? (
-          <FlipImage imageUrl={imgSrc} />
+          <div className='selectedTools-div'>
+            <FlipImage imageUrl={imgSrc} />
+          </div>
         ) : currentTool === "draw" ? (
-          console.log("draw")
+          <div className='selectedTools-div'>
+            <Draw width={1000} height={563} />
+          </div>
         ) : (
           console.log("none")
         )}
@@ -62,7 +61,7 @@ export default function Controls({ imgSrc }: props): JSX.Element {
     );
   }
 
-  function Controls() {
+  function Tools() {
     return (
       <>
         <div className='controls-main'>
@@ -122,12 +121,25 @@ export default function Controls({ imgSrc }: props): JSX.Element {
     );
   }
 
+  function Canvas(propRef: any) {
+    return (
+      <>
+        <canvas
+          ref={propRef}
+          style={{
+            borderRadius: "7px",
+            boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
+          }}
+        />
+      </>
+    );
+  }
+
   return (
     <div className='controls-out'>
-      <Controls />
-      <div className='selectedTools-div'>
-        <ShowSelectedTool />
-      </div>
+      <Tools />
+      <ShowSelectedTool />
+      {/* <Canvas /> */}
     </div>
   );
 }
