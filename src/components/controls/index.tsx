@@ -16,6 +16,7 @@ import "./index.css";
 import { Button } from "./buttons";
 import { controls, handleToolClick, tools } from "../../utils/data";
 import FlipImage from "../flip";
+import ImageCropper from "../crop"
 
 interface controlsType {
   id: number;
@@ -50,7 +51,7 @@ export default function Controls({ imgSrc }: props): JSX.Element {
         ) : currentTool === "text-on-image" ? (
           console.log("ToI")
         ) : currentTool === "crop" ? (
-          console.log("crop")
+          <ImageCropper imageUrl={imgSrc}/>
         ) : currentTool === "flip" ? (
           <FlipImage imageUrl={imgSrc} />
         ) : currentTool === "draw" ? (
