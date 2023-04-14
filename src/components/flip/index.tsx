@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-
+import "./index.css";
+import { FlipHorizontal, FlipVertical } from "../../assets/icons";
 interface Props {
   imageUrl: string;
 }
@@ -85,9 +86,13 @@ export default function FlipImage(props: Props) {
             boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
           }}
         />
-        <div>
-          <button onClick={flipHorizontally}>Flip Horizontally</button>
-          <button onClick={flipVertically}>Flip Vertically</button>
+        <div className='button-div'>
+          <button className='flip-button' onClick={flipHorizontally}>
+            <FlipHorizontal />
+          </button>
+          <button className='flip-button' onClick={flipVertically}>
+            <FlipVertical />
+          </button>
         </div>
       </div>
     </>

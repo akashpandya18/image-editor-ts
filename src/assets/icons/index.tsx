@@ -23,7 +23,6 @@ export const Tornado = () => {
     </>
   );
 };
-
 export const Close = () => {
   return (
     <>
@@ -50,7 +49,6 @@ export const Close = () => {
     </>
   );
 };
-
 export const Check = () => {
   return (
     <>
@@ -76,7 +74,6 @@ export const Check = () => {
     </>
   );
 };
-
 // export const RotateLeft = () => {
 //   return (
 //     <>
@@ -113,7 +110,6 @@ export const Check = () => {
 //     </>
 //   );
 // };
-
 export const RotateRight = () => {
   return (
     <>
@@ -141,7 +137,6 @@ export const RotateRight = () => {
     </>
   );
 };
-
 export const Flip = () => {
   return (
     <>
@@ -169,7 +164,6 @@ export const Flip = () => {
     </>
   );
 };
-
 export const BrightnessUp = () => {
   return (
     <>
@@ -190,7 +184,6 @@ export const BrightnessUp = () => {
     </>
   );
 };
-
 // export const BrightnessDown = () => {
 //   return (
 //     <>
@@ -209,7 +202,6 @@ export const BrightnessUp = () => {
 //     </>
 //   );
 // };
-
 export const Crop = () => {
   return (
     <>
@@ -240,7 +232,6 @@ export const Crop = () => {
     </>
   );
 };
-
 export const Blur = () => {
   return (
     <>
@@ -267,7 +258,6 @@ export const Blur = () => {
     </>
   );
 };
-
 export const Zoom = () => {
   return (
     <>
@@ -295,7 +285,6 @@ export const Zoom = () => {
     </>
   );
 };
-
 export const Tag = () => {
   return (
     <>
@@ -326,7 +315,6 @@ export const Tag = () => {
     </>
   );
 };
-
 export const TextOnImage = () => {
   return (
     <>
@@ -349,7 +337,6 @@ export const TextOnImage = () => {
     </>
   );
 };
-
 export const ShowTags = () => {
   return (
     <>
@@ -377,7 +364,6 @@ export const ShowTags = () => {
     </>
   );
 };
-
 export const HideTags = () => {
   return (
     <>
@@ -405,7 +391,6 @@ export const HideTags = () => {
     </>
   );
 };
-
 export const ScreenShot = () => {
   return (
     <>
@@ -442,7 +427,6 @@ export const ScreenShot = () => {
     </>
   );
 };
-
 export const Draw = () => {
   return (
     <>
@@ -473,7 +457,6 @@ export const Draw = () => {
     </>
   );
 };
-
 export const More = () => {
   return (
     <>
@@ -491,6 +474,69 @@ export const More = () => {
         </g>
         <defs>
           <clipPath id='clip0_489_191327'>
+            <path fill='currentColor' d='M0 0H24V24H0z' />
+          </clipPath>
+        </defs>
+      </svg>
+    </>
+  );
+};
+export const FlipVertical = () => {
+  return (
+    <>
+      <svg
+        width='24'
+        height='24'
+        fill='none'
+        xmlns='http://www.w3.org/2000/svg'
+      >
+        <g clipPath='url(#clip0_489_191336)'>
+          <g clipPath='url(#clip1_489_191336)'>
+            <path
+              d='M17 8.875l-2.208-2.152c-1.319-1.287-1.978-1.93-2.792-1.93-.814 0-1.473.643-2.792 1.93L7 8.875m10 6.25l-2.208 2.152c-1.319 1.287-1.978 1.93-2.792 1.93-.814 0-1.473-.643-2.792-1.93L7 15.125'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+            />
+          </g>
+        </g>
+        <defs>
+          <clipPath id='clip0_489_191336'>
+            <path fill='currentColor' d='M0 0H24V24H0z' />
+          </clipPath>
+          <clipPath id='clip1_489_191336'>
+            <path
+              fill='currentColor'
+              transform='rotate(90 12 12)'
+              d='M0 0H24V24H0z'
+            />
+          </clipPath>
+        </defs>
+      </svg>
+    </>
+  );
+};
+export const FlipHorizontal = () => {
+  return (
+    <>
+      <svg
+        width='24'
+        height='24'
+        fill='none'
+        xmlns='http://www.w3.org/2000/svg'
+      >
+        <g clipPath='url(#clip0_489_191335)'>
+          <path
+            d='M8.875 7L6.723 9.208c-1.287 1.319-1.93 1.978-1.93 2.792 0 .814.643 1.473 1.93 2.792L8.875 17m6.25-10l2.152 2.208c1.287 1.319 1.93 1.978 1.93 2.792 0 .814-.643 1.473-1.93 2.792L15.125 17'
+            stroke='currentColor'
+            strokeWidth='2'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+          />
+        </g>
+        <defs>
+          <clipPath id='clip0_489_191335'>
             <path fill='currentColor' d='M0 0H24V24H0z' />
           </clipPath>
         </defs>
