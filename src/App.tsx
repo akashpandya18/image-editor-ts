@@ -19,18 +19,7 @@ function App() {
   return (
     <div className='App'>
       {imgSrc ? (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "flex-start",
-            justifyContent: "left",
-            width: "90%",
-            gap: "10px",
-          }}
-        >
-          <Controls imgSrc={imgSrc} />
-        </div>
+        <Controls imgSrc={imgSrc} />
       ) : (
         <FileUpload onSelectFile={onSelectFile} />
       )}
