@@ -16,14 +16,14 @@ interface props {
   setBrightness: Function;
   rotate: number;
   setRotate: Function;
-};
+}
 
 interface annotation {
   id: string;
   x: number;
   y: number;
   tag: string;
-};
+}
 
 function ImageAnnot({
   imageSrcMain,
@@ -32,7 +32,7 @@ function ImageAnnot({
   brightness,
   setBrightness,
   rotate,
-  setRotate
+  setRotate,
 }: props) {
   const ref = useRef(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -230,7 +230,9 @@ function ImageAnnot({
     }, 10);
   };
 
-  const handleCanvasMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleCanvasMouseMove = (
+    event: React.MouseEvent<HTMLCanvasElement>
+  ) => {
     event.preventDefault();
     const canvas = canvasRef.current;
     const ctx = canvas!.getContext("2d");
@@ -374,7 +376,7 @@ function ImageAnnot({
 
   useEffect(() => {
     // console.log("blur", {blur});
-    let blurVal = `${blur*10}px`;
+    let blurVal = `${blur * 10}px`;
     // let rotateVal = `${rotate}deg`;
     const image = new Image();
     image.src = imageSrcMain;
@@ -418,60 +420,62 @@ function ImageAnnot({
       // renderSquare();
       // console.log("context", context);
     }, 10);
-  },[imageSrcMain, blur, brightness, rotate]);
+  }, [imageSrcMain, blur, brightness, rotate]);
 
   return (
-    <div
-      style={{
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-      }}
-    >
-      <canvas
-        ref={canvasRef}
-        onClick={(e) => handleCanvasClick(e)}
+    <>
+      <div
         style={{
-          borderRadius: "7px",
-          boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)"
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
         }}
-        onMouseMove={handleCanvasMouseMove}
-      />
-
-      {tempRedPrompt && (
-        <>
-          <TempRedTag position={currentAnnotation} />
-          <TagAnnotationForm
-            refer={ref}
-            tags={tag}
-            handleCloseInput={setTempRedPrompt}
-            handleInputChange={handleInputChange}
-            onSubmit={handleSubmitTag}
-            position={currentAnnotation}
-          />
-        </>
-      )}
-
-      {deleteTag && (
-        <DeleteTag
-          position={deletePos}
-          setPromptOff={() => setDeleteTag(false)}
-          deleteTagSubmit={handleClearSingleTag}
+      >
+        <canvas
+          ref={canvasRef}
+          onClick={(e) => handleCanvasClick(e)}
+          style={{
+            borderRadius: "7px",
+            boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
+          }}
+          onMouseMove={handleCanvasMouseMove}
         />
-      )}
 
-      {showH && <ShowTagOnHover position={hoverPos} tag={hoverTag} />}
+        {tempRedPrompt && (
+          <>
+            <TempRedTag position={currentAnnotation} />
+            <TagAnnotationForm
+              refer={ref}
+              tags={tag}
+              handleCloseInput={setTempRedPrompt}
+              handleInputChange={handleInputChange}
+              onSubmit={handleSubmitTag}
+              position={currentAnnotation}
+            />
+          </>
+        )}
 
-      {draw && <Draw width={dimensions.width} height={dimensions.height} />}
+        {deleteTag && (
+          <DeleteTag
+            position={deletePos}
+            setPromptOff={() => setDeleteTag(false)}
+            deleteTagSubmit={handleClearSingleTag}
+          />
+        )}
 
-      <MainCanvasControls
-        clearFunction={handleClearAllTags}
-        showHideFunction={() => (showAllTags ? hideTags() : showTags())}
-        screenShotFunction={handleScreenShot}
-        iconTag={showAllTags ? <HideTags /> : <ShowTags />}
-      />
-    </div>
+        {showH && <ShowTagOnHover position={hoverPos} tag={hoverTag} />}
+
+        {draw && <Draw width={dimensions.width} height={dimensions.height} />}
+
+        <MainCanvasControls
+          clearFunction={handleClearAllTags}
+          showHideFunction={() => (showAllTags ? hideTags() : showTags())}
+          screenShotFunction={handleScreenShot}
+          iconTag={showAllTags ? <HideTags /> : <ShowTags />}
+        />
+      </div>
+    </>
   );
 }
 

@@ -1,13 +1,21 @@
 import { useState } from "react";
 import {
+  Blur,
+  BrightnessUp,
   Crop,
   Draw,
   Flip,
-  More,
+  RotateRight,
   Tag,
-  TextOnImage
+  TextOnImage,
+  Zoom,
 } from "../../assets/icons";
 import UniversalSlider from "./sliders";
+import ImageAnnot from "../TagAnnotation";
+import "./index.css";
+import { Button } from "./buttons";
+import { controls, handleToolClick, tools } from "../../utils/data";
+import FlipImage from "../flip";
 
 interface controlsType {
   id: number;
@@ -15,186 +23,111 @@ interface controlsType {
   type: string;
   icon: any;
 }
-
 interface props {
-  controls: controlsType[];
-  blur: number;
-  setBlur: Function;
-  brightness: number;
-  setBrightness: Function;
-  rotate: number;
-  setRotate: Function;
+  imgSrc: string;
 }
 
-const tools = [
-  { id: 1, name: "Tag/Annot", type: "tag-annotation", icon: <Tag /> },
-  {
-    id: 2,
-    name: "Text on Image",
-    type: "text-on-image",
-    icon: <TextOnImage />,
-  },
-  { id: 3, name: "Crop", type: "crop", icon: <Crop /> },
-  { id: 4, name: "Flip", type: "flip", icon: <Flip /> },
-  { id: 5, name: "Draw", type: "draw", icon: <Draw /> },
-  { id: 6, name: "More", type: "more", icon: <More /> },
-];
+export default function Controls({ imgSrc }: props): JSX.Element {
+  const [currentTool, setCurrentTool] = useState<string>("tag-annotation");
+  const [blur, setBlur] = useState<number>(0);
+  const [rotate, setRotate] = useState<number>(0);
+  const [brightness, setBrightness] = useState<number>(1);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
 
-export default function Controls({
-  controls,
-  blur,
-  setBlur,
-  brightness,
-  setBrightness,
-  rotate,
-  setRotate
-}: props): JSX.Element {
-  const [showControls, setShowControls] = useState(false);
+  function ShowSelectedTool() {
+    return (
+      <>
+        {currentTool === "tag-annotation" ? (
+          <ImageAnnot
+            imageSrcMain={imgSrc}
+            blur={blur}
+            setBlur={setBlur}
+            brightness={brightness}
+            setBrightness={setBrightness}
+            rotate={rotate}
+            setRotate={setRotate}
+          />
+        ) : currentTool === "text-on-image" ? (
+          console.log("ToI")
+        ) : currentTool === "crop" ? (
+          console.log("crop")
+        ) : currentTool === "flip" ? (
+          <FlipImage imageUrl={imgSrc} />
+        ) : currentTool === "draw" ? (
+          console.log("draw")
+        ) : (
+          console.log("none")
+        )}
+      </>
+    );
+  }
 
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "space-between",
-        height: "auto",
-        gap: "10px",
-        padding: "1rem 0",
-      }}
-    >
-      <div
-        style={{
-          padding: "1rem",
-          width: "400px",
-          height: "auto",
-          borderRadius: "7px",
-          backgroundColor: "#fafafa",
-        }}
-      >
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-            gap: "1rem",
-          }}
-        >
-          {tools.map((x: controlsType) => {
-            return (
-              <div
-                key={x.id}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <div
-                  onClick={() => {
-                    switch (x.type) {
-                      case "tag-annotation":
-                        break;
-                      case "text-on-image":
-                        break;
-                      case "crop":
-                        break;
-                      case "flip":
-                        break;
-                      case "draw":
-                        break;
-                      case "more":
-                        setShowControls(!showControls);
-                        break;
-                      default:
-                        break;
-                    }
-                  }}
-                  style={{
-                    display: "block",
-                    borderRadius: "7px",
-                    backgroundColor: "#000",
-                    color: "#fff",
-                    padding: "1rem",
-                    width: "24px",
-                    cursor: "pointer",
-                    boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.2)",
-                  }}
-                >
-                  {x.icon}
-                </div>
-                <span
-                  style={{
-                    textAlign: "center",
-                    marginTop: "4px",
-                    color: "#3a3a3a",
-                  }}
-                >
-                  {x.name}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {showControls && (
-        <div
-          style={{
-            padding: "1rem",
-            width: "400px",
-            height: "auto",
-            borderRadius: "7px",
-            backgroundColor: "#fafafa"
-          }}
-        >
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(1, minmax(0, 1fr))",
-              gap: "0.5rem",
-            }}
-          >
-            {controls.map((x: controlsType) => {
-              return (
-                <div
-                  key={x.id}
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "block",
-                      borderRadius: "7px",
-                      backgroundColor: "#000",
-                      color: "#fff",
-                      padding: "1rem",
-                      width: "24px",
-                    }}
-                  >
-                    {x.icon}
+  function Controls() {
+    return (
+      <>
+        <div className='controls-main'>
+          {/* tools */}
+          <div className='controls-2div'>
+            <div className='tools-grid'>
+              {tools.map((x: controlsType, idx: number) => {
+                return (
+                  <div key={x.id} className='tools-map-div'>
+                    <Button
+                      className='tools-button'
+                      isActive={idx === activeIndex}
+                      onClick={() =>
+                        handleToolClick(
+                          x.type,
+                          idx,
+                          setActiveIndex,
+                          setCurrentTool
+                        )
+                      }
+                    >
+                      {x.icon}
+                    </Button>
+                    <span>{x.name}</span>
                   </div>
-                  <div>
-                    <UniversalSlider
-                      label={x.name}
-                      id={x.type}
-                      blur={blur}
-                      setBlur={setBlur}
-                      brightness={brightness}
-                      setBrightness={setBrightness}
-                      rotate={rotate}
-                      setRotate={setRotate}
-                    />
+                );
+              })}
+            </div>
+          </div>
+
+          {/* controls */}
+          <div className='showControls-div'>
+            <div className='showControls-grid'>
+              {controls.map((x: controlsType) => {
+                return (
+                  <div key={x.id} className='controlsMap-div'>
+                    <div className='controlsMap-icon'>{x.icon}</div>
+                    <div>
+                      <UniversalSlider
+                        label={x.name}
+                        id={x.type}
+                        blur={blur}
+                        setBlur={setBlur}
+                        brightness={brightness}
+                        setBrightness={setBrightness}
+                        rotate={rotate}
+                        setRotate={setRotate}
+                      />
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
-      )}
+      </>
+    );
+  }
+
+  return (
+    <div className='controls-out'>
+      <Controls />
+      <div className='selectedTools-div'>
+        <ShowSelectedTool />
+      </div>
     </div>
   );
-};
+}
