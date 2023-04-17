@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import "./index.css";
 import { FlipHorizontal, FlipVertical } from "../../assets/icons";
+
 interface Props {
   imageUrl: string;
 }
+
 export default function FlipImage(props: Props) {
   const { imageUrl } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -77,24 +79,23 @@ export default function FlipImage(props: Props) {
   }, [dimensions, imageUrl]);
 
   return (
-    <>
-      <div>
-        <canvas
-          ref={canvasRef}
-          style={{
-            borderRadius: "7px",
-            boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
-          }}
-        />
-        <div className='button-div'>
-          <button className='flip-button' onClick={flipHorizontally}>
-            <FlipHorizontal />
-          </button>
-          <button className='flip-button' onClick={flipVertically}>
-            <FlipVertical />
-          </button>
-        </div>
+    <div>
+      <canvas
+        ref={canvasRef}
+        style={{
+          borderRadius: "7px",
+          boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)"
+        }}
+      />
+      <div className={"button-div"}>
+        <button className={"flip-button"} onClick={flipHorizontally}>
+          <FlipHorizontal />
+        </button>
+
+        <button className={"flip-button"} onClick={flipVertically}>
+          <FlipVertical />
+        </button>
       </div>
-    </>
+    </div>
   );
-}
+};

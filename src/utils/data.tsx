@@ -8,7 +8,7 @@ import {
   RotateRight,
   Tag,
   TextOnImage,
-  Zoom,
+  Zoom
 } from "../assets/icons";
 
 interface controlsType {
@@ -17,6 +17,7 @@ interface controlsType {
   type: string;
   icon: any;
 }
+
 export const controls: controlsType[] = [
   { id: 1, name: "Blur", type: "blur", icon: <Blur /> },
   { id: 2, name: "Zoom", type: "zoom", icon: <Zoom /> },
@@ -26,12 +27,7 @@ export const controls: controlsType[] = [
 
 export const tools: controlsType[] = [
   { id: 1, name: "Tag/Annot", type: "tag-annotation", icon: <Tag /> },
-  {
-    id: 2,
-    name: "Text on Image",
-    type: "text-on-image",
-    icon: <TextOnImage />,
-  },
+  { id: 2, name: "Text on Image", type: "text-on-image", icon: <TextOnImage /> },
   { id: 3, name: "Crop", type: "crop", icon: <Crop /> },
   { id: 4, name: "Flip", type: "flip", icon: <Flip /> },
   { id: 5, name: "Draw", type: "draw", icon: <Draw /> },

@@ -23,6 +23,7 @@ export const Tornado = () => {
     </>
   );
 };
+
 export const Close = () => {
   return (
     <>
@@ -49,6 +50,7 @@ export const Close = () => {
     </>
   );
 };
+
 export const Check = () => {
   return (
     <>
@@ -74,6 +76,7 @@ export const Check = () => {
     </>
   );
 };
+
 // export const RotateLeft = () => {
 //   return (
 //     <>
@@ -110,6 +113,7 @@ export const Check = () => {
 //     </>
 //   );
 // };
+
 export const RotateRight = () => {
   return (
     <>
@@ -137,6 +141,7 @@ export const RotateRight = () => {
     </>
   );
 };
+
 export const Flip = () => {
   return (
     <>
@@ -164,6 +169,7 @@ export const Flip = () => {
     </>
   );
 };
+
 export const BrightnessUp = () => {
   return (
     <>
@@ -184,6 +190,7 @@ export const BrightnessUp = () => {
     </>
   );
 };
+
 // export const BrightnessDown = () => {
 //   return (
 //     <>
@@ -202,6 +209,7 @@ export const BrightnessUp = () => {
 //     </>
 //   );
 // };
+
 export const Crop = () => {
   return (
     <>
@@ -232,6 +240,7 @@ export const Crop = () => {
     </>
   );
 };
+
 export const Blur = () => {
   return (
     <>
@@ -258,6 +267,7 @@ export const Blur = () => {
     </>
   );
 };
+
 export const Zoom = () => {
   return (
     <>
@@ -285,6 +295,7 @@ export const Zoom = () => {
     </>
   );
 };
+
 export const Tag = () => {
   return (
     <>
@@ -315,6 +326,7 @@ export const Tag = () => {
     </>
   );
 };
+
 export const TextOnImage = () => {
   return (
     <>
@@ -337,6 +349,7 @@ export const TextOnImage = () => {
     </>
   );
 };
+
 export const ShowTags = () => {
   return (
     <>
@@ -364,6 +377,7 @@ export const ShowTags = () => {
     </>
   );
 };
+
 export const HideTags = () => {
   return (
     <>
@@ -391,6 +405,7 @@ export const HideTags = () => {
     </>
   );
 };
+
 export const ScreenShot = () => {
   return (
     <>
@@ -427,6 +442,7 @@ export const ScreenShot = () => {
     </>
   );
 };
+
 export const Draw = () => {
   return (
     <>
@@ -457,30 +473,32 @@ export const Draw = () => {
     </>
   );
 };
-export const More = () => {
-  return (
-    <>
-      <svg
-        width='24'
-        height='24'
-        fill='none'
-        xmlns='http://www.w3.org/2000/svg'
-      >
-        <g clipPath='url(#clip0_489_191327)'>
-          <path
-            d='M6 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0z'
-            fill='currentColor'
-          />
-        </g>
-        <defs>
-          <clipPath id='clip0_489_191327'>
-            <path fill='currentColor' d='M0 0H24V24H0z' />
-          </clipPath>
-        </defs>
-      </svg>
-    </>
-  );
-};
+
+// export const More = () => {
+//   return (
+//     <>
+//       <svg
+//         width='24'
+//         height='24'
+//         fill='none'
+//         xmlns='http://www.w3.org/2000/svg'
+//       >
+//         <g clipPath='url(#clip0_489_191327)'>
+//           <path
+//             d='M6 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0z'
+//             fill='currentColor'
+//           />
+//         </g>
+//         <defs>
+//           <clipPath id='clip0_489_191327'>
+//             <path fill='currentColor' d='M0 0H24V24H0z' />
+//           </clipPath>
+//         </defs>
+//       </svg>
+//     </>
+//   );
+// };
+
 export const FlipVertical = () => {
   return (
     <>
@@ -517,6 +535,7 @@ export const FlipVertical = () => {
     </>
   );
 };
+
 export const FlipHorizontal = () => {
   return (
     <>
