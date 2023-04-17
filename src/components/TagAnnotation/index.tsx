@@ -8,6 +8,12 @@ import ShowTagOnHover from "../prompts/showTagOnHover";
 import MainCanvasControls from "../controls/mainCanvasControls";
 import Draw from "../draw";
 
+interface annotation {
+  id: string;
+  x: number;
+  y: number;
+  tag: string;
+}
 interface props {
   imageSrcMain: any;
   blur: number;
@@ -16,13 +22,8 @@ interface props {
   setBrightness: Function;
   rotate: number;
   setRotate: Function;
-}
-
-interface annotation {
-  id: string;
-  x: number;
-  y: number;
-  tag: string;
+  annotations: annotation[];
+  setAnnotations: any;
 }
 
 function ImageAnnot({
@@ -33,13 +34,14 @@ function ImageAnnot({
   setBrightness,
   rotate,
   setRotate,
+  annotations,
+  setAnnotations,
 }: props) {
   const ref = useRef(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [currentAnnotation, setCurrentAnnotation] = useState({ x: 0, y: 0 });
   const [tag, setTag] = useState("");
-  const [annotations, setAnnotations] = useState<annotation[]>([]);
   const [tempRedPrompt, setTempRedPrompt] = useState(false);
   const [deleteTag, setDeleteTag] = useState(false);
   const [deletePos, setDeletePos] = useState({ xN: 0, yN: 0 });

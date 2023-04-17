@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import "./index.css";
-import { FlipHorizontal, FlipVertical } from "../../assets/icons";
 interface Props {
   imageUrl: string;
 }
@@ -47,54 +46,37 @@ export default function FlipImage(props: Props) {
     img.src = imageUrl;
   };
 
-  useEffect(() => {
-    const img = new Image();
-    img.src = imageUrl;
-    img.onload = () => {
-      const { width, height } = img;
-      if (width > 1000) {
-        const ratio = width / height;
-        const newHeight = 1000 / ratio;
-        const newWidth = 563 * ratio;
-        setDimensions({ width: newWidth, height: newHeight });
-      } else {
-        setDimensions({ width, height });
-      }
-    };
-  }, [imageUrl]);
+  // useEffect(() => {
+  //   const img = new Image();
+  //   img.src = imageUrl;
+  //   img.onload = () => {
+  //     const { width, height } = img;
+  //     if (width > 1000) {
+  //       const ratio = width / height;
+  //       const newHeight = 1000 / ratio;
+  //       const newWidth = 563 * ratio;
+  //       setDimensions({ width: newWidth, height: newHeight });
+  //     } else {
+  //       setDimensions({ width, height });
+  //     }
+  //   };
+  // }, [imageUrl]);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const { width, height } = dimensions;
-    canvas!.width = width;
-    canvas!.height = height;
-    const ctx = canvas!.getContext("2d");
-    const image = new Image();
-    image.src = imageUrl;
-    image.onload = () => {
-      ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
-    };
-  }, [dimensions, imageUrl]);
-
+  // useEffect(() => {
+  //   const canvas = canvasRef.current;
+  //   const { width, height } = dimensions;
+  //   canvas!.width = width;
+  //   canvas!.height = height;
+  //   const ctx = canvas!.getContext("2d");
+  //   const image = new Image();
+  //   image.src = imageUrl;
+  //   image.onload = () => {
+  //     ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
+  //   };
+  // }, [dimensions, imageUrl]);
   return (
     <>
-      <div>
-        <canvas
-          ref={canvasRef}
-          style={{
-            borderRadius: "7px",
-            boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
-          }}
-        />
-        <div className='button-div'>
-          <button className='flip-button' onClick={flipHorizontally}>
-            <FlipHorizontal />
-          </button>
-          <button className='flip-button' onClick={flipVertically}>
-            <FlipVertical />
-          </button>
-        </div>
-      </div>
+      <div></div>
     </>
   );
 }
