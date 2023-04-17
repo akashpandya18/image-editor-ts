@@ -1,0 +1,16 @@
+.button-div {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.flip-button {
+  display: block;
+  border-radius: 7px;
+  background-color: #2a2a2a;
+  color: #fff;
+  padding: 0.7rem;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.2);
+}
