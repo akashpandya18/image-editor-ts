@@ -45,10 +45,10 @@ export function FlipControl({ flipHorizontally, flipVertically }: propsFlip) {
   return (
     <>
       <div className='button-div'>
-        <button className='flip-button' onClick={() => flipHorizontally()}>
+        <button className='flip-button' onClick={flipHorizontally}>
           <FlipHorizontal />
         </button>
-        <button className='flip-button' onClick={() => flipVertically()}>
+        <button className='flip-button' onClick={flipVertically}>
           <FlipVertical />
         </button>
       </div>

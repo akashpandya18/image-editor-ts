@@ -1,15 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import "./index.css";
 interface Props {
-  imageUrl: string;
+  canvas: HTMLCanvasElement | null;
 }
 export default function FlipImage(props: Props) {
-  const { imageUrl } = props;
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { canvas } = props;
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   const flipHorizontally = () => {
-    const canvas = canvasRef.current;
     if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
@@ -21,7 +19,6 @@ export default function FlipImage(props: Props) {
   };
 
   const flipVertically = () => {
-    const canvas = canvasRef.current;
     if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
@@ -35,16 +32,13 @@ export default function FlipImage(props: Props) {
   const drawImage = (ctx: CanvasRenderingContext2D) => {
     const img = new Image();
     img.onload = () => {
-      ctx.drawImage(
-        img,
-        0,
-        0,
-        canvasRef.current!.width,
-        canvasRef.current!.height
-      );
+      ctx.drawImage(img, 0, 0, canvas!.width, canvas!.height);
     };
-    img.src = imageUrl;
   };
+
+  useEffect(() => {
+    const ctx = canvas?.getContext("2d");
+  }, [canvas]);
 
   // useEffect(() => {
   //   const img = new Image();
@@ -74,9 +68,5 @@ export default function FlipImage(props: Props) {
   //     ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
   //   };
   // }, [dimensions, imageUrl]);
-  return (
-    <>
-      <div></div>
-    </>
-  );
+  return <>Flip</>;
 }

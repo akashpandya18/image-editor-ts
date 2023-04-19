@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import ImageAnnot from "../TagAnnotation";
+import ImageAnnot, { handleCanvasMouseMove } from "../TagAnnotation";
 import "./index.css";
 import { Button } from "./buttons";
 import { handleToolClick, tools } from "../../utils/data";
-import FlipImage from "../flip";
 import Draw from "../draw";
 import { FlipControl, MoreControls, TagControls } from "./allControls";
+import MainCanvasControls from "./mainCanvasControls";
+import { customAlphabet } from "nanoid";
 
 interface controlsType {
   id: number;
@@ -16,7 +17,6 @@ interface controlsType {
 interface props {
   imgSrc: string;
 }
-interface CanvasTypes {}
 interface annotation {
   id: string;
   x: number;
@@ -38,8 +38,29 @@ export default function Controls({ imgSrc }: props): JSX.Element {
   const [rotate, setRotate] = useState<number>(0);
   const [brightness, setBrightness] = useState<number>(1);
   const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [clear, setClear] = useState<boolean>(false);
+  const [hoverTag, setHoverTag] = useState("");
+  const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 });
+  const [showH, setShowH] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const nanoid = customAlphabet("1234567890abcdef", 10);
+  const id = nanoid(5);
+
+  const drawImage = (ctx: CanvasRenderingContext2D) => {
+    const img = new Image();
+    img.onload = () => {
+      ctx.drawImage(
+        img,
+        0,
+        0,
+        canvasRef.current!.width,
+        canvasRef.current!.height
+      );
+    };
+    img.src = imgSrc;
+  };
 
   function Tools() {
     return (
@@ -81,43 +102,41 @@ export default function Controls({ imgSrc }: props): JSX.Element {
     );
   }
 
-  function ShowSelectedTool() {
-    return (
-      <>
-        {currentTool === "tag-annotation" ? (
-          <div className='selectedTools-div'>
-            <ImageAnnot
-              imageSrcMain={imgSrc}
-              annotations={annotations}
-              setAnnotations={setAnnotations}
-              blur={blur}
-              setBlur={setBlur}
-              brightness={brightness}
-              setBrightness={setBrightness}
-              rotate={rotate}
-              setRotate={setRotate}
-            />
-          </div>
-        ) : currentTool === "text-on-image" ? (
-          console.log("ToI")
-        ) : currentTool === "crop" ? (
-          console.log("crop")
-        ) : currentTool === "flip" ? (
-          <div className='selectedTools-div'>
-            <FlipImage imageUrl={imgSrc} />
-          </div>
-        ) : currentTool === "draw" ? (
-          <div className='selectedTools-div'>
-            <Draw width={1000} height={563} />
-          </div>
-        ) : currentTool === "more" ? (
-          console.log("more")
-        ) : (
-          console.log("none")
-        )}
-      </>
-    );
-  }
+  // function ShowSelectedTool() {
+  //   return (
+  //     <>
+  //       {currentTool === "tag-annotation" ? (
+  //         <div className='selectedTools-div'>
+  //           {/* <ImageAnnot
+  //             imageSrcMain={imgSrc}
+  //             annotations={annotations}
+  //             setAnnotations={setAnnotations}
+  //             blur={blur}
+  //             setBlur={setBlur}
+  //             brightness={brightness}
+  //             setBrightness={setBrightness}
+  //             rotate={rotate}
+  //             setRotate={setRotate}
+  //           /> */}
+  //         </div>
+  //       ) : currentTool === "text-on-image" ? (
+  //         console.log("ToI")
+  //       ) : currentTool === "crop" ? (
+  //         console.log("crop")
+  //       ) : currentTool === "flip" ? (
+  //         console.log("flip")
+  //       ) : currentTool === "draw" ? (
+  //         <div className='selectedTools-div'>
+  //           <Draw width={1000} height={563} />
+  //         </div>
+  //       ) : currentTool === "more" ? (
+  //         console.log("more")
+  //       ) : (
+  //         console.log("none")
+  //       )}
+  //     </>
+  //   );
+  // }
 
   function SelectedControl() {
     return (
@@ -130,8 +149,28 @@ export default function Controls({ imgSrc }: props): JSX.Element {
           console.log("crop")
         ) : currentControl === "flip" ? (
           <FlipControl
-            flipHorizontally={undefined}
-            flipVertically={undefined}
+            flipHorizontally={() => {
+              const canvas = canvasRef.current;
+              if (!canvas) return;
+
+              const ctx = canvas.getContext("2d");
+              if (!ctx) return;
+
+              ctx.translate(canvas.width, 0);
+              ctx.scale(-1, 1);
+              drawImage(ctx);
+            }}
+            flipVertically={() => {
+              const canvas = canvasRef.current;
+              if (!canvas) return;
+
+              const ctx = canvas.getContext("2d");
+              if (!ctx) return;
+
+              ctx.translate(0, canvas.height);
+              ctx.scale(1, -1);
+              drawImage(ctx);
+            }}
           />
         ) : currentControl === "draw" ? (
           console.log("draw")
@@ -178,18 +217,36 @@ export default function Controls({ imgSrc }: props): JSX.Element {
     image.onload = () => {
       ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
     };
-  }, [dimensions, imgSrc]);
+  }, [dimensions, imgSrc, clear]);
 
   return (
     <div className='controls-out'>
       <Tools />
-      <ShowSelectedTool />
+      {/* <ShowSelectedTool /> */}
       <canvas
         ref={canvasRef}
         style={{
           borderRadius: "7px",
           boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
         }}
+        onMouseMove={(event) =>
+          handleCanvasMouseMove(
+            event,
+            canvasRef,
+            annotations,
+            setHoverTag,
+            setHoverPos,
+            setShowH
+          )
+        }
+      />
+      <MainCanvasControls
+        clearFunction={() => {
+          setClear(!clear);
+        }}
+        showHideFunction={() => {}}
+        screenShotFunction={() => {}}
+        iconTag={() => {}}
       />
     </div>
   );
