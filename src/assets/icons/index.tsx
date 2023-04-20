@@ -474,30 +474,30 @@ export const Draw = () => {
   );
 };
 
-// export const More = () => {
-//   return (
-//     <>
-//       <svg
-//         width='24'
-//         height='24'
-//         fill='none'
-//         xmlns='http://www.w3.org/2000/svg'
-//       >
-//         <g clipPath='url(#clip0_489_191327)'>
-//           <path
-//             d='M6 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0z'
-//             fill='currentColor'
-//           />
-//         </g>
-//         <defs>
-//           <clipPath id='clip0_489_191327'>
-//             <path fill='currentColor' d='M0 0H24V24H0z' />
-//           </clipPath>
-//         </defs>
-//       </svg>
-//     </>
-//   );
-// };
+export const More = () => {
+  return (
+    <>
+      <svg
+        width='24'
+        height='24'
+        fill='none'
+        xmlns='http://www.w3.org/2000/svg'
+      >
+        <g clipPath='url(#clip0_489_191327)'>
+          <path
+            d='M6 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0z'
+            fill='currentColor'
+          />
+        </g>
+        <defs>
+          <clipPath id='clip0_489_191327'>
+            <path fill='currentColor' d='M0 0H24V24H0z' />
+          </clipPath>
+        </defs>
+      </svg>
+    </>
+  );
+};
 
 export const FlipVertical = () => {
   return (

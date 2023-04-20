@@ -5,6 +5,7 @@ import {
   Crop,
   Draw,
   Flip,
+  More,
   RotateRight,
   Tag,
   TextOnImage,
@@ -31,6 +32,7 @@ export const tools: controlsType[] = [
   { id: 3, name: "Crop", type: "crop", icon: <Crop /> },
   { id: 4, name: "Flip", type: "flip", icon: <Flip /> },
   { id: 5, name: "Draw", type: "draw", icon: <Draw /> },
+  { id: 6, name: "More", type: "more", icon: <More /> }
 ];
 
 export function handleToolClick(
@@ -61,6 +63,9 @@ export function handleToolClick(
       break;
     case "draw":
       setCurrentTool("draw");
+      break;
+    case "more":
+      setCurrentTool("more");
       break;
     default:
       break;

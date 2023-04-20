@@ -9,13 +9,7 @@ import MainCanvasControls from "../controls/mainCanvasControls";
 import Draw from "../draw";
 
 interface props {
-  imageSrcMain: any;
-  blur: number;
-  setBlur: Function;
-  brightness: number;
-  setBrightness: Function;
-  rotate: number;
-  setRotate: Function;
+  imageSrcMain: string;
 }
 
 interface annotation {
@@ -25,14 +19,8 @@ interface annotation {
   tag: string;
 }
 
-function ImageAnnot({
-  imageSrcMain,
-  blur,
-  setBlur,
-  brightness,
-  setBrightness,
-  rotate,
-  setRotate,
+function ImageAnnotation({
+  imageSrcMain
 }: props) {
   const ref = useRef(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -179,9 +167,6 @@ function ImageAnnot({
     setDeleteTagId("");
     setShowAllTags(false);
     setShowH(false);
-    setBlur(0);
-    setRotate(0);
-    setBrightness(1);
 
     const image = new Image();
     image.src = imageSrcMain;
@@ -376,51 +361,6 @@ function ImageAnnot({
     };
   }, [dimensions, imageSrcMain]);
 
-  useEffect(() => {
-    console.log({imageSrcMain, blur, brightness})
-    let blurVal = `${blur * 10}px`;
-    const image = new Image();
-    image.src = imageSrcMain;
-    const canvas = canvasRef.current;
-    const context = canvas!.getContext("2d");
-
-    const cx = canvas!.width/2;
-    const cy = canvas!.height/2;
-    // let x = 0;
-    // let y = 0;
-    // let w = canvas!.width;
-    // let h = canvas!.height;
-    let deg = rotate;
-
-    image.width = canvas!.width;
-    image.height = canvas!.height;
-
-    context!.clearRect(0, 0, canvas!.width, canvas!.height);
-
-    function clear() {
-      context!.save();
-      context!.setTransform(1, 0, 0, 1, 0, 0);
-      context!.clearRect(0, 0, canvas!.width, canvas!.height);
-      context!.restore();
-    }
-
-    function renderSquare() {
-      context!.save();
-      context!.translate(cx, cy); // pivot point
-      context!.rotate(deg); // rotate square in radians
-      context!.strokeRect(0, 0, canvas!.width, canvas!.height);
-      context!.restore();
-    }
-
-    setTimeout(() => {
-      context!.drawImage(image, 0, 0, image.width, image.height);
-      context!.filter = `blur(${blurVal}) brightness(${brightness})`;
-      clear();
-      renderSquare();
-      console.log("context", context);
-    }, 10);
-  }, [imageSrcMain, blur, brightness, rotate]);
-
   return (
     <div
       style={{
@@ -476,4 +416,4 @@ function ImageAnnot({
   );
 }
 
-export default ImageAnnot;
+export default ImageAnnotation;

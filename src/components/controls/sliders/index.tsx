@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./index.css";
 
 interface props {
@@ -6,10 +6,12 @@ interface props {
   id: string;
   blur: number;
   setBlur: Function;
-  brightness: number;
-  setBrightness: Function;
+  zoom: number;
+  setZoom: Function;
   rotate: number;
   setRotate: Function;
+  brightness: number;
+  setBrightness: Function;
 }
 
 export default function UniversalSlider({
@@ -17,25 +19,37 @@ export default function UniversalSlider({
   id,
   blur,
   setBlur,
-  brightness,
-  setBrightness,
+  zoom,
+  setZoom,
   rotate,
-  setRotate
+  setRotate,
+  brightness,
+  setBrightness
 }: props): JSX.Element {
-  const [zoom, setZoom] = useState<number>(1);
-
-  const handleBrightnessChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
+  const handleEffectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.persist();
     if (e.target.id === "blur") {
       setBlur(Number(e.target.value));
+      setZoom(zoom);
+      setRotate(rotate);
+      setBrightness(brightness);
     }
     if (e.target.id === "zoom") {
+      setBlur(blur);
       setZoom(Number(e.target.value));
+      setRotate(rotate);
+      setBrightness(brightness);
     }
     if (e.target.id === "rotate") {
+      setBlur(blur);
+      setZoom(zoom);
       setRotate(Number(e.target.value));
+      setBrightness(brightness);
     }
     if (e.target.id === "brightness") {
+      setBlur(blur);
+      setZoom(zoom);
+      setRotate(rotate);
       setBrightness(Number(e.target.value));
     }
   };
@@ -55,6 +69,10 @@ export default function UniversalSlider({
     }
   };
 
+  const minValue = id === "zoom" ? -8 : id === "rotate" ? -180 : 0;
+  const maxValue = id === "zoom" ? 20 : id === "rotate" ? 180 : 1;
+  const stepValue = id === "zoom" ? 2 : id === "rotate" ? 45 : 0.2;
+
   return (
     <div className={"brightness-slider"}>
       <label className={"brightness-label"} htmlFor={"brightness"}>
@@ -64,11 +82,11 @@ export default function UniversalSlider({
         type={"range"}
         id={id}
         name={id}
-        min={id === "rotate" ? -180 : 0}
-        max={id === "rotate" ? 180 : 1}
-        step={id !== "rotate" ? 0.2 : ""}
+        min={minValue}
+        max={maxValue}
+        step={stepValue}
         value={inputValue()}
-        onChange={handleBrightnessChange}
+        onChange={handleEffectChange}
       />
     </div>
   );
