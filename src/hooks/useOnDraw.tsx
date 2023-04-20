@@ -1,20 +1,12 @@
-import { useEffect, useRef } from "react";
-
-interface Point {
-  x: number;
-  y: number;
-}
-
-type OnDrawFunction = (
-  ctx: CanvasRenderingContext2D,
-  currentPoint: Point,
-  prevPoint: Point | null
-) => void;
-
-interface UseOnDrawResult {
-  setCanvasRef: (ref: HTMLCanvasElement | null) => void;
-  onCanvasMouseDown: () => void;
-}
+import React, {
+  useEffect,
+  useRef
+} from "react";
+import {
+  OnDrawFunction,
+  Point,
+  UseOnDrawResult
+} from "../types";
 
 export default function useOnDraw(onDraw?: OnDrawFunction): UseOnDrawResult {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);

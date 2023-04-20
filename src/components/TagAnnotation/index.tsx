@@ -1,3 +1,4 @@
+import React from "react";
 import { annotation } from "../../types";
 
 export const handleCanvasMouseMove = (
@@ -20,6 +21,7 @@ export const handleCanvasMouseMove = (
     ctx?.arc(annotation.x, annotation.y, 10, 0, 2 * Math.PI);
     return ctx?.isPointInPath(x, y);
   });
+
   if (hoveredDot) {
     canvas!.style.cursor = "pointer";
     let x = hoveredDot.x;
@@ -50,12 +52,14 @@ export const handleCanvasClick = (
   setTempRedPrompt(true);
   setDeleteTag(false);
   setDeleteTagId("");
+
   const canvas = canvasRef.current;
   const ctx = canvas!.getContext("2d");
   const rect = canvas!.getBoundingClientRect();
   const x = event.clientX - rect!.left;
   const y = event.clientY - rect!.top;
   const annotation = { x, y };
+
   setCurrentAnnotation(annotation);
   setTag("");
   const xFind = event.nativeEvent.offsetX;
@@ -102,6 +106,7 @@ export const handleSubmitTag = (
   e.preventDefault();
   const x = currentAnnotation.x;
   const y = currentAnnotation.y;
+
   const canvas = canvasRef.current;
   const ctx = canvas!.getContext("2d");
   const image = new Image();
@@ -131,7 +136,6 @@ export const handleSubmitTag = (
           ctx!.font = "24px Arial";
           // Draw the background color rectangle
           let textWidth = ctx!.measureText(tag).width;
-
           //tags
           ctx!.beginPath();
           ctx!.fillStyle = "yellow";

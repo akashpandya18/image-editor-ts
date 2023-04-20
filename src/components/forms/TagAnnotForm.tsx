@@ -1,14 +1,6 @@
+import { TagAnnotationFormProps } from "../../types";
 import { Close } from "../../assets/icons";
 import "../styles/index.css";
-
-interface props {
-  tags: string;
-  handleInputChange: (e: any) => void;
-  onSubmit: (e: any) => void;
-  position: { x: number; y: number };
-  refer: any;
-  handleCloseInput: any;
-}
 
 function TagAnnotationForm({
   tags,
@@ -17,7 +9,7 @@ function TagAnnotationForm({
   position,
   refer,
   handleCloseInput
-}: props) {
+}: TagAnnotationFormProps) {
   return (
     <div
       ref={refer}

@@ -1,4 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef
+} from "react";
+import { handleToolClick } from "../../utils/data";
+import { tools } from "../../utils/constant";
 import {
   handleCanvasClick,
   handleCanvasMouseMove,
@@ -7,30 +13,44 @@ import {
   handleScreenShot,
   handleSubmitTag,
   hideTags,
-  showTags,
+  showTags
 } from "../TagAnnotation";
-import "./index.css";
 import { Button } from "./buttons";
-import { handleToolClick, tools } from "../../utils/data";
 import { onDraw } from "../draw";
-import { FlipControl, MoreControls, TagControls } from "./allControls";
+import {
+  FlipControl,
+  MoreControls,
+  TagControls
+} from "./allControls";
 import MainCanvasControls from "./mainCanvasControls";
 import { customAlphabet } from "nanoid";
-import { controlsType, annotation, controlsProps } from "../../types";
+import {
+  controlsType,
+  annotation,
+  controlsProps
+} from "../../types";
 import ShowTagOnHover from "../prompts/showTagOnHover";
 import { DeleteTag } from "../prompts/deleteTag";
 import TagAnnotationForm from "../forms/TagAnnotForm";
 import TempRedTag from "../prompts/ConfirmSubmitTag";
-import { HideTags, ShowTags } from "../../assets/icons";
-import { flipHorizontally, flipVertically } from "../flip";
-import { useOnDraw } from "../../hooks/useOnDraw";
+import {
+  flipHorizontally,
+  flipVertically
+} from "../flip";
+import useOnDraw from "../../hooks/useOnDraw";
+import {
+  HideTags,
+  ShowTags
+} from "../../assets/icons";
+import "./index.css";
 
 export default function Controls({ imgSrc }: controlsProps): JSX.Element {
-  const [currentTool, setCurrentTool] = useState<string>("tag-annotation");
+  const [
+    // currentTool
+    , setCurrentTool] = useState<string>("tag-annotation");
   const [annotations, setAnnotations] = useState<annotation[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [currentControl, setCurrentControl] =
-    useState<string>("tag-annotation");
+  const [currentControl, setCurrentControl] = useState<string>("tag-annotation");
   const [blur, setBlur] = useState<number>(0);
   const [zoom, setZoom] = useState<number>(0);
   const [rotate, setRotate] = useState<number>(0);
@@ -54,7 +74,9 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   const nanoid = customAlphabet("1234567890abcdef", 10);
   const id = nanoid(5);
 
-  const { setCanvasRef, onCanvasMouseDown } = useOnDraw(onDraw);
+  const {
+    // setCanvasRef,
+    onCanvasMouseDown } = useOnDraw(onDraw);
 
   const LoadImageFlip = (ctx: CanvasRenderingContext2D) => {
     const img = new Image();
@@ -73,15 +95,15 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   function Tools() {
     return (
       <>
-        <div className='controls-main'>
+        <div className={"controls-main"}>
           {/* tools */}
-          <div className='controls-2div'>
-            <div className='tools-grid'>
+          <div className={"controls-2div"}>
+            <div className={"tools-grid"}>
               {tools.map((x: controlsType, idx: number) => {
                 return (
-                  <div key={x.id} className='tools-map-div'>
+                  <div key={x.id} className={"tools-map-div"}>
                     <Button
-                      className='tools-button'
+                      className={"tools-button"}
                       isActive={idx === activeIndex}
                       onClick={() => {
                         handleToolClick(
@@ -102,7 +124,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
             </div>
           </div>
           {/* controls */}
-          <div className='showControls-div'>
+          <div className={"showControls-div"}>
             <SelectedControl />
           </div>
         </div>
@@ -137,10 +159,12 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
           <MoreControls
             blur={blur}
             setBlur={setBlur}
-            brightness={brightness}
-            setBrightness={setBrightness}
+            zoom={zoom}
+            setZoom={setZoom}
             rotate={rotate}
             setRotate={setRotate}
+            brightness={brightness}
+            setBrightness={setBrightness}
           />
         ) : (
           console.log("none")
@@ -189,15 +213,14 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   }, [dimensions, imgSrc, clear]);
 
   return (
-    <div className='controls-out'>
+    <div className={"controls-out"}>
       <Tools />
-      {/* <ShowSelectedTool /> */}
-      <div className='canvas-div'>
+      <div className={"canvas-div"}>
         <canvas
           ref={canvasRef}
           style={{
             borderRadius: "7px",
-            boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
+            boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)"
           }}
           onMouseDown={onCanvasMouseDown}
           onClick={(e) =>

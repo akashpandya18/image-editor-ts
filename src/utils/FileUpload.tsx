@@ -1,11 +1,8 @@
 import React, { useRef } from "react";
+import { FileUploadProps } from "../types";
 import "./FileUpload.css";
 
-interface props {
-  onSelectFile: (e: any) => void;
-}
-
-const FileUpload = ({ onSelectFile }: props) => {
+const FileUpload = ({ onSelectFile }: FileUploadProps) => {
   const fileInputRef = useRef<any>(null);
 
   return (

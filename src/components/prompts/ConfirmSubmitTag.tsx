@@ -1,8 +1,6 @@
-interface props {
-  position: { x: number; y: number };
-}
+import { TempRedTagProps } from "../../types";
 
-export default function TempRedTag({ position }: props) {
+export default function TempRedTag({ position }: TempRedTagProps) {
   return (
     <div
       style={{

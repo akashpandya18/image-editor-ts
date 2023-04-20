@@ -1,9 +1,6 @@
-interface props {
-  position: { x: number; y: number };
-  tag: string;
-}
+import { ShowTagOnHoverProps } from "../../types";
 
-export default function ShowTagOnHover({ position, tag }: props) {
+export default function ShowTagOnHover({ position, tag }: ShowTagOnHoverProps) {
   return (
     <div
       style={{

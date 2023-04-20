@@ -1,91 +1,76 @@
-import { controls } from "../../utils/data";
+import { controls } from "../../utils/constant";
 import UniversalSlider from "./sliders";
-import "./index.css";
+import {
+  controlsType,
+  flipProps,
+  propsMore,
+  propsTag
+} from "../../types";
 import { FlipHorizontal, FlipVertical } from "../../assets/icons";
+import "./index.css";
 
-interface controlsType {
-  id: number;
-  name: string;
-  type: string;
-  icon: any;
-}
-interface propsMore {
-  blur: number;
-  setBlur: Function;
-  brightness: number;
-  setBrightness: Function;
-  rotate: number;
-  setRotate: Function;
-}
-interface propsTag {
-  annotations: { id: string; x: number; y: number; tag: string }[];
-}
-interface propsFlip {
-  flipHorizontally: any;
-  flipVertically: any;
-}
 export function TagControls({ annotations }: propsTag) {
   return (
-    <>
-      <div>
-        {annotations && (
-          <div>
-            <ol>
-              {annotations.map((data: any) => {
-                return <li>{data.tag}</li>;
-              })}
-            </ol>
-          </div>
-        )}
-      </div>
-    </>
+    <div>
+      {annotations && (
+        <div>
+          <ol>
+            {annotations.map((data: any) => {
+              return <li>{data.tag}</li>;
+            })}
+          </ol>
+        </div>
+      )}
+    </div>
   );
 }
-export function FlipControl({ flipHorizontally, flipVertically }: propsFlip) {
+
+export function FlipControl({ flipHorizontally, flipVertically }: flipProps) {
   return (
-    <>
-      <div className='button-div'>
-        <button className='flip-button' onClick={flipHorizontally}>
-          <FlipHorizontal />
-        </button>
-        <button className='flip-button' onClick={flipVertically}>
-          <FlipVertical />
-        </button>
-      </div>
-    </>
+    <div className={"button-div"}>
+      <button className={"flip-button"} onClick={flipHorizontally}>
+        <FlipHorizontal />
+      </button>
+      <button className={"flip-button"} onClick={flipVertically}>
+        <FlipVertical />
+      </button>
+    </div>
   );
 }
+
 export function MoreControls({
   blur,
   setBlur,
+  zoom,
+  setZoom,
   brightness,
   setBrightness,
   rotate,
-  setRotate,
+  setRotate
 }: propsMore) {
   return (
-    <>
-      <div className='showControls-grid'>
-        {controls.map((x: controlsType) => {
-          return (
-            <div key={x.id} className='controlsMap-div'>
-              <div className='controlsMap-icon'>{x.icon}</div>
-              <div>
-                <UniversalSlider
-                  label={x.name}
-                  id={x.type}
-                  blur={blur}
-                  setBlur={setBlur}
-                  brightness={brightness}
-                  setBrightness={setBrightness}
-                  rotate={rotate}
-                  setRotate={setRotate}
-                />
-              </div>
+    <div className={"showControls-grid"}>
+      {controls.map((x: controlsType) => {
+        return (
+          <div key={x.id} className={"controlsMap-div"}>
+            <div className={"controlsMap-icon"}>{x.icon}</div>
+            <div>
+              <UniversalSlider
+                label={x.name}
+                id={x.type}
+                blur={blur}
+                setBlur={setBlur}
+                zoom={zoom}
+                setZoom={setZoom}
+                rotate={rotate}
+                setRotate={setRotate}
+                brightness={brightness}
+                setBrightness={setBrightness}
+              />
             </div>
-          );
-        })}
-      </div>
-    </>
+          </div>
+        );
+      })}
+    </div>
   );
 }
