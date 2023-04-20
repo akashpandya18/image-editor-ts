@@ -1,43 +1,5 @@
 import { annotation } from "../../types";
 
-export const handleClearAllTags = (
-  e: React.MouseEvent<HTMLCanvasElement>,
-  setDeleteTag: any,
-  setShowH: any,
-  setDeleteTagId: any,
-  setDeletePos: any,
-  canvasRef: any,
-  imageSrcMain: any,
-  setAnnotations: any,
-  setTag: any,
-  setCurrentAnnotation: any,
-  setTempRedPrompt: any,
-  setShowAllTags: any
-) => {
-  e.preventDefault();
-
-  setAnnotations([]);
-  setTempRedPrompt(false);
-  setCurrentAnnotation({ x: 0, y: 0 });
-  setTag("");
-  setDeleteTag(false);
-  setDeletePos({ xN: 0, yN: 0 });
-  setDeleteTagId("");
-  setShowAllTags(false);
-  setShowH(false);
-
-  const image = new Image();
-  image.src = imageSrcMain;
-  const canvas = canvasRef.current;
-  const context = canvas!.getContext("2d");
-  image.width = canvas!.width;
-  image.height = canvas!.height;
-  context!.clearRect(0, 0, canvas!.width, canvas!.height);
-  setTimeout(() => {
-    context!.drawImage(image, 0, 0, image.width, image.height);
-  }, 100);
-};
-
 export const handleCanvasMouseMove = (
   event: React.MouseEvent<HTMLCanvasElement>,
   canvasRef: any,

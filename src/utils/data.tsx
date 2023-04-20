@@ -11,13 +11,8 @@ import {
   TextOnImage,
   Zoom,
 } from "../assets/icons";
+import { controlsType } from "../types";
 
-interface controlsType {
-  id: number;
-  name: string;
-  type: string;
-  icon: any;
-}
 export const controls: controlsType[] = [
   { id: 1, name: "Blur", type: "blur", icon: <Blur /> },
   { id: 2, name: "Zoom", type: "zoom", icon: <Zoom /> },

@@ -12,22 +12,20 @@ import {
 import "./index.css";
 import { Button } from "./buttons";
 import { handleToolClick, tools } from "../../utils/data";
-import Draw from "../draw";
+import { onDraw } from "../draw";
 import { FlipControl, MoreControls, TagControls } from "./allControls";
 import MainCanvasControls from "./mainCanvasControls";
 import { customAlphabet } from "nanoid";
-import { controlsType, annotation } from "../../types";
+import { controlsType, annotation, controlsProps } from "../../types";
 import ShowTagOnHover from "../prompts/showTagOnHover";
 import { DeleteTag } from "../prompts/deleteTag";
 import TagAnnotationForm from "../forms/TagAnnotForm";
 import TempRedTag from "../prompts/ConfirmSubmitTag";
 import { HideTags, ShowTags } from "../../assets/icons";
+import { flipHorizontally, flipVertically } from "../flip";
+import { useOnDraw } from "../../hooks/useOnDraw";
 
-interface props {
-  imgSrc: string;
-}
-
-export default function Controls({ imgSrc }: props): JSX.Element {
+export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   const [currentTool, setCurrentTool] = useState<string>("tag-annotation");
   const [annotations, setAnnotations] = useState<annotation[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -44,16 +42,18 @@ export default function Controls({ imgSrc }: props): JSX.Element {
   const [tempRedPrompt, setTempRedPrompt] = useState(false);
   const [deleteTag, setDeleteTag] = useState(false);
   const [deletePos, setDeletePos] = useState({ xN: 0, yN: 0 });
-  const [draw, setDraw] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
   const [deleteTagId, setDeleteTagId] = useState("");
   const [currentAnnotation, setCurrentAnnotation] = useState({ x: 0, y: 0 });
   const [tag, setTag] = useState("");
+
   const ref = useRef(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const nanoid = customAlphabet("1234567890abcdef", 10);
   const id = nanoid(5);
+
+  const { setCanvasRef, onCanvasMouseDown } = useOnDraw(onDraw);
 
   const LoadImageFlip = (ctx: CanvasRenderingContext2D) => {
     const img = new Image();
@@ -120,31 +120,11 @@ export default function Controls({ imgSrc }: props): JSX.Element {
           console.log("crop")
         ) : currentControl === "flip" ? (
           <FlipControl
-            flipHorizontally={() => {
-              const canvas = canvasRef.current;
-              if (!canvas) return;
-
-              const ctx = canvas.getContext("2d");
-              if (!ctx) return;
-
-              ctx.translate(canvas.width, 0);
-              ctx.scale(-1, 1);
-              LoadImageFlip(ctx);
-            }}
-            flipVertically={() => {
-              const canvas = canvasRef.current;
-              if (!canvas) return;
-
-              const ctx = canvas.getContext("2d");
-              if (!ctx) return;
-
-              ctx.translate(0, canvas.height);
-              ctx.scale(1, -1);
-              LoadImageFlip(ctx);
-            }}
+            flipHorizontally={() => flipHorizontally(canvasRef, LoadImageFlip)}
+            flipVertically={() => flipVertically(canvasRef, LoadImageFlip)}
           />
         ) : currentControl === "draw" ? (
-          console.log("draw")
+          console.log("")
         ) : currentControl === "more" ? (
           <MoreControls
             blur={blur}
@@ -178,6 +158,16 @@ export default function Controls({ imgSrc }: props): JSX.Element {
   }, [imgSrc]);
 
   useEffect(() => {
+    setAnnotations([]);
+    setTempRedPrompt(false);
+    setCurrentAnnotation({ x: 0, y: 0 });
+    setTag("");
+    setDeleteTag(false);
+    setDeletePos({ xN: 0, yN: 0 });
+    setDeleteTagId("");
+    setShowAllTags(false);
+    setShowH(false);
+
     const canvas = canvasRef.current;
     const { width, height } = dimensions;
     canvas!.width = width;
@@ -201,6 +191,7 @@ export default function Controls({ imgSrc }: props): JSX.Element {
             borderRadius: "7px",
             boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
           }}
+          onMouseDown={onCanvasMouseDown}
           onClick={(e) =>
             handleCanvasClick(
               e,
@@ -279,8 +270,6 @@ export default function Controls({ imgSrc }: props): JSX.Element {
         )}
 
         {showH && <ShowTagOnHover position={hoverPos} tag={hoverTag} />}
-
-        {draw && <Draw width={dimensions.width} height={dimensions.height} />}
 
         <MainCanvasControls
           clearFunction={() => setClear(!clear)}
