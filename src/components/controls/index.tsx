@@ -1,5 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import ImageAnnot, { handleCanvasMouseMove } from "../TagAnnotation";
+import {
+  handleCanvasClick,
+  handleCanvasMouseMove,
+  handleClearSingleTag,
+  handleInputChange,
+  handleScreenShot,
+  handleSubmitTag,
+  hideTags,
+  showTags,
+} from "../TagAnnotation";
 import "./index.css";
 import { Button } from "./buttons";
 import { handleToolClick, tools } from "../../utils/data";
@@ -7,25 +16,15 @@ import Draw from "../draw";
 import { FlipControl, MoreControls, TagControls } from "./allControls";
 import MainCanvasControls from "./mainCanvasControls";
 import { customAlphabet } from "nanoid";
+import { controlsType, annotation } from "../../types";
+import ShowTagOnHover from "../prompts/showTagOnHover";
+import { DeleteTag } from "../prompts/deleteTag";
+import TagAnnotationForm from "../forms/TagAnnotForm";
+import TempRedTag from "../prompts/ConfirmSubmitTag";
+import { HideTags, ShowTags } from "../../assets/icons";
 
-interface controlsType {
-  id: number;
-  name: string;
-  type: string;
-  icon: any;
-}
 interface props {
   imgSrc: string;
-}
-interface annotation {
-  id: string;
-  x: number;
-  y: number;
-  tag: string;
-}
-interface flipProps {
-  flipHorizontally: () => void;
-  flipVertically: () => void;
 }
 
 export default function Controls({ imgSrc }: props): JSX.Element {
@@ -42,13 +41,21 @@ export default function Controls({ imgSrc }: props): JSX.Element {
   const [hoverTag, setHoverTag] = useState("");
   const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 });
   const [showH, setShowH] = useState(false);
-
+  const [tempRedPrompt, setTempRedPrompt] = useState(false);
+  const [deleteTag, setDeleteTag] = useState(false);
+  const [deletePos, setDeletePos] = useState({ xN: 0, yN: 0 });
+  const [draw, setDraw] = useState(false);
+  const [showAllTags, setShowAllTags] = useState(false);
+  const [deleteTagId, setDeleteTagId] = useState("");
+  const [currentAnnotation, setCurrentAnnotation] = useState({ x: 0, y: 0 });
+  const [tag, setTag] = useState("");
+  const ref = useRef(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const nanoid = customAlphabet("1234567890abcdef", 10);
   const id = nanoid(5);
 
-  const drawImage = (ctx: CanvasRenderingContext2D) => {
+  const LoadImageFlip = (ctx: CanvasRenderingContext2D) => {
     const img = new Image();
     img.onload = () => {
       ctx.drawImage(
@@ -102,42 +109,6 @@ export default function Controls({ imgSrc }: props): JSX.Element {
     );
   }
 
-  // function ShowSelectedTool() {
-  //   return (
-  //     <>
-  //       {currentTool === "tag-annotation" ? (
-  //         <div className='selectedTools-div'>
-  //           {/* <ImageAnnot
-  //             imageSrcMain={imgSrc}
-  //             annotations={annotations}
-  //             setAnnotations={setAnnotations}
-  //             blur={blur}
-  //             setBlur={setBlur}
-  //             brightness={brightness}
-  //             setBrightness={setBrightness}
-  //             rotate={rotate}
-  //             setRotate={setRotate}
-  //           /> */}
-  //         </div>
-  //       ) : currentTool === "text-on-image" ? (
-  //         console.log("ToI")
-  //       ) : currentTool === "crop" ? (
-  //         console.log("crop")
-  //       ) : currentTool === "flip" ? (
-  //         console.log("flip")
-  //       ) : currentTool === "draw" ? (
-  //         <div className='selectedTools-div'>
-  //           <Draw width={1000} height={563} />
-  //         </div>
-  //       ) : currentTool === "more" ? (
-  //         console.log("more")
-  //       ) : (
-  //         console.log("none")
-  //       )}
-  //     </>
-  //   );
-  // }
-
   function SelectedControl() {
     return (
       <>
@@ -158,7 +129,7 @@ export default function Controls({ imgSrc }: props): JSX.Element {
 
               ctx.translate(canvas.width, 0);
               ctx.scale(-1, 1);
-              drawImage(ctx);
+              LoadImageFlip(ctx);
             }}
             flipVertically={() => {
               const canvas = canvasRef.current;
@@ -169,7 +140,7 @@ export default function Controls({ imgSrc }: props): JSX.Element {
 
               ctx.translate(0, canvas.height);
               ctx.scale(1, -1);
-              drawImage(ctx);
+              LoadImageFlip(ctx);
             }}
           />
         ) : currentControl === "draw" ? (
@@ -223,31 +194,105 @@ export default function Controls({ imgSrc }: props): JSX.Element {
     <div className='controls-out'>
       <Tools />
       {/* <ShowSelectedTool /> */}
-      <canvas
-        ref={canvasRef}
-        style={{
-          borderRadius: "7px",
-          boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
-        }}
-        onMouseMove={(event) =>
-          handleCanvasMouseMove(
-            event,
-            canvasRef,
-            annotations,
-            setHoverTag,
-            setHoverPos,
-            setShowH
-          )
-        }
-      />
-      <MainCanvasControls
-        clearFunction={() => {
-          setClear(!clear);
-        }}
-        showHideFunction={() => {}}
-        screenShotFunction={() => {}}
-        iconTag={() => {}}
-      />
+      <div className='canvas-div'>
+        <canvas
+          ref={canvasRef}
+          style={{
+            borderRadius: "7px",
+            boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
+          }}
+          onClick={(e) =>
+            handleCanvasClick(
+              e,
+              canvasRef,
+              annotations,
+              setTempRedPrompt,
+              setDeleteTag,
+              setShowH,
+              setDeleteTagId,
+              setCurrentAnnotation,
+              setTag,
+              setDeletePos
+            )
+          }
+          onMouseMove={(event) =>
+            handleCanvasMouseMove(
+              event,
+              canvasRef,
+              annotations,
+              setHoverTag,
+              setHoverPos,
+              setShowH
+            )
+          }
+        />
+        {tempRedPrompt && (
+          <>
+            <TempRedTag position={currentAnnotation} />
+            <TagAnnotationForm
+              refer={ref}
+              tags={tag}
+              handleCloseInput={setTempRedPrompt}
+              handleInputChange={(e) => handleInputChange(e, setTag)}
+              onSubmit={(e) =>
+                handleSubmitTag(
+                  e,
+                  currentAnnotation,
+                  canvasRef,
+                  imgSrc,
+                  tag,
+                  annotations,
+                  id,
+                  setAnnotations,
+                  setTag,
+                  setCurrentAnnotation,
+                  setTempRedPrompt,
+                  showAllTags
+                )
+              }
+              position={currentAnnotation}
+            />
+          </>
+        )}
+
+        {deleteTag && (
+          <DeleteTag
+            position={deletePos}
+            setPromptOff={() => setDeleteTag(false)}
+            deleteTagSubmit={(e) =>
+              handleClearSingleTag(
+                e,
+                setDeleteTagId,
+                canvasRef,
+                imgSrc,
+                setDeleteTag,
+                annotations,
+                deleteTagId,
+                setAnnotations,
+                setTag,
+                setCurrentAnnotation,
+                setTempRedPrompt,
+                setShowAllTags
+              )
+            }
+          />
+        )}
+
+        {showH && <ShowTagOnHover position={hoverPos} tag={hoverTag} />}
+
+        {draw && <Draw width={dimensions.width} height={dimensions.height} />}
+
+        <MainCanvasControls
+          clearFunction={() => setClear(!clear)}
+          showHideFunction={() =>
+            showAllTags
+              ? hideTags(setShowAllTags, imgSrc, canvasRef, annotations)
+              : showTags(setShowAllTags, imgSrc, canvasRef, annotations)
+          }
+          screenShotFunction={() => handleScreenShot(canvasRef)}
+          iconTag={showAllTags ? <HideTags /> : <ShowTags />}
+        />
+      </div>
     </div>
   );
 }
