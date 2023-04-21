@@ -104,8 +104,12 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
           console.log("crop")
         ) : currentControl === "flip" ? (
           <FlipControl
-            flipHorizontally={() => flipHorizontally(canvasRef, imgSrc)}
-            flipVertically={() => flipVertically(canvasRef, imgSrc)}
+            flipHorizontally={() =>
+              flipHorizontally(canvasRef, imgSrc, annotations)
+            }
+            flipVertically={() =>
+              flipVertically(canvasRef, imgSrc, annotations)
+            }
           />
         ) : currentControl === "draw" ? (
           console.log("")
@@ -176,10 +180,10 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    const ctx = canvas!.getContext("2d");
     const { width, height } = dimensions;
     canvas!.width = width;
     canvas!.height = height;
-    const ctx = canvas!.getContext("2d");
     const image = new Image();
     image.src = imgSrc;
     image.onload = () => {
@@ -232,6 +236,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
         ) : (
           <DrawCanvas canvasRef={canvasRef} />
         )}
+
         {tempRedPrompt && (
           <>
             <TempRedTag position={currentAnnotation} />
