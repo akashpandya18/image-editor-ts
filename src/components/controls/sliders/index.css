@@ -10,6 +10,7 @@
 .brightness-label {
   width: 120px;
 }
+
 /********** Range Input Styles **********/
 /* Range Reset */
 input[type="range"] {

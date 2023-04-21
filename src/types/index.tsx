@@ -91,3 +91,23 @@ export interface ShowTagOnHoverProps {
   position: { x: number; y: number };
   tag: string;
 }
+
+export interface MainCanvasControlsProps {
+  clearFunction: (e: any) => void;
+  showHideFunction: any;
+  screenShotFunction: (e: any) => void;
+  iconTag: any;
+}
+
+export interface UniversalSliderProps {
+  label: string;
+  id: string;
+  blur: number;
+  setBlur: Function;
+  zoom: number;
+  setZoom: Function;
+  rotate: number;
+  setRotate: Function;
+  brightness: number;
+  setBrightness: Function;
+}

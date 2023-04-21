@@ -6,8 +6,6 @@ import React, {
 import { handleToolClick } from "../../utils/data";
 import { tools } from "../../utils/constant";
 import {
-  handleCanvasClick,
-  handleCanvasMouseMove,
   handleClearSingleTag,
   handleInputChange,
   handleScreenShot,
@@ -36,7 +34,7 @@ import {
   flipHorizontally,
   flipVertically
 } from "../flip";
-import { DrawCanvas, TagCanvas } from "../canvases";
+import { DrawCanvas } from "../canvases";
 import {
   HideTags,
   ShowTags
@@ -49,8 +47,12 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   const [currentControl, setCurrentControl] = useState<string>("tag-annotation");
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [clear, setClear] = useState<boolean>(false);
-  const [hoverTag, setHoverTag] = useState("");
-  const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 });
+  const [hoverTag,
+    // setHoverTag
+  ] = useState("");
+  const [hoverPos,
+    // setHoverPos
+  ] = useState({ x: 0, y: 0 });
   const [showH, setShowH] = useState(false);
   const [tempRedPrompt, setTempRedPrompt] = useState(false);
   const [deleteTag, setDeleteTag] = useState(false);
@@ -152,14 +154,6 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
     );
   }
 
-  function clearFunction() {
-    setBlur(0);
-    setZoom(1);
-    setRotate(0);
-    setBrightness(1);
-    setClear(!clear)
-  }
-
   useEffect(() => {
     const img = new Image();
     img.src = imgSrc;
@@ -186,6 +180,10 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
     setDeleteTagId("");
     setShowAllTags(false);
     setShowH(false);
+    setBlur(0);
+    setZoom(1);
+    setRotate(0);
+    setBrightness(1);
 
     const canvas = canvasRef.current;
     const { width, height } = dimensions;
@@ -287,33 +285,6 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
     <div className={"controls-out"}>
       <Tools />
       <div className='canvas-div'>
-        {/* <TagCanvas
-          canvasRef={canvasRef}
-          handleTagClick={(event: any) =>
-            handleCanvasClick(
-              event,
-              canvasRef,
-              annotations,
-              setTempRedPrompt,
-              setDeleteTag,
-              setShowH,
-              setDeleteTagId,
-              setCurrentAnnotation,
-              setTag,
-              setDeletePos
-            )
-          }
-          handleTagMouseMove={(event: any) =>
-            handleCanvasMouseMove(
-              event,
-              canvasRef,
-              annotations,
-              setHoverTag,
-              setHoverPos,
-              setShowH
-            )
-          }
-        /> */}
         <DrawCanvas canvasRef={canvasRef} />
         {tempRedPrompt && (
           <>
@@ -370,7 +341,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
         {showH && <ShowTagOnHover position={hoverPos} tag={hoverTag} />}
 
         <MainCanvasControls
-          clearFunction={() => clearFunction()}
+          clearFunction={() => setClear(!clear)}
           showHideFunction={() =>
             showAllTags
               ? hideTags(setShowAllTags, imgSrc, canvasRef, annotations)

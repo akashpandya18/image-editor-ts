@@ -1,89 +1,89 @@
 import React from "react";
-import { annotation } from "../../types";
+// import { annotation } from "../../types";
 
-export const handleCanvasMouseMove = (
-  event: React.MouseEvent<HTMLCanvasElement>,
-  canvasRef: any,
-  annotations: any,
-  setHoverTag: any,
-  setHoverPos: any,
-  setShowH: any
-) => {
-  event.preventDefault();
-  const canvas = canvasRef.current;
-  const ctx = canvas!.getContext("2d");
-  const x = event.nativeEvent.offsetX;
-  const y = event.nativeEvent.offsetY;
-
-  // Check if the mouse is hovering over the white dot
-  const hoveredDot = annotations.find((annotation: any) => {
-    ctx?.beginPath();
-    ctx?.arc(annotation.x, annotation.y, 10, 0, 2 * Math.PI);
-    return ctx?.isPointInPath(x, y);
-  });
-
-  if (hoveredDot) {
-    canvas!.style.cursor = "pointer";
-    let x = hoveredDot.x;
-    let y = hoveredDot.y;
-    let pos = { x, y };
-    setHoverTag(hoveredDot.tag);
-    setHoverPos(pos);
-    setShowH(true);
-  } else {
-    canvas!.style.cursor = "default";
-    setHoverTag("");
-    setShowH(false);
-  }
-};
-
-export const handleCanvasClick = (
-  event: React.MouseEvent<HTMLCanvasElement>,
-  canvasRef: any,
-  annotations: any,
-  setTempRedPrompt: any,
-  setDeleteTag: any,
-  setShowH: any,
-  setDeleteTagId: any,
-  setCurrentAnnotation: any,
-  setTag: any,
-  setDeletePos: any
-) => {
-  setTempRedPrompt(true);
-  setDeleteTag(false);
-  setDeleteTagId("");
-
-  const canvas = canvasRef.current;
-  const ctx = canvas!.getContext("2d");
-  const rect = canvas!.getBoundingClientRect();
-  const x = event.clientX - rect!.left;
-  const y = event.clientY - rect!.top;
-  const annotation = { x, y };
-
-  setCurrentAnnotation(annotation);
-  setTag("");
-  const xFind = event.nativeEvent.offsetX;
-  const yFind = event.nativeEvent.offsetY;
-
-  // Check if the mouse click is on any of the tags
-  const clickedDot = annotations.find((annotation: annotation) => {
-    ctx?.beginPath();
-    ctx?.arc(annotation.x, annotation.y, 10, 0, 2 * Math.PI);
-    return ctx?.isPointInPath(xFind, yFind);
-  });
-
-  // Check if the click was within the bounds of the tags
-  if (clickedDot) {
-    setTempRedPrompt(false);
-    setDeleteTag(true);
-    setShowH(false);
-    setDeleteTagId(clickedDot.id);
-    const xN = clickedDot.x;
-    const yN = clickedDot.y;
-    const annotationN = { xN, yN };
-    setDeletePos(annotationN);
-  }
-};
+// export const handleCanvasMouseMove = (
+//   event: React.MouseEvent<HTMLCanvasElement>,
+//   canvasRef: any,
+//   annotations: any,
+//   setHoverTag: any,
+//   setHoverPos: any,
+//   setShowH: any
+// ) => {
+//   event.preventDefault();
+//   const canvas = canvasRef.current;
+//   const ctx = canvas!.getContext("2d");
+//   const x = event.nativeEvent.offsetX;
+//   const y = event.nativeEvent.offsetY;
+//
+//   // Check if the mouse is hovering over the white dot
+//   const hoveredDot = annotations.find((annotation: any) => {
+//     ctx?.beginPath();
+//     ctx?.arc(annotation.x, annotation.y, 10, 0, 2 * Math.PI);
+//     return ctx?.isPointInPath(x, y);
+//   });
+//
+//   if (hoveredDot) {
+//     canvas!.style.cursor = "pointer";
+//     let x = hoveredDot.x;
+//     let y = hoveredDot.y;
+//     let pos = { x, y };
+//     setHoverTag(hoveredDot.tag);
+//     setHoverPos(pos);
+//     setShowH(true);
+//   } else {
+//     canvas!.style.cursor = "default";
+//     setHoverTag("");
+//     setShowH(false);
+//   }
+// };
+//
+// export const handleCanvasClick = (
+//   event: React.MouseEvent<HTMLCanvasElement>,
+//   canvasRef: any,
+//   annotations: any,
+//   setTempRedPrompt: any,
+//   setDeleteTag: any,
+//   setShowH: any,
+//   setDeleteTagId: any,
+//   setCurrentAnnotation: any,
+//   setTag: any,
+//   setDeletePos: any
+// ) => {
+//   setTempRedPrompt(true);
+//   setDeleteTag(false);
+//   setDeleteTagId("");
+//
+//   const canvas = canvasRef.current;
+//   const ctx = canvas!.getContext("2d");
+//   const rect = canvas!.getBoundingClientRect();
+//   const x = event.clientX - rect!.left;
+//   const y = event.clientY - rect!.top;
+//   const annotation = { x, y };
+//
+//   setCurrentAnnotation(annotation);
+//   setTag("");
+//   const xFind = event.nativeEvent.offsetX;
+//   const yFind = event.nativeEvent.offsetY;
+//
+//   // Check if the mouse click is on any of the tags
+//   const clickedDot = annotations.find((annotation: annotation) => {
+//     ctx?.beginPath();
+//     ctx?.arc(annotation.x, annotation.y, 10, 0, 2 * Math.PI);
+//     return ctx?.isPointInPath(xFind, yFind);
+//   });
+//
+//   // Check if the click was within the bounds of the tags
+//   if (clickedDot) {
+//     setTempRedPrompt(false);
+//     setDeleteTag(true);
+//     setShowH(false);
+//     setDeleteTagId(clickedDot.id);
+//     const xN = clickedDot.x;
+//     const yN = clickedDot.y;
+//     const annotationN = { xN, yN };
+//     setDeletePos(annotationN);
+//   }
+// };
 
 export const handleInputChange = (event: any, setTag: any) => {
   setTag(event.target.value);

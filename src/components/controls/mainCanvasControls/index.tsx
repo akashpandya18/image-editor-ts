@@ -1,18 +1,15 @@
-import { ScreenShot, Tornado } from "../../../assets/icons";
-
-interface props {
-  clearFunction: (e: any) => void;
-  showHideFunction: any;
-  screenShotFunction: (e: any) => void;
-  iconTag: any;
-}
+import { MainCanvasControlsProps } from "../../../types";
+import {
+  ScreenShot,
+  Tornado
+} from "../../../assets/icons";
 
 export default function MainCanvasControls({
   clearFunction,
   showHideFunction,
   screenShotFunction,
   iconTag
-}: props) {
+}: MainCanvasControlsProps) {
   const controls = [
     { id: 1, name: "Clear", type: "clear", icon: <Tornado /> },
     { id: 2, name: "ShowHideTags", type: "show-hide-tags", icon: iconTag },

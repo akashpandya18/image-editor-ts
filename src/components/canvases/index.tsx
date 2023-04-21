@@ -1,5 +1,8 @@
-import { useState } from "react";
-import { DrawProps, TagProps } from "../../types";
+import React, { useState } from "react";
+import {
+  DrawProps,
+  TagProps
+} from "../../types";
 
 export const TagCanvas = ({
   canvasRef,
@@ -7,19 +10,18 @@ export const TagCanvas = ({
   handleTagMouseMove,
 }: TagProps) => {
   return (
-    <>
-      <canvas
-        ref={canvasRef}
-        style={{
-          borderRadius: "7px",
-          boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
-        }}
-        onClick={handleTagClick}
-        onMouseMove={handleTagMouseMove}
-      />
-    </>
+    <canvas
+      ref={canvasRef}
+      style={{
+        borderRadius: "7px",
+        boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)"
+      }}
+      onClick={handleTagClick}
+      onMouseMove={handleTagMouseMove}
+    />
   );
 };
+
 export const DrawCanvas = ({ canvasRef }: DrawProps) => {
   const [isDrawing, setIsDrawing] = useState(false);
 
@@ -51,19 +53,17 @@ export const DrawCanvas = ({ canvasRef }: DrawProps) => {
   };
 
   return (
-    <>
-      <canvas
-        ref={canvasRef}
-        onMouseDown={(e) => startDrawing(e)}
-        onMouseMove={(e) => draw(e)}
-        onMouseUp={stopDrawing}
-        onMouseLeave={stopDrawing}
-        style={{
-          borderRadius: "7px",
-          boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
-          cursor: "",
-        }}
-      />
-    </>
+    <canvas
+      ref={canvasRef}
+      onMouseDown={(e) => startDrawing(e)}
+      onMouseMove={(e) => draw(e)}
+      onMouseUp={stopDrawing}
+      onMouseLeave={stopDrawing}
+      style={{
+        borderRadius: "7px",
+        boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
+        cursor: ""
+      }}
+    />
   );
 };

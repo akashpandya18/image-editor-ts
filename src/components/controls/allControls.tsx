@@ -6,7 +6,10 @@ import {
   propsMore,
   propsTag
 } from "../../types";
-import { FlipHorizontal, FlipVertical } from "../../assets/icons";
+import {
+  FlipHorizontal,
+  FlipVertical
+} from "../../assets/icons";
 import "./index.css";
 
 export function TagControls({ annotations }: propsTag) {
@@ -53,7 +56,7 @@ export function MoreControls({
       {controls.map((x: controlsType) => {
         return (
           <div key={x.id} className={"controlsMap-div"}>
-            <div className={"controlsMap-icon"}>{x.icon}</div>
+            <div className={"controlsMap-icon"}> {x.icon} </div>
             <div>
               <UniversalSlider
                 label={x.name}

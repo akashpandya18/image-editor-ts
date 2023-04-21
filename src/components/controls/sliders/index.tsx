@@ -1,18 +1,6 @@
 import React from "react";
+import { UniversalSliderProps } from "../../../types";
 import "./index.css";
-
-interface props {
-  label: string;
-  id: string;
-  blur: number;
-  setBlur: Function;
-  zoom: number;
-  setZoom: Function;
-  rotate: number;
-  setRotate: Function;
-  brightness: number;
-  setBrightness: Function;
-}
 
 export default function UniversalSlider({
   label,
@@ -25,31 +13,19 @@ export default function UniversalSlider({
   setRotate,
   brightness,
   setBrightness
-}: props): JSX.Element {
+}: UniversalSliderProps): JSX.Element {
   const handleEffectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     if (e.target.id === "blur") {
       setBlur(Number(e.target.value));
-      // setZoom(zoom);
-      // setRotate(rotate);
-      // setBrightness(brightness);
     }
     if (e.target.id === "zoom") {
-      // setBlur(blur);
       setZoom(Number(e.target.value));
-      // setRotate(rotate);
-      // setBrightness(brightness);
     }
     if (e.target.id === "rotate") {
-      // setBlur(blur);
-      // setZoom(zoom);
       setRotate(Number(e.target.value));
-      // setBrightness(brightness);
     }
     if (e.target.id === "brightness") {
-      // setBlur(blur);
-      // setZoom(zoom);
-      // setRotate(rotate);
       setBrightness(Number(e.target.value));
     }
   };
