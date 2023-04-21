@@ -27,29 +27,29 @@ export default function UniversalSlider({
   setBrightness
 }: props): JSX.Element {
   const handleEffectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.persist();
+    e.preventDefault();
     if (e.target.id === "blur") {
       setBlur(Number(e.target.value));
-      setZoom(zoom);
-      setRotate(rotate);
-      setBrightness(brightness);
+      // setZoom(zoom);
+      // setRotate(rotate);
+      // setBrightness(brightness);
     }
     if (e.target.id === "zoom") {
-      setBlur(blur);
+      // setBlur(blur);
       setZoom(Number(e.target.value));
-      setRotate(rotate);
-      setBrightness(brightness);
+      // setRotate(rotate);
+      // setBrightness(brightness);
     }
     if (e.target.id === "rotate") {
-      setBlur(blur);
-      setZoom(zoom);
+      // setBlur(blur);
+      // setZoom(zoom);
       setRotate(Number(e.target.value));
-      setBrightness(brightness);
+      // setBrightness(brightness);
     }
     if (e.target.id === "brightness") {
-      setBlur(blur);
-      setZoom(zoom);
-      setRotate(rotate);
+      // setBlur(blur);
+      // setZoom(zoom);
+      // setRotate(rotate);
       setBrightness(Number(e.target.value));
     }
   };
@@ -69,9 +69,9 @@ export default function UniversalSlider({
     }
   };
 
-  const minValue = id === "zoom" ? -8 : id === "rotate" ? -180 : 0;
-  const maxValue = id === "zoom" ? 20 : id === "rotate" ? 180 : 1;
-  const stepValue = id === "zoom" ? 2 : id === "rotate" ? 45 : 0.2;
+  const minValue = id === "zoom" ? 0.2 : id === "rotate" ? -180 : 0;
+  const maxValue = id === "zoom" ? 1.5 : id === "rotate" ? 180 : id === "blur" ? 5 : 1;
+  const stepValue = id === "zoom" ? 0.1 : id === "rotate" ? 45 : id === "blur" ? 1 : 0.2;
 
   return (
     <div className={"brightness-slider"}>
@@ -86,7 +86,8 @@ export default function UniversalSlider({
         max={maxValue}
         step={stepValue}
         value={inputValue()}
-        onChange={handleEffectChange}
+        onChange={(e: any) => handleEffectChange(e)}
+        autoComplete="off"
       />
     </div>
   );
