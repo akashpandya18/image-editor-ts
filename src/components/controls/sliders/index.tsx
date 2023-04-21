@@ -20,7 +20,7 @@ export default function UniversalSlider({
   brightness,
   setBrightness,
   rotate,
-  setRotate
+  setRotate,
 }: props): JSX.Element {
   const [zoom, setZoom] = useState<number>(1);
 
@@ -74,4 +74,4 @@ export default function UniversalSlider({
       />
     </div>
   );
-};
+}
