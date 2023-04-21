@@ -24,6 +24,10 @@ export interface controlsType {
   icon: any;
 }
 export interface DrawProps {
-  width: number;
-  height: number;
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+}
+export interface TagProps {
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+  handleTagClick: (e: any) => void;
+  handleTagMouseMove: (e: any) => void;
 }
