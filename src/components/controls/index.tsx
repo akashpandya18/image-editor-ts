@@ -174,38 +174,64 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
     }
   }, [canvasRef, lineWidth, lineColor]);
 
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const { width, height } = dimensions;
+    canvas!.width = width;
+    canvas!.height = height;
+    const ctx = canvas!.getContext("2d");
+    const image = new Image();
+    image.src = imgSrc;
+    image.onload = () => {
+      ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
+      annotations.forEach((annot: any) => {
+        const { x, y } = annot;
+        ctx!.beginPath();
+        ctx!.fillStyle = "yellow";
+        ctx!.arc(x, y, 10, 0, 2 * Math.PI);
+        ctx!.fill();
+      });
+      setTag("");
+      setCurrentAnnotation({ x: 0, y: 0 });
+      setTempRedPrompt(false);
+    };
+  }, [currentControl]);
+
   return (
     <div className='controls-out'>
       <Tools />
       <div className='canvas-div'>
-        {/* <TagCanvas
-          canvasRef={canvasRef}
-          handleTagClick={(event: any) =>
-            handleCanvasClick(
-              event,
-              canvasRef,
-              annotations,
-              setTempRedPrompt,
-              setDeleteTag,
-              setShowH,
-              setDeleteTagId,
-              setCurrentAnnotation,
-              setTag,
-              setDeletePos
-            )
-          }
-          handleTagMouseMove={(event: any) =>
-            handleCanvasMouseMove(
-              event,
-              canvasRef,
-              annotations,
-              setHoverTag,
-              setHoverPos,
-              setShowH
-            )
-          }
-        /> */}
-        <DrawCanvas canvasRef={canvasRef} />
+        {currentControl === "tag-annotation" ? (
+          <TagCanvas
+            canvasRef={canvasRef}
+            handleTagClick={(event: any) =>
+              handleCanvasClick(
+                event,
+                canvasRef,
+                annotations,
+                setTempRedPrompt,
+                setDeleteTag,
+                setShowH,
+                setDeleteTagId,
+                setCurrentAnnotation,
+                setTag,
+                setDeletePos
+              )
+            }
+            handleTagMouseMove={(event: any) =>
+              handleCanvasMouseMove(
+                event,
+                canvasRef,
+                annotations,
+                setHoverTag,
+                setHoverPos,
+                setShowH
+              )
+            }
+          />
+        ) : (
+          <DrawCanvas canvasRef={canvasRef} />
+        )}
         {tempRedPrompt && (
           <>
             <TempRedTag position={currentAnnotation} />
