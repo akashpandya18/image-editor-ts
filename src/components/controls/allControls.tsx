@@ -15,8 +15,8 @@ export function TagControls({ annotations }: propsTag) {
       {annotations && (
         <div>
           <ol>
-            {annotations.map((data: any, index: number) => {
-              return <li key={index}> {data.tag} </li>;
+            {annotations.map((data: any) => {
+              return <li key={data.id}> {data.tag} </li>;
             })}
           </ol>
         </div>

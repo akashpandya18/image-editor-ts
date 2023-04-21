@@ -1,3 +1,5 @@
+import React from "react";
+
 export interface controlsType {
   id: number;
   name: string;
@@ -73,6 +75,16 @@ export interface DeleteTagProps {
   position: { xN: number; yN: number };
   setPromptOff: (e: any) => void;
   deleteTagSubmit: (e: any) => void;
+}
+
+export interface DrawProps {
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+}
+
+export interface TagProps {
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+  handleTagClick: (e: any) => void;
+  handleTagMouseMove: (e: any) => void;
 }
 
 export interface ShowTagOnHoverProps {

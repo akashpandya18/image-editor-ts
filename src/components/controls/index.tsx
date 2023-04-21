@@ -15,8 +15,7 @@ import {
   hideTags,
   showTags
 } from "../TagAnnotation";
-import { Button } from "./buttons";
-import { onDraw } from "../draw";
+import { Button } from "./buttons"
 import {
   FlipControl,
   MoreControls,
@@ -37,7 +36,7 @@ import {
   flipHorizontally,
   flipVertically
 } from "../flip";
-import useOnDraw from "../../hooks/useOnDraw";
+import { DrawCanvas, TagCanvas } from "../canvases";
 import {
   HideTags,
   ShowTags
@@ -45,9 +44,6 @@ import {
 import "./index.css";
 
 export default function Controls({ imgSrc }: controlsProps): JSX.Element {
-  const [
-    // currentTool
-    , setCurrentTool] = useState<string>("tag-annotation");
   const [annotations, setAnnotations] = useState<annotation[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [currentControl, setCurrentControl] = useState<string>("tag-annotation");
@@ -80,23 +76,8 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   const nanoid = customAlphabet("1234567890abcdef", 10);
   const id = nanoid(5);
 
-  const {
-    // setCanvasRef,
-    onCanvasMouseDown } = useOnDraw(onDraw);
-
-  const LoadImageFlip = (ctx: CanvasRenderingContext2D) => {
-    const img = new Image();
-    img.onload = () => {
-      ctx.drawImage(
-        img,
-        0,
-        0,
-        canvasRef.current!.width,
-        canvasRef.current!.height
-      );
-    };
-    img.src = imgSrc;
-  };
+  const lineWidth = 4;
+  const lineColor = "#000000";
 
   function Tools() {
     return (
@@ -116,7 +97,6 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
                           x.type,
                           idx,
                           setActiveIndex,
-                          setCurrentTool,
                           setCurrentControl
                         );
                       }}
@@ -149,8 +129,8 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
           console.log("crop")
         ) : currentControl === "flip" ? (
           <FlipControl
-            flipHorizontally={() => flipHorizontally(canvasRef, LoadImageFlip)}
-            flipVertically={() => flipVertically(canvasRef, LoadImageFlip)}
+            flipHorizontally={() => flipHorizontally(canvasRef, imgSrc)}
+            flipVertically={() => flipVertically(canvasRef, imgSrc)}
           />
         ) : currentControl === "draw" ? (
           console.log("draw")
@@ -189,7 +169,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
         const ratio = width / height;
         const newHeight = 1000 / ratio;
         const newWidth = 563 * ratio;
-        setDimensions({width: newWidth, height: newHeight});
+        setDimensions({ width: newWidth, height: newHeight });
       } else {
         setDimensions({ width, height });
       }
@@ -218,6 +198,16 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
       ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
     };
   }, [dimensions, imgSrc, clear]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas?.getContext("2d");
+
+    if (context) {
+      context.lineWidth = lineWidth;
+      context.strokeStyle = lineColor;
+    }
+  }, [canvasRef, lineWidth, lineColor]);
 
   // const handleMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
   //   if (dragging && zoom > 1) {
@@ -296,16 +286,12 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   return (
     <div className={"controls-out"}>
       <Tools />
-      <div className={"canvas-div"}>
-        <canvas
-          ref={canvasRef}
-          style={{
-            borderRadius: "7px",
-            boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)"
-          }}
-          onClick={(e) =>
+      <div className='canvas-div'>
+        {/* <TagCanvas
+          canvasRef={canvasRef}
+          handleTagClick={(event: any) =>
             handleCanvasClick(
-              e,
+              event,
               canvasRef,
               annotations,
               setTempRedPrompt,
@@ -317,20 +303,18 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
               setDeletePos
             )
           }
-          onMouseDown={onCanvasMouseDown} // {handleMouseDown} // {onCanvasMouseDown}
-          onMouseMove= //{handleMouseMove}
-          {(event) =>
-           handleCanvasMouseMove(
-             event,
-             canvasRef,
-             annotations,
-             setHoverTag,
-             setHoverPos,
-             setShowH
-           )
+          handleTagMouseMove={(event: any) =>
+            handleCanvasMouseMove(
+              event,
+              canvasRef,
+              annotations,
+              setHoverTag,
+              setHoverPos,
+              setShowH
+            )
           }
-          // onMouseUp={handleMouseUp}
-        />
+        /> */}
+        <DrawCanvas canvasRef={canvasRef} />
         {tempRedPrompt && (
           <>
             <TempRedTag position={currentAnnotation} />
