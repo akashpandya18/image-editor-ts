@@ -1,21 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-
-interface Props {
-  imageUrl: string
-}
-interface Cropped {
-  startingX: number,
-  startingY: number,
-  height: number,
-  width: number
-}
-
-interface CropImageProps {
-  startingX: any
-  startingY: any
-  totalWidth: any
-  totalHeight: any
-}
+import { CropImageProps, Cropped, Props } from "../../types"
 
 const ImageCropper = (props: Props) => {
 
@@ -37,29 +21,30 @@ const ImageCropper = (props: Props) => {
     startingX: 0,
     startingY: 0,
     height: 0,
-    width: 0
+    width: 0,
+
   })
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const canvasPreviewRef = useRef<HTMLCanvasElement>(null)
 
   const imgRef = useRef<HTMLImageElement>(null)
-  useEffect(() => {
-    const img = new Image()
-    img.src = imageUrl
-    img.onload = () => {
-      const { width, height } = img
-      if (width > 1000) {
-        const ratio = width / height
-        const newHeight = 1000 / ratio
-        const newWidth = 563 * ratio
-        setDimensions({ width: newWidth, height: newHeight })
+  // useEffect(() => {
+  //   const img = new Image()
+  //   img.src = imageUrl
+  //   img.onload = () => {
+  //     const { width, height } = img
+  //     if (width > 1000) {
+  //       const ratio = width / height
+  //       const newHeight = 1000 / ratio
+  //       const newWidth = 563 * ratio
+  //       setDimensions({ width: newWidth, height: newHeight })
 
-      } else {
-        setDimensions({ width, height })
-      }
-    }
-  }, [imageUrl])
+  //     } else {
+  //       setDimensions({ width, height })
+  //     }
+  //   }
+  // }, [imageUrl])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -116,7 +101,7 @@ const ImageCropper = (props: Props) => {
       ctx!.fillStyle = "white"
       ctx!.fill()
       ctx!.stroke()
-      const croppedCanvas: any = document.createElement('canvas')
+      const croppedCanvas: HTMLCanvasElement = document.createElement('canvas')
       const croppedCtx = croppedCanvas.getContext('2d')
       if (!croppedCtx) {
         return
@@ -124,8 +109,8 @@ const ImageCropper = (props: Props) => {
       const canvas1 = canvasRef.current
       const ctx1 = canvas1?.getContext('2d')
       croppedCanvas.width = (dimensions.width / 4)
-      croppedCanvas.heigh = (dimensions.height / 4)
-      const imageData = ctx1?.getImageData(dimensions.width / 4 + 2, dimensions.height / 4 + 2, dimensions.width / 4 - 3, dimensions.height / 4 - 3)
+      croppedCanvas.height = (dimensions.height / 4)
+      const imageData = ctx1!.getImageData(dimensions.width / 4 + 2, dimensions.height / 4 + 2, dimensions.width / 4 - 3, dimensions.height / 4 - 3)
       croppedCtx.putImageData(imageData, 0, 0)
     }
 
@@ -224,7 +209,7 @@ const ImageCropper = (props: Props) => {
   }, [currentCropped])
 
 
-  const mouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
+   const mouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const x = event.nativeEvent.offsetX
     const y = event.nativeEvent.offsetY
 
@@ -477,7 +462,7 @@ const ImageCropper = (props: Props) => {
 
   }
 
-  const mouseUP = (event: any) => {
+  const mouseUP = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const x = event.nativeEvent.offsetX
     const y = event.nativeEvent.offsetY
 
@@ -494,7 +479,7 @@ const ImageCropper = (props: Props) => {
       return
     }
 
-    let startingX, startingY, totalWidth, totalHeight
+    let startingX = 0, startingY = 0, totalWidth = 0, totalHeight = 0
     if (isDragging) {
       startingX = currentCropped?.startingX + (event.nativeEvent.offsetX - startingNode.x)
       startingY = currentCropped?.startingY + (event.nativeEvent.offsetY - startingNode.y)
@@ -623,7 +608,7 @@ const ImageCropper = (props: Props) => {
   }
 
 
-  const mouseLeave = (event: any) => {
+  const mouseLeave = (event: React.MouseEvent<HTMLCanvasElement>) => {
     setIsDragging(false)
     setIsResize(false)
     document.body.style.setProperty('cursor', 'default')
