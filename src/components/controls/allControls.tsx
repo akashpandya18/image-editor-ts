@@ -1,7 +1,7 @@
 import { controls } from "../../utils/data";
 import UniversalSlider from "./sliders";
 import "./index.css";
-import { FlipHorizontal, FlipVertical } from "../../assets/icons";
+import { Check, FlipHorizontal, FlipVertical } from "../../assets/icons";
 import { controlsType, propsFlip, propsMore, propsTag } from "../../types";
 
 export function TagControls({ annotations }: propsTag) {
@@ -38,12 +38,17 @@ export function FlipControl({ flipHorizontally, flipVertically }: propsFlip) {
   return (
     <>
       <h3>Flip</h3>
-      <div className='button-div'>
-        <button className='flip-button' onClick={flipHorizontally}>
-          <FlipHorizontal />
-        </button>
-        <button className='flip-button' onClick={flipVertically}>
-          <FlipVertical />
+      <div className='buttondiv-main'>
+        <div className='button-div'>
+          <button className='flip-button' onClick={flipHorizontally}>
+            <FlipHorizontal />
+          </button>
+          <button className='flip-button' onClick={flipVertically}>
+            <FlipVertical />
+          </button>
+        </div>
+        <button className='flip-button-sure'>
+          <Check />
         </button>
       </div>
     </>
