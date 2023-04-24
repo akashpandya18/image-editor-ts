@@ -31,7 +31,10 @@ import { HideTags, ShowTags } from "../../assets/icons";
 import { flipHorizontally, flipVertically } from "../flip";
 import { DrawCanvas, RegularCanvas, TagCanvas } from "../canvases";
 
-export default function Controls({ imgSrc }: controlsProps): JSX.Element {
+export default function Controls({
+  imgSrc,
+  setImgSrc,
+}: controlsProps): JSX.Element {
   const [annotations, setAnnotations] = useState<annotation[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [currentControl, setCurrentControl] =
@@ -60,7 +63,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   const nanoid = customAlphabet("1234567890abcdef", 10);
   const id = nanoid(5);
 
-  function Tools() {
+  function Tools(): JSX.Element {
     return (
       <>
         <div className='controls-main'>
@@ -99,7 +102,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
     );
   }
 
-  function SelectedControl() {
+  function SelectedControl(): JSX.Element {
     return (
       <>
         {currentControl === "tag-annotation" ? (
@@ -162,7 +165,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
     setShowAllTags(false);
     setShowH(false);
 
-    const canvas = canvasRef.current;
+    const canvas: HTMLCanvasElement | null = canvasRef.current;
     const { width, height } = dimensions;
     canvas!.width = width;
     canvas!.height = height;

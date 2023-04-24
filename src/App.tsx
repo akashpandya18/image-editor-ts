@@ -19,7 +19,7 @@ function App() {
   return (
     <div className='App'>
       {imgSrc ? (
-        <Controls imgSrc={imgSrc} />
+        <Controls imgSrc={imgSrc} setImgSrc={setImgSrc} />
       ) : (
         <FileUpload onSelectFile={onSelectFile} />
       )}

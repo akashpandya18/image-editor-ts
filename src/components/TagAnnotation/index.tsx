@@ -1,13 +1,14 @@
 import { annotation } from "../../types";
+import React from "react";
 
 export const handleCanvasMouseMove = (
   event: React.MouseEvent<HTMLCanvasElement>,
-  canvasRef: any,
-  annotations: any,
-  setHoverTag: any,
-  setHoverPos: any,
-  setShowH: any
-) => {
+  canvasRef: React.RefObject<HTMLCanvasElement>,
+  annotations: annotation[],
+  setHoverTag: React.Dispatch<React.SetStateAction<string>>,
+  setHoverPos: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>,
+  setShowH: React.Dispatch<React.SetStateAction<boolean>>
+): void => {
   event.preventDefault();
   const canvas = canvasRef.current;
   const ctx = canvas!.getContext("2d");
@@ -37,16 +38,18 @@ export const handleCanvasMouseMove = (
 
 export const handleCanvasClick = (
   event: React.MouseEvent<HTMLCanvasElement>,
-  canvasRef: any,
-  annotations: any,
-  setTempRedPrompt: any,
-  setDeleteTag: any,
-  setShowH: any,
-  setDeleteTagId: any,
-  setCurrentAnnotation: any,
-  setTag: any,
-  setDeletePos: any
-) => {
+  canvasRef: React.RefObject<HTMLCanvasElement>,
+  annotations: annotation[],
+  setTempRedPrompt: React.Dispatch<React.SetStateAction<boolean>>,
+  setDeleteTag: React.Dispatch<React.SetStateAction<boolean>>,
+  setShowH: React.Dispatch<React.SetStateAction<boolean>>,
+  setDeleteTagId: React.Dispatch<React.SetStateAction<string>>,
+  setCurrentAnnotation: React.Dispatch<
+    React.SetStateAction<{ x: number; y: number }>
+  >,
+  setTag: React.Dispatch<React.SetStateAction<string>>,
+  setDeletePos: React.Dispatch<React.SetStateAction<{ xN: number; yN: number }>>
+): void => {
   setTempRedPrompt(true);
   setDeleteTag(false);
   setDeleteTagId("");
@@ -81,24 +84,29 @@ export const handleCanvasClick = (
   }
 };
 
-export const handleInputChange = (event: any, setTag: any) => {
+export const handleInputChange = (
+  event: any,
+  setTag: React.Dispatch<React.SetStateAction<string>>
+): void => {
   setTag(event.target.value);
 };
 
 export const handleSubmitTag = (
   e: any,
-  currentAnnotation: any,
-  canvasRef: any,
-  imageSrcMain: any,
-  tag: any,
-  annotations: any,
-  id: any,
-  setAnnotations: any,
-  setTag: any,
-  setCurrentAnnotation: any,
-  setTempRedPrompt: any,
-  showAllTags: any
-) => {
+  currentAnnotation: { x: number; y: number },
+  canvasRef: React.RefObject<HTMLCanvasElement>,
+  imageSrcMain: string,
+  tag: string,
+  annotations: annotation[],
+  id: string,
+  setAnnotations: React.Dispatch<React.SetStateAction<annotation[]>>,
+  setTag: React.Dispatch<React.SetStateAction<string>>,
+  setCurrentAnnotation: React.Dispatch<
+    React.SetStateAction<{ x: number; y: number }>
+  >,
+  setTempRedPrompt: React.Dispatch<React.SetStateAction<boolean>>,
+  showAllTags: boolean
+): void => {
   e.preventDefault();
   const x = currentAnnotation.x;
   const y = currentAnnotation.y;
@@ -171,18 +179,20 @@ export const handleSubmitTag = (
 
 export const handleClearSingleTag = (
   e: any,
-  setDeleteTagId: any,
-  canvasRef: any,
-  imageSrcMain: any,
-  setDeleteTag: any,
-  annotations: any,
-  deleteTagId: any,
-  setAnnotations: any,
-  setTag: any,
-  setCurrentAnnotation: any,
-  setTempRedPrompt: any,
-  setShowAllTags: any
-) => {
+  setDeleteTagId: React.Dispatch<React.SetStateAction<string>>,
+  canvasRef: React.RefObject<HTMLCanvasElement>,
+  imageSrcMain: string,
+  setDeleteTag: React.Dispatch<React.SetStateAction<boolean>>,
+  annotations: annotation[],
+  deleteTagId: string,
+  setAnnotations: React.Dispatch<React.SetStateAction<annotation[]>>,
+  setTag: React.Dispatch<React.SetStateAction<string>>,
+  setCurrentAnnotation: React.Dispatch<
+    React.SetStateAction<{ x: number; y: number }>
+  >,
+  setTempRedPrompt: React.Dispatch<React.SetStateAction<boolean>>,
+  setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>
+): void => {
   e.preventDefault();
   setShowAllTags(false);
 
@@ -221,11 +231,11 @@ export const handleClearSingleTag = (
 };
 
 export const hideTags = (
-  setShowAllTags: any,
-  imageSrcMain: any,
-  canvasRef: any,
-  annotations: any
-) => {
+  setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>,
+  imageSrcMain: string,
+  canvasRef: React.RefObject<HTMLCanvasElement>,
+  annotations: annotation[]
+): void => {
   setShowAllTags(false);
   const image = new Image();
   image.src = imageSrcMain;
@@ -248,11 +258,11 @@ export const hideTags = (
 };
 
 export const showTags = (
-  setShowAllTags: any,
-  imageSrcMain: any,
-  canvasRef: any,
-  annotations: any
-) => {
+  setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>,
+  imageSrcMain: string,
+  canvasRef: React.RefObject<HTMLCanvasElement>,
+  annotations: annotation[]
+): void => {
   setShowAllTags(true);
   const image = new Image();
   image.src = imageSrcMain;
@@ -303,7 +313,9 @@ export const showTags = (
   }, 10);
 };
 
-export const handleScreenShot = (canvasRef: any) => {
+export const handleScreenShot = (
+  canvasRef: React.RefObject<HTMLCanvasElement>
+): void => {
   const canvas = canvasRef.current;
   const image = canvas!.toDataURL("image/png");
 

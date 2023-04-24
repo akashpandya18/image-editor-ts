@@ -1,7 +1,6 @@
-interface props {
-  position: { x: number; y: number };
-}
-export default function TempRedTag({ position }: props) {
+import { submitTagsProps } from "../../types";
+
+export default function TempRedTag({ position }: submitTagsProps) {
   return (
     <>
       <div

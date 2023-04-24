@@ -1,12 +1,13 @@
 import { Close } from "../../assets/icons";
 import "../styles/index.css";
+import React from "react";
 interface props {
   tags: string;
   handleInputChange: (e: any) => void;
   onSubmit: (e: any) => void;
   position: { x: number; y: number };
   refer: any;
-  handleCloseInput: any;
+  handleCloseInput: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function TagAnnotationForm({
@@ -42,7 +43,9 @@ function TagAnnotationForm({
             name='tag'
             maxLength={20}
             value={tags}
-            onChange={(e) => handleInputChange(e)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              handleInputChange(e)
+            }
             autoFocus
             autoComplete='off'
           />
