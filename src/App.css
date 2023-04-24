@@ -5,3 +5,11 @@
   justify-content: center;
   align-items: center;
 }
+
+h3 {
+  color: #2a2a2a;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: left;
+  margin: 0 0 1rem 0;
+}

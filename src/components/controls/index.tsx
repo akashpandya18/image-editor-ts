@@ -12,7 +12,14 @@ import {
 import "./index.css";
 import { Button } from "./buttons";
 import { handleToolClick, tools } from "../../utils/data";
-import { FlipControl, MoreControls, TagControls } from "./allControls";
+import {
+  CropControl,
+  DrawControl,
+  FlipControl,
+  MoreControls,
+  TagControls,
+  TextOnImageControl,
+} from "./allControls";
 import MainCanvasControls from "./mainCanvasControls";
 import { customAlphabet } from "nanoid";
 import { controlsType, annotation, controlsProps } from "../../types";
@@ -44,15 +51,14 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   const [deleteTagId, setDeleteTagId] = useState("");
   const [currentAnnotation, setCurrentAnnotation] = useState({ x: 0, y: 0 });
   const [tag, setTag] = useState("");
+  const [lineWidth, setLineWidth] = useState<number>(4);
+  const [lineColor, setLineColor] = useState<string>("#000");
 
   const ref = useRef(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const nanoid = customAlphabet("1234567890abcdef", 10);
   const id = nanoid(5);
-
-  const lineWidth = 4;
-  const lineColor = "#000000";
 
   function Tools() {
     return (
@@ -99,9 +105,9 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
         {currentControl === "tag-annotation" ? (
           <TagControls annotations={annotations} />
         ) : currentControl === "text-on-image" ? (
-          console.log("ToI")
+          <TextOnImageControl />
         ) : currentControl === "crop" ? (
-          console.log("crop")
+          <CropControl />
         ) : currentControl === "flip" ? (
           <FlipControl
             flipHorizontally={() =>
@@ -112,7 +118,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
             }
           />
         ) : currentControl === "draw" ? (
-          console.log("")
+          <DrawControl />
         ) : currentControl === "more" ? (
           <MoreControls
             blur={blur}
