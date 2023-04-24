@@ -111,3 +111,7 @@ export interface UniversalSliderProps {
   brightness: number;
   setBrightness: Function;
 }
+
+export interface MoreOptionsCanvasProps {
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+}

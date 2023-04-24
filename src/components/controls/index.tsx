@@ -64,9 +64,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   // more
   const [blur, setBlur] = useState<number>(0);
   const [zoom, setZoom] = useState<number>(1);
-  const [offset,
-    // setOffset
-  ] = useState({ x: 0, y: 0 });
+  // const [offset, setOffset] = useState({ x: 0, y: 0 });
   // const [dragging, setDragging] = useState(false);
   const [rotate, setRotate] = useState<number>(0);
   const [brightness, setBrightness] = useState<number>(1);
@@ -83,40 +81,38 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
 
   function Tools() {
     return (
-      <>
-        <div className={"controls-main"}>
-          {/* tools */}
-          <div className={"controls-2div"}>
-            <div className={"tools-grid"}>
-              {tools.map((x: controlsType, idx: number) => {
-                return (
-                  <div key={x.id} className={"tools-map-div"}>
-                    <Button
-                      className={"tools-button"}
-                      isActive={idx === activeIndex}
-                      onClick={() => {
-                        handleToolClick(
-                          x.type,
-                          idx,
-                          setActiveIndex,
-                          setCurrentControl
-                        );
-                      }}
-                    >
-                      {x.icon}
-                    </Button>
-                    <span> {x.name} </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-          {/* controls */}
-          <div className={"showControls-div"}>
-            <SelectedControl />
+      <div className={"controls-main"}>
+        {/* tools */}
+        <div className={"controls-2div"}>
+          <div className={"tools-grid"}>
+            {tools.map((x: controlsType, idx: number) => {
+              return (
+                <div key={x.id} className={"tools-map-div"}>
+                  <Button
+                    className={"tools-button"}
+                    isActive={idx === activeIndex}
+                    onClick={() => {
+                      handleToolClick(
+                        x.type,
+                        idx,
+                        setActiveIndex,
+                        setCurrentControl
+                      );
+                    }}
+                  >
+                    {x.icon}
+                  </Button>
+                  <span> {x.name} </span>
+                </div>
+              );
+            })}
           </div>
         </div>
-      </>
+        {/* controls */}
+        <div className={"showControls-div"}>
+          <SelectedControl />
+        </div>
+      </div>
     );
   }
 
@@ -207,84 +203,10 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
     }
   }, [canvasRef, lineWidth, lineColor]);
 
-  // const handleMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
-  //   if (dragging && zoom > 1) {
-  //     const { x, y } = touch.current;
-  //     const { clientX, clientY } = event;
-  //     setOffset({
-  //       x: offset.x + (x - clientX),
-  //       y: offset.y + (y - clientY),
-  //     });
-  //     touch.current = { x: clientX, y: clientY };
-  //   }
-  // };
-
-  // const handleMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
-  //   const { clientX, clientY } = event;
-  //   touch.current = { x: clientX, y: clientY };
-  //   setDragging(true);
-  // };
-
-  // const handleMouseUp = () => setDragging(false);
-
-  const handleZoomEffect = () => {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
-
-    const image = new Image();
-    image.src = imgSrc;
-
-    if (canvas) {
-      const { width, height } = canvas;
-
-      // Set canvas dimensions
-      canvas!.width = width;
-      canvas!.height = height;
-
-      // Clear canvas and scale it
-      const centerX = canvas!.width / 2;
-      const centerY = canvas!.height / 2;
-
-      // context!.translate(-offset.x, -offset.y);
-      context!.translate(centerX, centerY);
-      context!.scale(zoom, zoom);
-      context!.translate(-centerX, -centerY)
-      context!.clearRect(0, 0, width, height);
-
-      // Make sure we're zooming to the center
-      // const x = (context!.canvas.width / zoom - image.width) / 2;
-      // const y = (context!.canvas.height / zoom - image.height) / 2;
-
-      // Draw image
-      // context!.drawImage(image, x, y);
-    }
-  };
-
-  useEffect(() => {
-    handleZoomEffect();
-  }, [zoom, offset]);
-
-  useEffect(() => {
-    const image = new Image();
-    image.src = imgSrc;
-    const canvas = canvasRef.current;
-    const context = canvas!.getContext("2d");
-
-    image.width = canvas!.width;
-    image.height = canvas!.height;
-
-    context!.clearRect(0, 0, canvas!.width, canvas!.height);
-
-    setTimeout(() => {
-      context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
-    });
-    context!.filter = `blur(${blur}px) brightness(${brightness})`;
-  }, [blur, brightness, zoom]);
-
   return (
     <div className={"controls-out"}>
       <Tools />
-      <div className='canvas-div'>
+      <div className={"canvas-div"}>
         <DrawCanvas canvasRef={canvasRef} />
         {tempRedPrompt && (
           <>
