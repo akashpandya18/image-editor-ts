@@ -1,4 +1,8 @@
-import { useState, useEffect, useRef } from "react"
+import { customAlphabet } from "nanoid"
+import { useEffect, useRef, useState } from "react"
+import { HideTags, ShowTags } from "../../assets/icons"
+import { Cropped, annotation, controlsProps, controlsType } from "../../types"
+import { handleToolClick, tools } from "../../utils/data"
 import {
   handleCanvasClick,
   handleCanvasMouseMove,
@@ -9,20 +13,16 @@ import {
   hideTags,
   showTags,
 } from "../TagAnnotation"
-import "./index.css"
-import { Button } from "./buttons"
-import { handleToolClick, tools } from "../../utils/data"
-import { FlipControl, MoreControls, TagControls } from "./allControls"
-import MainCanvasControls from "./mainCanvasControls"
-import { customAlphabet } from "nanoid"
-import { controlsType, annotation, controlsProps, Cropped } from "../../types"
-import ShowTagOnHover from "../prompts/showTagOnHover"
-import { DeleteTag } from "../prompts/deleteTag"
+import { Crop, DrawCanvas, RegularCanvas, TagCanvas } from "../canvases"
+import { flipHorizontally, flipVertically } from "../flip"
 import TagAnnotationForm from "../forms/TagAnnotForm"
 import TempRedTag from "../prompts/ConfirmSubmitTag"
-import { HideTags, ShowTags } from "../../assets/icons"
-import { flipHorizontally, flipVertically } from "../flip"
-import { DrawCanvas, RegularCanvas, TagCanvas } from "../canvases"
+import { DeleteTag } from "../prompts/deleteTag"
+import ShowTagOnHover from "../prompts/showTagOnHover"
+import { FlipControl, MoreControls, TagControls } from "./allControls"
+import { Button } from "./buttons"
+import "./index.css"
+import MainCanvasControls from "./mainCanvasControls"
 
 export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   const [annotations, setAnnotations] = useState<annotation[]>([])
@@ -108,7 +108,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
         ) : currentControl === "text-on-image" ? (
           console.log("ToI")
         ) : currentControl === "crop" ? (
-          console.log("crop")
+          <div>viram</div>
         ) : currentControl === "flip" ? (
           <FlipControl
             flipHorizontally={() =>
@@ -242,13 +242,37 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
     image.onload = () => {
       console.log('dimensions', dimensions)
       ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height)
-      if (currentControl == "crop") {
+    }
+  }, [dimensions, imgSrc, clear])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const context = canvas?.getContext("2d")
+
+    if (context) {
+      context.lineWidth = lineWidth
+      context.strokeStyle = lineColor
+    }
+  }, [canvasRef, lineWidth, lineColor])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const ctx = canvas!.getContext("2d")
+    const { width, height } = dimensions
+    canvas!.width = width
+    canvas!.height = height
+    const image = new Image()
+    image.src = imgSrc
+    image.onload = () => {
+      ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height)
+      if (currentControl == 'crop') {
         ctx!.strokeStyle = 'white'
         ctx!.setLineDash([5, 5])
         const imgX = Math.floor(dimensions.width / 4)
         const imgY = Math.floor(dimensions.height / 4)
         ctx!.lineWidth = 2
         ctx!.strokeRect(imgX, imgY, imgX, imgY)
+        console.log('imgX , imgY', imgX, imgY)
         setCurrentCropped({
           startingX: imgX,
           startingY: imgY,
@@ -300,108 +324,17 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
         const imageData = ctx1!.getImageData(dimensions.width / 4 + 2, dimensions.height / 4 + 2, dimensions.width / 4 - 3, dimensions.height / 4 - 3)
         croppedCtx.putImageData(imageData, 0, 0)
       }
-    }
-  }, [dimensions, imgSrc, clear])
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    const context = canvas?.getContext("2d")
-
-    if (context) {
-      context.lineWidth = lineWidth
-      context.strokeStyle = lineColor
-    }
-  }, [canvasRef, lineWidth, lineColor])
-
-
-  // useEffect(() => {
-  //   first
-
-  //   return () => {
-  //     second
-  //   }
-  // }, [currentControl])
-
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    const ctx = canvas!.getContext("2d")
-    const { width, height } = dimensions
-    canvas!.width = width
-    canvas!.height = height
-    const image = new Image()
-    image.src = imgSrc
-    image.onload = () => {
-      ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height)
-
-      // annotations.forEach((annot: any) => {
-      //   const { x, y } = annot
-      //   ctx!.beginPath()
-      //   ctx!.fillStyle = "yellow"
-      //   ctx!.arc(x, y, 10, 0, 2 * Math.PI)
-      //   ctx!.fill()
-      // })
-      // setTag("")
-      // setCurrentAnnotation({ x: 0, y: 0 })
-
-      // ctx!.strokeStyle = 'white'
-      // ctx!.setLineDash([5, 5])
-      // const imgX = Math.floor(dimensions.width / 4)
-      // const imgY = Math.floor(dimensions.height / 4)
-      // ctx!.lineWidth = 2
-      // ctx!.strokeRect(imgX, imgY, imgX, imgY)
-      // setCurrentCropped({
-      //   startingX: imgX,
-      //   startingY: imgY,
-      //   width: imgX,
-      //   height: imgY,
-      // })
-      // ctx!.setLineDash([0, 0])
-      // ctx!.beginPath()
-      // ctx!.lineWidth = 3
-      // ctx!.lineJoin = "round"
-      // ctx!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 10, 0)
-      // ctx!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 0, 10)
-      // ctx!.fillStyle = "white"
-      // ctx!.fill()
-      // ctx!.stroke()
-      // ctx!.beginPath()
-      // ctx!.lineWidth = 3
-      // ctx!.lineJoin = "round"
-      // ctx!.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, -10, 0)
-      // ctx!.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, 0, 10)
-      // ctx!.fillStyle = "white"
-      // ctx!.fill()
-      // ctx!.stroke()
-      // ctx!.beginPath()
-      // ctx!.lineWidth = 3
-      // ctx!.lineJoin = "round"
-      // ctx!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0)
-      // ctx!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10)
-      // ctx!.fillStyle = "white"
-      // ctx!.fill()
-      // ctx!.stroke()
-      // ctx!.beginPath()
-      // ctx!.lineWidth = 3
-      // ctx!.lineJoin = "round"
-      // ctx!.strokeRect((dimensions.width / 4) - 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0)
-      // ctx!.strokeRect((dimensions.width / 4) + 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10)
-      // ctx!.fillStyle = "white"
-      // ctx!.fill()
-      // ctx!.stroke()
-      // const croppedCanvas: HTMLCanvasElement = document.createElement('canvas')
-      // const croppedCtx = croppedCanvas.getContext('2d')
-      // if (!croppedCtx) {
-      //   return
-      // }
-      // const canvas1 = canvasRef.current
-      // const ctx1 = canvas1?.getContext('2d')
-      // croppedCanvas.width = (dimensions.width / 4)
-      // croppedCanvas.height = (dimensions.height / 4)
-      // const imageData = ctx1!.getImageData(dimensions.width / 4 + 2, dimensions.height / 4 + 2, dimensions.width / 4 - 3, dimensions.height / 4 - 3)
-      // croppedCtx.putImageData(imageData, 0, 0)
-      console.log('viram')
-
+      else {
+        annotations.forEach((annot: any) => {
+          const { x, y } = annot
+          ctx!.beginPath()
+          ctx!.fillStyle = "yellow"
+          ctx!.arc(x, y, 10, 0, 2 * Math.PI)
+          ctx!.fill()
+        })
+        setTag("")
+        setCurrentAnnotation({ x: 0, y: 0 })
+      }
     }
 
   }, [currentControl])
@@ -440,6 +373,15 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
           />
         ) : currentControl === "draw" ? (
           <DrawCanvas canvasRef={canvasRef} />
+        ) : currentControl == 'crop' ? (
+          <Crop
+            imgSrc={imgSrc}
+            dimensions={dimensions}
+            setDimensions={setDimensions}
+            canvasRef={canvasRef}
+            currentCropped={currentCropped}
+            setCurrentCropped={setCurrentCropped}
+          />
         ) : (
           <RegularCanvas canvasRef={canvasRef} />
         )}

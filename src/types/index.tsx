@@ -26,6 +26,12 @@ export interface controlsType {
 export interface DrawProps {
   canvasRef: React.RefObject<HTMLCanvasElement>
 }
+export interface CropProps {
+  canvasRef: React.RefObject<HTMLCanvasElement>,
+  currentCropped: any,
+  setCurrentCropped: any,
+  dimensions: any, setDimensions: any, imgSrc: any
+}
 export interface TagProps {
   canvasRef: React.RefObject<HTMLCanvasElement>
   handleTagClick: (e: any) => void
@@ -33,15 +39,27 @@ export interface TagProps {
 }
 
 export interface CropProps {
-  canvasRef : React.RefObject<HTMLCanvasElement>,
-
+  canvasRef: React.RefObject<HTMLCanvasElement>,
 }
 
+export interface differenceProps {
+  width: number,
+  height: number,
+  x: number,
+  y: number,
+}
+
+export interface startingNodeProps {
+  x: number,
+  y: number
+}
 export interface CropImageProps {
   startingX: number
   startingY: number
   totalWidth: number
   totalHeight: number
+  canvasRef: any,
+  imgRef: any
 }
 export interface Cropped {
   startingX: number,
@@ -51,5 +69,11 @@ export interface Cropped {
 }
 
 export interface Props {
-  imageUrl: string
+  canvasRef: any,
+  imageUrl: any
+}
+
+export interface cropingImageProps {
+  canvasRef: any,
+  imgRef: any
 }
