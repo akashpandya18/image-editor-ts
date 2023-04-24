@@ -1,15 +1,11 @@
 import { Check, Close } from "../../assets/icons";
+import { deleteTagProps } from "../../types";
 
-interface props {
-  position: { xN: number; yN: number };
-  setPromptOff: (e: any) => void;
-  deleteTagSubmit: (e: any) => void;
-}
 export const DeleteTag = ({
   position,
   setPromptOff,
   deleteTagSubmit,
-}: props) => {
+}: deleteTagProps) => {
   return (
     <>
       <div
