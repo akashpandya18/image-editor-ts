@@ -38,10 +38,9 @@ export const DrawCanvas = ({ canvasRef }: DrawProps) => {
   };
 
   const draw = (event: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) return;
-
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
+    if (!isDrawing) return;
 
     if (context) {
       context.lineTo(event.nativeEvent.offsetX, event.nativeEvent.offsetY);
@@ -53,19 +52,40 @@ export const DrawCanvas = ({ canvasRef }: DrawProps) => {
     setIsDrawing(false);
   };
 
+  const clickDot = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    const context = canvas?.getContext("2d");
+    if (context) {
+      context!.beginPath();
+      context!.fillStyle = "#000";
+      context!.arc(
+        event.nativeEvent.offsetX,
+        event.nativeEvent.offsetY,
+        1,
+        0,
+        2 * Math.PI
+      );
+      context!.fill();
+    }
+  };
+
   return (
-    <canvas
-      ref={canvasRef}
-      onMouseDown={(e) => startDrawing(e)}
-      onMouseMove={(e) => draw(e)}
-      onMouseUp={stopDrawing}
-      onMouseLeave={stopDrawing}
-      style={{
-        borderRadius: "7px",
-        boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
-        cursor: ""
-      }}
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        onMouseDown={(e) => startDrawing(e)}
+        onMouseMove={(e) => draw(e)}
+        onMouseUp={stopDrawing}
+        onMouseLeave={stopDrawing}
+        onClick={(event: React.MouseEvent<HTMLCanvasElement>) =>
+          clickDot(event)
+        }
+        style={{
+          borderRadius: "7px",
+          boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
+        }}
+      />
+    </>
   );
 };
 
