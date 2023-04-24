@@ -22,7 +22,7 @@ import TagAnnotationForm from "../forms/TagAnnotForm";
 import TempRedTag from "../prompts/ConfirmSubmitTag";
 import { HideTags, ShowTags } from "../../assets/icons";
 import { flipHorizontally, flipVertically } from "../flip";
-import { DrawCanvas, TagCanvas } from "../canvases";
+import { DrawCanvas, RegularCanvas, TagCanvas } from "../canvases";
 
 export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   const [annotations, setAnnotations] = useState<annotation[]>([]);
@@ -233,8 +233,10 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
               )
             }
           />
-        ) : (
+        ) : currentControl === "draw" ? (
           <DrawCanvas canvasRef={canvasRef} />
+        ) : (
+          <RegularCanvas canvasRef={canvasRef} />
         )}
 
         {tempRedPrompt && (
