@@ -22,7 +22,7 @@ import TagAnnotationForm from "../forms/TagAnnotForm"
 import TempRedTag from "../prompts/ConfirmSubmitTag"
 import { HideTags, ShowTags } from "../../assets/icons"
 import { flipHorizontally, flipVertically } from "../flip"
-import { Crop, DrawCanvas, RegularCanvas, TagCanvas } from "../canvases"
+import { DrawCanvas, RegularCanvas, TagCanvas } from "../canvases"
 
 export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   const [annotations, setAnnotations] = useState<annotation[]>([])
@@ -324,13 +324,13 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
 
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas!.getContext("2d");
-    const { width, height } = dimensions;
-    canvas!.width = width;
-    canvas!.height = height;
-    const image = new Image();
-    image.src = imgSrc;
+    const canvas = canvasRef.current
+    const ctx = canvas!.getContext("2d")
+    const { width, height } = dimensions
+    canvas!.width = width
+    canvas!.height = height
+    const image = new Image()
+    image.src = imgSrc
     image.onload = () => {
       ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height)
 
