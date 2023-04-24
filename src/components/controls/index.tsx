@@ -22,7 +22,7 @@ import TagAnnotationForm from "../forms/TagAnnotForm"
 import TempRedTag from "../prompts/ConfirmSubmitTag"
 import { HideTags, ShowTags } from "../../assets/icons"
 import { flipHorizontally, flipVertically } from "../flip"
-import { Crop, DrawCanvas, TagCanvas } from "../canvases"
+import { Crop, DrawCanvas, RegularCanvas, TagCanvas } from "../canvases"
 
 export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   const [annotations, setAnnotations] = useState<annotation[]>([])
@@ -111,8 +111,12 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
           console.log("crop")
         ) : currentControl === "flip" ? (
           <FlipControl
-            flipHorizontally={() => flipHorizontally(canvasRef, imgSrc)}
-            flipVertically={() => flipVertically(canvasRef, imgSrc)}
+            flipHorizontally={() =>
+              flipHorizontally(canvasRef, imgSrc, annotations)
+            }
+            flipVertically={() =>
+              flipVertically(canvasRef, imgSrc, annotations)
+            }
           />
         ) : currentControl === "draw" ? (
           console.log("")
@@ -320,15 +324,13 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
 
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    console.log('canvas', canvas)
-    const { width, height } = dimensions
-    console.log('dimensions', dimensions)
-    canvas!.width = width
-    canvas!.height = height
-    const ctx = canvas!.getContext("2d")
-    const image = new Image()
-    image.src = imgSrc
+    const canvas = canvasRef.current;
+    const ctx = canvas!.getContext("2d");
+    const { width, height } = dimensions;
+    canvas!.width = width;
+    canvas!.height = height;
+    const image = new Image();
+    image.src = imgSrc;
     image.onload = () => {
       ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height)
 
@@ -436,7 +438,11 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
               )
             }
           />
-        ) : currentControl === "crop" ? '' : <DrawCanvas canvasRef={canvasRef} />}
+        ) : currentControl === "draw" ? (
+          <DrawCanvas canvasRef={canvasRef} />
+        ) : (
+          <RegularCanvas canvasRef={canvasRef} />
+        )}
 
         {tempRedPrompt && (
           <>

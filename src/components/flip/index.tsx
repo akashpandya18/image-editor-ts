@@ -1,4 +1,10 @@
-export const flipHorizontally = (canvasRef: any, imgSrc: any) => {
+import { annotation } from "../../types";
+
+export const flipHorizontally = (
+  canvasRef: any,
+  imgSrc: any,
+  annotations: annotation[]
+) => {
   const canvas = canvasRef.current;
   if (!canvas) return;
 
@@ -7,10 +13,13 @@ export const flipHorizontally = (canvasRef: any, imgSrc: any) => {
 
   ctx.translate(canvas.width, 0);
   ctx.scale(-1, 1);
-  LoadImageFlip(ctx, canvasRef, imgSrc);
+  LoadImageFlip(ctx, canvasRef, imgSrc, annotations);
 };
-
-export const flipVertically = (canvasRef: any, imgSrc: any) => {
+export const flipVertically = (
+  canvasRef: any,
+  imgSrc: any,
+  annotations: annotation[]
+) => {
   const canvas = canvasRef.current;
   if (!canvas) return;
 
@@ -19,13 +28,13 @@ export const flipVertically = (canvasRef: any, imgSrc: any) => {
 
   ctx.translate(0, canvas.height);
   ctx.scale(1, -1);
-  LoadImageFlip(ctx, canvasRef, imgSrc);
+  LoadImageFlip(ctx, canvasRef, imgSrc, annotations);
 };
-
 export const LoadImageFlip = (
   ctx: CanvasRenderingContext2D,
   canvasRef: any,
-  imgSrc: any
+  imgSrc: any,
+  annotations: annotation[]
 ) => {
   const img = new Image();
   img.onload = () => {
@@ -36,6 +45,13 @@ export const LoadImageFlip = (
       canvasRef.current!.width,
       canvasRef.current!.height
     );
+    annotations.forEach((annot: annotation) => {
+      const { x, y } = annot;
+      ctx!.beginPath();
+      ctx!.fillStyle = "yellow";
+      ctx!.arc(x, y, 10, 0, 2 * Math.PI);
+      ctx!.fill();
+    });
   };
   img.src = imgSrc;
 };
