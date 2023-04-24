@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { DrawProps, TagProps } from "../../types";
+import { useState } from "react"
+import { CropProps, DrawProps, TagProps } from "../../types"
 
 export const TagCanvas = ({
   canvasRef,
@@ -18,37 +18,37 @@ export const TagCanvas = ({
         onMouseMove={handleTagMouseMove}
       />
     </>
-  );
-};
+  )
+}
 export const DrawCanvas = ({ canvasRef }: DrawProps) => {
-  const [isDrawing, setIsDrawing] = useState(false);
+  const [isDrawing, setIsDrawing] = useState(false)
 
   const startDrawing = (event: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
+    const canvas = canvasRef.current
+    const context = canvas?.getContext("2d")
 
     if (context) {
-      context.beginPath();
-      context.moveTo(event.nativeEvent.offsetX, event.nativeEvent.offsetY);
-      setIsDrawing(true);
+      context.beginPath()
+      context.moveTo(event.nativeEvent.offsetX, event.nativeEvent.offsetY)
+      setIsDrawing(true)
     }
-  };
+  }
 
   const draw = (event: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) return;
+    if (!isDrawing) return
 
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
+    const canvas = canvasRef.current
+    const context = canvas?.getContext("2d")
 
     if (context) {
-      context.lineTo(event.nativeEvent.offsetX, event.nativeEvent.offsetY);
-      context.stroke();
+      context.lineTo(event.nativeEvent.offsetX, event.nativeEvent.offsetY)
+      context.stroke()
     }
-  };
+  }
 
   const stopDrawing = () => {
-    setIsDrawing(false);
-  };
+    setIsDrawing(false)
+  }
 
   return (
     <>
@@ -65,5 +65,30 @@ export const DrawCanvas = ({ canvasRef }: DrawProps) => {
         }}
       />
     </>
-  );
-};
+  )
+}
+
+export const Crop = ({ canvasRef }: CropProps) => {
+  return (
+    <>
+      <canvas
+        ref={canvasRef}
+        style={{
+          borderRadius: "7px",
+          boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
+        }}
+
+      // onMouseDown={mouseDown}
+      // onMouseMove={mouseMove}
+      // onMouseLeave={mouseLeave}
+      // onMouseUp={mouseUP}
+      // ref={canvasRef}
+      />
+      {/* <img src={imageUrl} alt="uploaded" height={dimensions.height} width={dimensions.width} ref={imgRef} style={{ display: 'none' }} /> */}
+      {/* <canvas style={{
+        marginTop: '20px'
+      }} ref={canvasPreviewRef} /> */}
+
+    </>
+  )
+}

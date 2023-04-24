@@ -22,7 +22,6 @@ const ImageCropper = (props: Props) => {
     startingY: 0,
     height: 0,
     width: 0,
-
   })
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -209,7 +208,7 @@ const ImageCropper = (props: Props) => {
   }, [currentCropped])
 
 
-   const mouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
+  const mouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const x = event.nativeEvent.offsetX
     const y = event.nativeEvent.offsetY
 
@@ -615,6 +614,7 @@ const ImageCropper = (props: Props) => {
     mouseUP(event)
   }
 
+
   return (
     <React.Fragment>
       <canvas
@@ -635,5 +635,6 @@ const ImageCropper = (props: Props) => {
     </React.Fragment>
   )
 }
+
 
 export default ImageCropper

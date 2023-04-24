@@ -32,6 +32,11 @@ export interface TagProps {
   handleTagMouseMove: (e: any) => void
 }
 
+export interface CropProps {
+  canvasRef : React.RefObject<HTMLCanvasElement>,
+
+}
+
 export interface CropImageProps {
   startingX: number
   startingY: number
