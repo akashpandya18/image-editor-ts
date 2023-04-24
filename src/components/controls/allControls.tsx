@@ -1,41 +1,34 @@
 import { controls } from "../../utils/data";
 import UniversalSlider from "./sliders";
 import "./index.css";
-import { FlipHorizontal, FlipVertical } from "../../assets/icons";
+import { Check, FlipHorizontal, FlipVertical } from "../../assets/icons";
+import { controlsType, propsFlip, propsMore, propsTag } from "../../types";
 
-interface controlsType {
-  id: number;
-  name: string;
-  type: string;
-  icon: any;
-}
-interface propsMore {
-  blur: number;
-  setBlur: Function;
-  brightness: number;
-  setBrightness: Function;
-  rotate: number;
-  setRotate: Function;
-}
-interface propsTag {
-  annotations: { id: string; x: number; y: number; tag: string }[];
-}
-interface propsFlip {
-  flipHorizontally: any;
-  flipVertically: any;
-}
 export function TagControls({ annotations }: propsTag) {
+  // const messageRef = useRef<HTMLDivElement>(null);
+
+  // if (messageRef.current) {
+  //   messageRef.current.scrollIntoView({
+  //     behavior: "smooth",
+  //     block: "end",
+  //     inline: "nearest",
+  //   });
+  // }
+
   return (
     <>
-      <div>
-        {annotations && (
-          <div>
-            <ol>
-              {annotations.map((data: any) => {
-                return <li key={data.id}>{data.tag}</li>;
-              })}
-            </ol>
-          </div>
+      <h3 className='tag-head'>Tags</h3>
+      <div className='tag-main'>
+        {annotations.length > 0 && (
+          <ol className='tag-ol'>
+            {annotations.map((data: any) => {
+              return (
+                <li className='list-tags' key={data.id}>
+                  {data.tag}
+                </li>
+              );
+            })}
+          </ol>
         )}
       </div>
     </>
@@ -44,12 +37,18 @@ export function TagControls({ annotations }: propsTag) {
 export function FlipControl({ flipHorizontally, flipVertically }: propsFlip) {
   return (
     <>
-      <div className='button-div'>
-        <button className='flip-button' onClick={flipHorizontally}>
-          <FlipHorizontal />
-        </button>
-        <button className='flip-button' onClick={flipVertically}>
-          <FlipVertical />
+      <h3>Flip</h3>
+      <div className='buttondiv-main'>
+        <div className='button-div'>
+          <button className='flip-button' onClick={flipHorizontally}>
+            <FlipHorizontal />
+          </button>
+          <button className='flip-button' onClick={flipVertically}>
+            <FlipVertical />
+          </button>
+        </div>
+        <button className='flip-button-sure'>
+          <Check />
         </button>
       </div>
     </>
@@ -65,6 +64,7 @@ export function MoreControls({
 }: propsMore) {
   return (
     <>
+      <h3>More Controls</h3>
       <div className='showControls-grid'>
         {controls.map((x: controlsType) => {
           return (
@@ -86,6 +86,27 @@ export function MoreControls({
           );
         })}
       </div>
+    </>
+  );
+}
+export function DrawControl() {
+  return (
+    <>
+      <h3>Draw</h3>
+    </>
+  );
+}
+export function TextOnImageControl() {
+  return (
+    <>
+      <h3>Text On Image</h3>
+    </>
+  );
+}
+export function CropControl() {
+  return (
+    <>
+      <h3>Crop</h3>
     </>
   );
 }
