@@ -1,7 +1,5 @@
 import React from "react";
 
-import React from "react"
-
 export interface controlsType {
   id: number;
   name: string;
@@ -80,9 +78,4 @@ export interface mainCanvasControlProps {
   showHideFunction: () => void;
   screenShotFunction: (e: any) => void;
   iconTag: any;
-}
-
-export interface cropingImageProps {
-  canvasRef: any,
-  imgRef: any
 }

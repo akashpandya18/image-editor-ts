@@ -45,7 +45,6 @@ export const TextContext = createContext({
 
 export default function Controls({
   imgSrc,
-  setImgSrc,
 }: controlsProps): JSX.Element {
   const [annotations, setAnnotations] = useState<annotation[]>([])
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
@@ -97,9 +96,6 @@ export default function Controls({
 
   const nanoid = customAlphabet("1234567890abcdef", 10)
   const id = nanoid(5)
-
-  const nanoid = customAlphabet("1234567890abcdef", 10);
-  const id = nanoid(5);
 
   function Tools() {
     return (

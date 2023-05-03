@@ -1,5 +1,7 @@
-import React, { useState } from "react";
-import { DrawProps, TagProps } from "../../types";
+import React, { useState, useRef } from "react";
+import {CropProps, DrawProps, TagProps} from "../../types";
+import {mouseDown, mouseLeave, mouseMove, mouseUP} from "../crop";
+import {clickHandler} from "../controls/textOnImage";
 
 export const TagCanvas = ({
   canvasRef,
@@ -202,8 +204,6 @@ export const RegularCanvas = ({
 
 
 export const TextOnImage = ({ canvasRef, tempPrompt, setTempPrompt, currentClicked, setCurrentClicked, setTextForm, imgSrc, allTextTags }: any) => {
-
-  console.log('canvasRef ,imgSrc', canvasRef, imgSrc)
 
   return (
     <div>
