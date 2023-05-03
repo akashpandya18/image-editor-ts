@@ -1,10 +1,12 @@
+import React from "react";
+
 import React from "react"
 
 export interface controlsType {
-  id: number
-  name: string
-  type: string
-  icon: any
+  id: number;
+  name: string;
+  type: string;
+  icon: JSX.Element;
 }
 export interface annotation {
   id: string
@@ -12,18 +14,9 @@ export interface annotation {
   y: number
   tag: string
 }
-export interface flipProps {
-  flipHorizontally: () => void
-  flipVertically: () => void
-}
 export interface controlsProps {
-  imgSrc: string
-}
-export interface controlsType {
-  id: number
-  name: string
-  type: string
-  icon: any
+  imgSrc: string;
+  setImgSrc: React.Dispatch<React.SetStateAction<string>>;
 }
 export interface DrawProps {
   canvasRef: React.RefObject<HTMLCanvasElement>
@@ -66,10 +59,27 @@ export interface Cropped {
   height: number,
   width: number
 }
-
-export interface Props {
-  canvasRef: any,
-  imageUrl: any
+export interface propsFlip {
+  flipHorizontally: React.MouseEventHandler<HTMLButtonElement> | undefined;
+  flipVertically: React.MouseEventHandler<HTMLButtonElement> | undefined;
+}
+export interface tagOnHoverProps {
+  position: { x: number; y: number };
+  tag: string;
+}
+export interface submitTagsProps {
+  position: { x: number; y: number };
+}
+export interface deleteTagProps {
+  position: { xN: number; yN: number };
+  setPromptOff: (e: any) => void;
+  deleteTagSubmit: (e: any) => void;
+}
+export interface mainCanvasControlProps {
+  clearFunction: (e: any) => void;
+  showHideFunction: () => void;
+  screenShotFunction: (e: any) => void;
+  iconTag: any;
 }
 
 export interface cropingImageProps {

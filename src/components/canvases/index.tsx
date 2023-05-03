@@ -206,7 +206,7 @@ export const RegularCanvas = ({
 
 export const TextOnImage = ({ canvasRef, tempPrompt, setTempPrompt, currentClicked, setCurrentClicked, setTextForm, imgSrc, allTextTags }: any) => {
 
-
+  console.log('canvasRef ,imgSrc', canvasRef, imgSrc)
 
   return (
     <div>

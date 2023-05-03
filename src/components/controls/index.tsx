@@ -43,7 +43,10 @@ export const TextContext = createContext({
 })
 
 
-export default function Controls({ imgSrc }: controlsProps): JSX.Element {
+export default function Controls({
+  imgSrc,
+  setImgSrc,
+}: controlsProps): JSX.Element {
   const [annotations, setAnnotations] = useState<annotation[]>([])
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
   const [currentControl, setCurrentControl] =
@@ -103,7 +106,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   // }
 
 
-  function Tools() {
+  function Tools(): JSX.Element {
     return (
       <>
         <div className='controls-main'>
@@ -172,9 +175,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
 
   }
 
-
-
-  function SelectedControl() {
+  function SelectedControl(): JSX.Element {
     return (
       <>
         {currentControl === "tag-annotation" ? (
@@ -253,7 +254,8 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
     setDeleteTagId("")
     setShowAllTags(false)
     setShowH(false)
-    const canvas = canvasRef.current
+
+    const canvas: HTMLCanvasElement | null = canvasRef.current
     const { width, height } = dimensions
     canvas!.width = width
     canvas!.height = height
@@ -295,7 +297,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
       setTag("")
       setCurrentAnnotation({ x: 0, y: 0 })
     }
-  },[
+  }, [
   ])
 
   useEffect(() => {
