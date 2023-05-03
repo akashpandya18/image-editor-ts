@@ -1,8 +1,9 @@
 import { customAlphabet } from "nanoid"
-import { useEffect, useRef, useState } from "react"
+import { createContext, useEffect, useMemo, useRef, useState } from "react"
 import { HideTags, ShowTags } from "../../assets/icons"
 import { Cropped, annotation, controlsProps, controlsType } from "../../types"
 import { handleToolClick, tools } from "../../utils/data"
+
 import {
   handleCanvasClick,
   handleCanvasMouseMove,
@@ -13,16 +14,34 @@ import {
   hideTags,
   showTags,
 } from "../TagAnnotation"
-import { Crop, DrawCanvas, RegularCanvas, TagCanvas } from "../canvases"
+import { Button } from "./buttons"
+import "./index.css"
+
+import { Crop, DrawCanvas, RegularCanvas, TagCanvas, TextOnImage } from "../canvases"
 import { flipHorizontally, flipVertically } from "../flip"
 import TagAnnotationForm from "../forms/TagAnnotForm"
 import TempRedTag from "../prompts/ConfirmSubmitTag"
 import { DeleteTag } from "../prompts/deleteTag"
 import ShowTagOnHover from "../prompts/showTagOnHover"
-import { FlipControl, MoreControls, TagControls } from "./allControls"
-import { Button } from "./buttons"
-import "./index.css"
+import {
+  CropControl,
+  DrawControl,
+  FlipControl,
+  MoreControls,
+  TagControls,
+  TextOnImageControl,
+} from "./allControls"
 import MainCanvasControls from "./mainCanvasControls"
+import TextOnImageForm from "../forms/TextOnImageForm"
+import { submitHandler, textOnChangeHandler1 } from "./textOnImage"
+import TextInputPrompt from "../prompts/TextInputPrompt"
+
+
+export const TextContext = createContext({
+  text: "",
+  setText: () => { }
+})
+
 
 export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   const [annotations, setAnnotations] = useState<annotation[]>([])
@@ -34,23 +53,41 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   const [brightness, setBrightness] = useState<number>(1)
   const [activeIndex, setActiveIndex] = useState<number>(0)
   const [clear, setClear] = useState<boolean>(false)
+  const [cloneRef, setCloneRef] = useState<any>()
   const [hoverTag, setHoverTag] = useState("")
   const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 })
+  const [selectCanvas, setselectCanvas] = useState(false)
   const [showH, setShowH] = useState(false)
   const [tempRedPrompt, setTempRedPrompt] = useState(false)
   const [deleteTag, setDeleteTag] = useState(false)
   const [deletePos, setDeletePos] = useState({ xN: 0, yN: 0 })
   const [showAllTags, setShowAllTags] = useState(false)
   const [deleteTagId, setDeleteTagId] = useState("")
+  const [croppedImage, setCroppedImage] = useState<string>("")
   const [currentAnnotation, setCurrentAnnotation] = useState({ x: 0, y: 0 })
   const [tag, setTag] = useState("")
+  const [tempPrompt, setTempPrompt] = useState(false)
+  const [currentClicked, setCurrentClicked] = useState({
+    x: 0,
+    y: 0
+  })
+  // const [name, setName] = useState("Mks");
 
+
+  const [allTextTags, setAllTextTags] = useState([])
   const [currentCropped, setCurrentCropped] = useState<Cropped>({
     startingX: 0,
     startingY: 0,
     height: 0,
     width: 0,
   })
+  const [TextForm, setTextForm] = useState({
+    text: "",
+    color: "",
+    size: ""
+  })
+  const [lineWidth, setLineWidth] = useState<number>(4)
+  const [lineColor, setLineColor] = useState<string>("#000")
 
   const ref = useRef(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -58,8 +95,13 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   const nanoid = customAlphabet("1234567890abcdef", 10)
   const id = nanoid(5)
 
-  const lineWidth = 4
-  const lineColor = "#000000"
+
+
+
+  // const handleUpdate = () => {
+  //   console.log('data updates')
+  // }
+
 
   function Tools() {
     return (
@@ -100,15 +142,63 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
     )
   }
 
+  const demo = (textForm: any) => {
+    textOnChangeHandler1(
+      textForm,
+      canvasRef,
+      currentClicked,
+      imgSrc
+    )
+    // console.log('textForm', textForm)
+
+    // let newCode = { ...textForm }
+
+    // clo
+
+    // sette
+    // setTextForm({
+    //   text: textForm.text,
+    //   color: textForm.color,
+    //   size: textForm.size
+    // })
+
+    // setTextForm({
+    //   text: textForm.text,
+    //   color: textForm.color,
+    //   size: textForm.size
+    // })
+
+    // setText(textForm.text)
+
+  }
+
+
+
   function SelectedControl() {
     return (
       <>
         {currentControl === "tag-annotation" ? (
           <TagControls annotations={annotations} />
         ) : currentControl === "text-on-image" ? (
-          console.log("ToI")
+          <TextOnImageControl
+            tempPrompt={tempPrompt}
+            textOnChangeHandler={demo}
+            onSubmit={(event: any) => submitHandler(
+              event,
+              allTextTags,
+              setAllTextTags,
+              currentClicked,
+              setTempPrompt,
+              tempPrompt
+            )}
+            allTextTags={allTextTags}
+            setTempPrompt={setTempPrompt}
+            TextForm={TextForm}
+            setTextForm={setTextForm}
+            canvasRef={canvasRef}
+          />
         ) : currentControl === "crop" ? (
-          <div>viram</div>
+          <CropControl img={croppedImage} select={select} />
         ) : currentControl === "flip" ? (
           <FlipControl
             flipHorizontally={() =>
@@ -119,7 +209,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
             }
           />
         ) : currentControl === "draw" ? (
-          console.log("")
+          <DrawControl />
         ) : currentControl === "more" ? (
           <MoreControls
             blur={blur}
@@ -135,6 +225,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
       </>
     )
   }
+
 
   useEffect(() => {
     const img = new Image()
@@ -152,75 +243,6 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
     }
   }, [imgSrc])
 
-  // useEffect(() => {
-  //   const canvas = canvasRef.current
-  //   const { width, height } = dimensions
-  //   canvas!.width = width
-  //   canvas!.height = height
-  //   const ctx = canvas!.getContext("2d")
-  //   const image = new Image()
-  //   image.src = imgSrc
-  //   image.onload = () => {
-  //     ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height)
-  //     // ctx!.strokeStyle = 'white'
-  //     // ctx!.setLineDash([5, 5])
-  //     // const imgX = Math.floor(dimensions.width / 4)
-  //     // const imgY = Math.floor(dimensions.height / 4)
-  //     // ctx!.lineWidth = 2
-  //     // ctx!.strokeRect(imgX, imgY, imgX, imgY)
-  //     // setCurrentCropped({
-  //     //   startingX: imgX,
-  //     //   startingY: imgY,
-  //     //   width: imgX,
-  //     //   height: imgY,
-  //     // })
-  //     // ctx!.setLineDash([0, 0])
-  //     // ctx!.beginPath()
-  //     // ctx!.lineWidth = 3
-  //     // ctx!.lineJoin = "round"
-  //     // ctx!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 10, 0)
-  //     // ctx!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 0, 10)
-  //     // ctx!.fillStyle = "white"
-  //     // ctx!.fill()
-  //     // ctx!.stroke()
-  //     // ctx!.beginPath()
-  //     // ctx!.lineWidth = 3
-  //     // ctx!.lineJoin = "round"
-  //     // ctx!.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, -10, 0)
-  //     // ctx!.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, 0, 10)
-  //     // ctx!.fillStyle = "white"
-  //     // ctx!.fill()
-  //     // ctx!.stroke()
-  //     // ctx!.beginPath()
-  //     // ctx!.lineWidth = 3
-  //     // ctx!.lineJoin = "round"
-  //     // ctx!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0)
-  //     // ctx!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10)
-  //     // ctx!.fillStyle = "white"
-  //     // ctx!.fill()
-  //     // ctx!.stroke()
-  //     // ctx!.beginPath()
-  //     // ctx!.lineWidth = 3
-  //     // ctx!.lineJoin = "round"
-  //     // ctx!.strokeRect((dimensions.width / 4) - 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0)
-  //     // ctx!.strokeRect((dimensions.width / 4) + 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10)
-  //     // ctx!.fillStyle = "white"
-  //     // ctx!.fill()
-  //     // ctx!.stroke()
-  //     // const croppedCanvas: HTMLCanvasElement = document.createElement('canvas')
-  //     // const croppedCtx = croppedCanvas.getContext('2d')
-  //     // if (!croppedCtx) {
-  //     //   return
-  //     // }
-  //     // const canvas1 = canvasRef.current
-  //     // const ctx1 = canvas1?.getContext('2d')
-  //     // croppedCanvas.width = (dimensions.width / 4)
-  //     // croppedCanvas.height = (dimensions.height / 4)
-  //     // const imageData = ctx1!.getImageData(dimensions.width / 4 + 2, dimensions.height / 4 + 2, dimensions.width / 4 - 3, dimensions.height / 4 - 3)
-  //     // croppedCtx.putImageData(imageData, 0, 0)
-  //   }
-  // }, [dimensions, imgSrc])
-
   useEffect(() => {
     setAnnotations([])
     setTempRedPrompt(false)
@@ -232,7 +254,6 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
     setShowAllTags(false)
     setShowH(false)
     const canvas = canvasRef.current
-    console.log('canvas', canvas)
     const { width, height } = dimensions
     canvas!.width = width
     canvas!.height = height
@@ -240,7 +261,6 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
     const image = new Image()
     image.src = imgSrc
     image.onload = () => {
-      console.log('dimensions', dimensions)
       ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height)
     }
   }, [dimensions, imgSrc, clear])
@@ -265,83 +285,171 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
     image.src = imgSrc
     image.onload = () => {
       ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height)
-      if (currentControl == 'crop') {
-        ctx!.strokeStyle = 'white'
-        ctx!.setLineDash([5, 5])
-        const imgX = Math.floor(dimensions.width / 4)
-        const imgY = Math.floor(dimensions.height / 4)
-        ctx!.lineWidth = 2
-        ctx!.strokeRect(imgX, imgY, imgX, imgY)
-        console.log('imgX , imgY', imgX, imgY)
-        setCurrentCropped({
-          startingX: imgX,
-          startingY: imgY,
-          width: imgX,
-          height: imgY,
-        })
-        ctx!.setLineDash([0, 0])
+      annotations.forEach((annot: any) => {
+        const { x, y } = annot
         ctx!.beginPath()
-        ctx!.lineWidth = 3
-        ctx!.lineJoin = "round"
-        ctx!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 10, 0)
-        ctx!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 0, 10)
-        ctx!.fillStyle = "white"
+        ctx!.fillStyle = "yellow"
+        ctx!.arc(x, y, 10, 0, 2 * Math.PI)
         ctx!.fill()
-        ctx!.stroke()
+      })
+      setTag("")
+      setCurrentAnnotation({ x: 0, y: 0 })
+    }
+  },[
+  ])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const ctx = canvas!.getContext("2d")
+    const { width, height } = dimensions
+    canvas!.width = width
+    canvas!.height = height
+    const image = new Image()
+    image.src = imgSrc
+    ctx!.fillStyle = "white"
+    const textHeight = parseInt(ctx!.font, 10)
+    image.onload = () => {
+      ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height)
+      allTextTags.forEach((texts: any) => {
+        const { x, y, text, color, size } = texts
+        ctx!.fillStyle = color
+        ctx!.font = `${size || 22}px monospace`
+        console.log('texts', texts)
         ctx!.beginPath()
-        ctx!.lineWidth = 3
-        ctx!.lineJoin = "round"
-        ctx!.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, -10, 0)
-        ctx!.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, 0, 10)
-        ctx!.fillStyle = "white"
-        ctx!.fill()
-        ctx!.stroke()
-        ctx!.beginPath()
-        ctx!.lineWidth = 3
-        ctx!.lineJoin = "round"
-        ctx!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0)
-        ctx!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10)
-        ctx!.fillStyle = "white"
-        ctx!.fill()
-        ctx!.stroke()
-        ctx!.beginPath()
-        ctx!.lineWidth = 3
-        ctx!.lineJoin = "round"
-        ctx!.strokeRect((dimensions.width / 4) - 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0)
-        ctx!.strokeRect((dimensions.width / 4) + 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10)
-        ctx!.fillStyle = "white"
-        ctx!.fill()
-        ctx!.stroke()
-        const croppedCanvas: HTMLCanvasElement = document.createElement('canvas')
-        const croppedCtx = croppedCanvas.getContext('2d')
-        if (!croppedCtx) {
-          return
-        }
-        const canvas1 = canvasRef.current
-        const ctx1 = canvas1?.getContext('2d')
-        croppedCanvas.width = (dimensions.width / 4)
-        croppedCanvas.height = (dimensions.height / 4)
-        const imageData = ctx1!.getImageData(dimensions.width / 4 + 2, dimensions.height / 4 + 2, dimensions.width / 4 - 3, dimensions.height / 4 - 3)
-        croppedCtx.putImageData(imageData, 0, 0)
-      }
-      else {
-        annotations.forEach((annot: any) => {
-          const { x, y } = annot
-          ctx!.beginPath()
-          ctx!.fillStyle = "yellow"
-          ctx!.arc(x, y, 10, 0, 2 * Math.PI)
-          ctx!.fill()
-        })
-        setTag("")
-        setCurrentAnnotation({ x: 0, y: 0 })
-      }
+        ctx!.fillText(text, x + 10, y + (textHeight / 4))
+      })
+
+      // setTag("")
+      // setCurrentAnnotation({ x: 0, y: 0 })
+    }
+  }, [allTextTags])
+
+  useEffect(() => {
+    if (currentCropped.startingX < 0) {
+      setCurrentCropped((prevState) => ({
+        ...prevState,
+        startingX: 0
+      }))
+    }
+    if (currentCropped.startingY < 0) {
+      setCurrentCropped((prevState) => ({
+        ...prevState,
+        startingY: 0
+      }))
+    }
+    if (currentCropped.startingX - 1 > Math.floor(dimensions.width) - currentCropped.width) {
+      setCurrentCropped((prevState) => ({
+        ...prevState,
+        startingX: dimensions.width - currentCropped.width
+      }))
+    }
+    if (currentCropped.startingY - 1 >= dimensions.height - currentCropped.height) {
+      setCurrentCropped((prevState) => ({
+        ...prevState,
+        startingY: dimensions.height - currentCropped.height
+      }))
     }
 
-  }, [currentControl])
+    if (selectCanvas) {
+      const canvas1 = canvasRef.current
+      const ctx1 = canvas1?.getContext('2d')
+      let newCanvas = document.createElement("canvas")
+      let newCtx = newCanvas.getContext("2d")
+
+      const { width, height } = currentCropped
+
+      newCanvas.height = height
+      newCanvas.width = width
+
+      const imageData = ctx1!.getImageData(currentCropped.startingX + 2, currentCropped.startingY + 2, currentCropped.width - 3, currentCropped.height - 3)
+      newCtx!.putImageData(imageData, 0, 0)
+      let crop = newCanvas.toDataURL()
+      setCroppedImage(crop)
+    }
+  }, [currentCropped])
+
+  useEffect(() => {
+    const clone = canvasRef.current
+    setCloneRef(clone!.toDataURL())
+  }, [annotations, canvasRef])
+
+  useEffect(() => {
+    if (selectCanvas) {
+      const canvas = canvasRef.current
+      const ctx = canvas!.getContext("2d")
+
+      ctx!.strokeStyle = 'white'
+      ctx!.setLineDash([5, 5])
+      const imgX = Math.floor(dimensions.width / 4)
+      const imgY = Math.floor(dimensions.height / 4)
+      ctx!.lineWidth = 2
+      ctx!.strokeRect(imgX, imgY, imgX, imgY)
+      setCurrentCropped({
+        startingX: imgX,
+        startingY: imgY,
+        width: imgX,
+        height: imgY,
+      })
+      ctx!.setLineDash([0, 0])
+      ctx!.beginPath()
+      ctx!.lineWidth = 3
+      ctx!.lineJoin = "round"
+      ctx!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 10, 0)
+      ctx!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 0, 10)
+      ctx!.fillStyle = "white"
+      ctx!.fill()
+      ctx!.stroke()
+      ctx!.beginPath()
+      ctx!.lineWidth = 3
+      ctx!.lineJoin = "round"
+      ctx!.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, -10, 0)
+      ctx!.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, 0, 10)
+      ctx!.fillStyle = "white"
+      ctx!.fill()
+      ctx!.stroke()
+      ctx!.beginPath()
+      ctx!.lineWidth = 3
+      ctx!.lineJoin = "round"
+      ctx!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0)
+      ctx!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10)
+      ctx!.fillStyle = "white"
+      ctx!.fill()
+      ctx!.stroke()
+      ctx!.beginPath()
+      ctx!.lineWidth = 3
+      ctx!.lineJoin = "round"
+      ctx!.strokeRect((dimensions.width / 4) - 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0)
+      ctx!.strokeRect((dimensions.width / 4) + 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10)
+      ctx!.fillStyle = "white"
+      ctx!.fill()
+      ctx!.stroke()
+
+      const canvas1 = canvasRef.current
+      const ctx1 = canvas1?.getContext('2d')
+      let newCanvas = document.createElement("canvas")
+      let newCtx = newCanvas.getContext("2d")
+
+
+      newCanvas.height = imgY
+      newCanvas.width = imgY
+
+      console.log('imgx,imgY', imgX, imgY)
+
+      const imageData = ctx1!.getImageData(dimensions.width / 4 + 2, dimensions.height / 4 + 2, dimensions.width / 4 - 3, dimensions.height / 4 - 3)
+      newCtx!.putImageData(imageData, 0, 0)
+      let crop = newCanvas.toDataURL()
+      setCroppedImage(crop)
+    }
+  }, [selectCanvas])
+
+  const select = () => {
+    setselectCanvas(!selectCanvas)
+  }
 
   return (
     <div className='controls-out'>
       <Tools />
+      {/* <img src={ } /> */}
       <div className='canvas-div'>
         {currentControl === "tag-annotation" ? (
           <TagCanvas
@@ -373,18 +481,28 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
           />
         ) : currentControl === "draw" ? (
           <DrawCanvas canvasRef={canvasRef} />
-        ) : currentControl == 'crop' ? (
+        ) : currentControl === 'crop' ? (
           <Crop
-            imgSrc={imgSrc}
-            dimensions={dimensions}
-            setDimensions={setDimensions}
             canvasRef={canvasRef}
             currentCropped={currentCropped}
             setCurrentCropped={setCurrentCropped}
+            dimensions={dimensions}
+            setDimensions={setDimensions}
+            imgSrc={cloneRef}
           />
-        ) : (
-          <RegularCanvas canvasRef={canvasRef} />
-        )}
+        ) : currentControl === "text-on-image" ?
+          <TextOnImage
+            allTextTags={allTextTags}
+            tempPrompt={tempPrompt}
+            setTempPrompt={setTempPrompt}
+            canvasRef={canvasRef}
+            currentClicked={currentClicked}
+            setCurrentClicked={setCurrentClicked}
+            setTextForm={setTextForm}
+            imgSrc={imgSrc}
+          /> : (
+            <RegularCanvas canvasRef={canvasRef} />
+          )}
 
         {tempRedPrompt && (
           <>
@@ -414,6 +532,14 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
             />
           </>
         )}
+
+        {/* {
+          tempPrompt &&
+          <>
+            <TextInputPrompt position={currentClicked} />
+          </>
+
+        } */}
 
         {deleteTag && (
           <DeleteTag

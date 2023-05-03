@@ -1,3 +1,5 @@
+import React from "react"
+
 export interface controlsType {
   id: number
   name: string
@@ -27,10 +29,7 @@ export interface DrawProps {
   canvasRef: React.RefObject<HTMLCanvasElement>
 }
 export interface CropProps {
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  currentCropped: any,
-  setCurrentCropped: any,
-  dimensions: any, setDimensions: any, imgSrc: any
+  canvasRef: React.RefObject<HTMLCanvasElement>, currentCropped: any, setCurrentCropped: any, dimensions: any, setDimensions: any, imgSrc: any, mouseLeave: any
 }
 export interface TagProps {
   canvasRef: React.RefObject<HTMLCanvasElement>

@@ -1,12 +1,14 @@
 import { useRef, useState } from "react"
 import { CropProps, DrawProps, TagProps } from "../../types"
-import { mouseDown, mouseMove, mouseUP } from "../crop"
+import { mouseDown, mouseLeave, mouseMove, mouseUP } from "../crop"
+import { clickHandler } from "../controls/textOnImage"
 
 export const TagCanvas = ({
   canvasRef,
   handleTagClick,
   handleTagMouseMove,
 }: TagProps) => {
+
   return (
     <>
       <canvas
@@ -21,7 +23,14 @@ export const TagCanvas = ({
     </>
   )
 }
+
 export const Crop = ({ canvasRef, currentCropped, setCurrentCropped, dimensions, setDimensions, imgSrc }: CropProps) => {
+
+  const canvas = canvasRef.current
+
+  if (!canvas) {
+    return
+  }
 
   const [difference, setDifference] = useState({
     width: 0,
@@ -38,7 +47,18 @@ export const Crop = ({ canvasRef, currentCropped, setCurrentCropped, dimensions,
 
   const imgRef = useRef<HTMLImageElement>(null)
 
-  console.log('canvasRef-1', canvasRef)
+  let mouseUp = {
+    difference,
+    setDifference,
+    currentCropped,
+    setCurrentCropped,
+    croppingNode,
+    setIsResize,
+    isDragging,
+    startingNode,
+    canvasRef,
+    imgRef
+  }
 
 
   return (
@@ -70,7 +90,6 @@ export const Crop = ({ canvasRef, currentCropped, setCurrentCropped, dimensions,
           dimensions,
           imgRef,
         )}
-        // onMouseLeave={mouseLeave}
         onMouseUp={(event) => mouseUP(
           event,
           difference,
@@ -84,7 +103,13 @@ export const Crop = ({ canvasRef, currentCropped, setCurrentCropped, dimensions,
           setIsDragging,
           startingNode,
           canvasRef,
-          imgRef,
+          imgRef
+        )}
+        onMouseLeave={(event) => mouseLeave(
+          event,
+          setIsDragging,
+          setIsResize,
+          mouseUp = mouseUp
         )}
       />
       <img src={imgSrc} alt="uploaded" height={dimensions.height} width={dimensions.width} ref={imgRef} style={{ display: 'none' }} />
@@ -175,5 +200,41 @@ export const RegularCanvas = ({
       />
 
     </>
+  )
+}
+
+
+export const TextOnImage = ({ canvasRef, tempPrompt, setTempPrompt, currentClicked, setCurrentClicked, setTextForm, imgSrc, allTextTags }: any) => {
+
+
+
+  return (
+    <div>
+      <canvas
+        ref={canvasRef}
+        style={{
+          borderRadius: "7px",
+          boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
+        }}
+        onClick={(event) => {
+          clickHandler(
+            event,
+            canvasRef,
+            currentClicked,
+            setTempPrompt,
+            setCurrentClicked,
+            imgSrc,
+            allTextTags
+          )
+          setTextForm({
+            text: "",
+            color: "",
+            size: ""
+          })
+        }}
+      // onClick={handleTagClick}
+      // onMouseMove={handleTagMouseMove}
+      />
+    </div>
   )
 }

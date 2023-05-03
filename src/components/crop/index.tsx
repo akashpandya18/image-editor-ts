@@ -1,7 +1,8 @@
 // import React, { useEffect, useRef, useState } from 'react'
 // import { CropImageProps, Cropped, Props } from "../../types"
 
-import { CropImageProps, Cropped, Props, cropingImageProps, differenceProps, startingNodeProps } from "../../types"
+import React from "react"
+import { CropImageProps, Cropped, differenceProps, startingNodeProps } from "../../types"
 
 // const ImageCropper = (props: Props) => {
 
@@ -127,7 +128,6 @@ export const mouseDown = (
 ) => {
   const mouseX = event.nativeEvent.offsetX
   const mouseY = event.nativeEvent.offsetY
-  console.log('called', event)
 
   if (
     mouseX > currentCropped.startingX - 5 &&
@@ -205,13 +205,10 @@ export const mouseDown = (
     setIsResize(false)
   }
 
-  console.log('event', event)
-
   const x = event.nativeEvent.offsetX
   const y = event.nativeEvent.offsetY
   setstartingNode({ x: x, y: y })
 
-  console.log('mouse down')
 }
 
 // useEffect(() => {
@@ -342,7 +339,6 @@ export const mouseMove = (
       movedArea.yMoved = 0
     }
     if (movedArea.yMoved + currentCropped.height >= dimensions.height) {
-      console.log('movedArea', movedArea)
       movedArea.yMoved = dimensions.height - currentCropped.height - 2
     }
     if (movedArea.xMoved + currentCropped.width >= dimensions.width) {
@@ -576,30 +572,14 @@ const cropImage = (props: CropImageProps) => {
   const {
     canvasRef,
     imgRef,
+    startingX,
+    startingY,
+    totalWidth,
+    totalHeight,
   } = props
 
-  const canvas = canvasRef.current
-  const ctx = canvas!.getContext('2d')
-  const img = imgRef.current
 
-  if (!img || !ctx) {
-    return
-  }
-
-  // const croppedCanvas: any = canvasPreviewRef.current
-  // const croppedCtx = croppedCanvas!.getContext('2d')
-
-  // if (!croppedCtx) {
-  //   return
-  // }
-
-  // croppedCanvas.width = totalWidth
-  // croppedCanvas.height = totalHeight
-
-  // const imageData = ctx!.getImageData(startingX < 0 ? 5 : startingX + 2, startingY < 0 ? 5 : startingY + 2, totalWidth - 3, totalHeight - 3)
-  // croppedCtx.putImageData(imageData, 0, 0)
 }
-
 export const mouseUP = (
   event: React.MouseEvent<HTMLCanvasElement>,
   difference: differenceProps,
@@ -751,6 +731,7 @@ export const mouseUP = (
     setIsResize(false)
   }
 
+
   cropImage({
     imgRef: imgRef,
     canvasRef: canvasRef,
@@ -761,12 +742,36 @@ export const mouseUP = (
   })
 }
 
-// const mouseLeave = (event: React.MouseEvent<HTMLCanvasElement>) => {
-//   setIsDragging(false)
-//   setIsResize(false)
-//   document.body.style.setProperty('cursor', 'default')
-//   mouseUP(event)
-// }
+export const mouseLeave = (event: React.MouseEvent<HTMLCanvasElement>, setIsDragging: any, setIsResize: any, mouseUp: any) => {
+
+  const {
+    difference,
+    setDifference,
+    currentCropped,
+    setCurrentCropped,
+    croppingNode,
+    isResize,
+    isDragging,
+    startingNode,
+    canvasRef,
+    imgRef } = mouseUp
+  setIsDragging(false)
+  setIsResize(false)
+  document.body.style.setProperty('cursor', 'default')
+  mouseUP(event,
+    difference,
+    setDifference,
+    currentCropped,
+    setCurrentCropped,
+    croppingNode,
+    isResize,
+    setIsResize,
+    isDragging,
+    setIsDragging,
+    startingNode,
+    canvasRef,
+    imgRef)
+}
 
 // return (
 //   <React.Fragment>

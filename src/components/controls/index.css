@@ -94,10 +94,18 @@ span {
   border-radius: 7px;
   padding: 1rem;
 }
+
+.buttondiv-main {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
 .button-div {
   display: flex;
   gap: 10px;
-  margin-top: 10px;
 }
 
 .flip-button {
@@ -109,4 +117,68 @@ span {
   cursor: pointer;
   border: none;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.2);
+}
+.flip-button-sure {
+  display: block;
+  border-radius: 7px;
+  background-color: #2294fb;
+  color: #fff;
+  padding: 0.7rem;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.089);
+}
+
+.tag-main {
+  max-height: 300px;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  background-color: #f1f1f1;
+  border-radius: 10px;
+}
+
+.tag-main::-webkit-scrollbar {
+  display: none;
+}
+
+/* .tag-head {
+  font-size: 24px;
+  color: #2a2a2a;
+  font-weight: 600;
+  text-align: center;
+  margin: 0 0 0.5rem 0;
+} */
+
+.tag-ol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  list-style: disc;
+}
+
+.list-tags {
+  font-size: 20px;
+  color: #505050;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+select {
+  appearance: none;
+  background: white;
+  font-size: 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16px' height='16px' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M6.1018 8C5.02785 8 4.45387 9.2649 5.16108 10.0731L10.6829 16.3838C11.3801 17.1806 12.6197 17.1806 13.3169 16.3838L18.8388 10.0731C19.5459 9.2649 18.972 8 17.898 8H6.1018Z' fill='%23212121'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  border-radius: 2px;
+  padding: 0.25rem 2rem 0.25rem 0.75rem;
+}
+select {
+  width: 100px;
+  height: 37px;
+  padding: 4px;
+  line-height: 32px;
+  text-indent: 4px;
+  cursor: pointer;
 }
