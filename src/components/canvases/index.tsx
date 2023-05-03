@@ -1,14 +1,11 @@
-import { useRef, useState } from "react"
-import { CropProps, DrawProps, TagProps } from "../../types"
-import { mouseDown, mouseLeave, mouseMove, mouseUP } from "../crop"
-import { clickHandler } from "../controls/textOnImage"
+import React, { useState } from "react";
+import { DrawProps, TagProps } from "../../types";
 
 export const TagCanvas = ({
   canvasRef,
   handleTagClick,
   handleTagMouseMove,
 }: TagProps) => {
-
   return (
     <>
       <canvas

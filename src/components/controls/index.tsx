@@ -98,15 +98,10 @@ export default function Controls({
   const nanoid = customAlphabet("1234567890abcdef", 10)
   const id = nanoid(5)
 
+  const nanoid = customAlphabet("1234567890abcdef", 10);
+  const id = nanoid(5);
 
-
-
-  // const handleUpdate = () => {
-  //   console.log('data updates')
-  // }
-
-
-  function Tools(): JSX.Element {
+  function Tools() {
     return (
       <>
         <div className='controls-main'>
