@@ -1,5 +1,5 @@
-import { Draw, ScreenShot, Tornado } from "../../../assets/icons";
-import { mainCanvasControlProps } from "../../../types";
+import { Draw, ScreenShot, Tornado } from "../../../assets/icons"
+import { mainCanvasControlProps } from "../../../types"
 
 interface props {
   clearFunction: (e: any) => void
@@ -49,24 +49,24 @@ export default function MainCanvasControls({
                   onClick={(e: any) => {
                     switch (item.type) {
                       case "clear":
-                        clearFunction(e);
-                        break;
+                        clearFunction(e)
+                        break
                       case "show-hide-tags":
-                        showHideFunction();
-                        break;
+                        showHideFunction()
+                        break
                       case "screenshot":
-                        screenShotFunction(e);
-                        break;
+                        screenShotFunction(e)
+                        break
                       default:
-                        console.log("no case");
-                        break;
+                        console.log("no case")
+                        break
                     }
                   }}
                 >
                   {item.icon}
                 </button>
               </div>
-            );
+            )
           }
         )}
       </div>

@@ -1,7 +1,7 @@
-import React, { useState, useRef } from "react";
-import {CropProps, DrawProps, TagProps} from "../../types";
-import {mouseDown, mouseLeave, mouseMove, mouseUP} from "../crop";
-import {clickHandler} from "../controls/textOnImage";
+import React, { useState, useRef } from "react"
+import { CropProps, DrawProps, TagProps, TextOnImageProps } from "../../types"
+import { mouseDown, mouseLeave, mouseMove, mouseUP } from "../crop"
+import { clickHandler, handleMouseDown, handleMouseMove } from "../controls/textOnImage"
 
 export const TagCanvas = ({
   canvasRef,
@@ -23,12 +23,12 @@ export const TagCanvas = ({
   )
 }
 
-export const Crop = ({ canvasRef, currentCropped, setCurrentCropped, dimensions, setDimensions, imgSrc }: CropProps) => {
+export const Crop = ({ canvasRef, currentCropped, setCurrentCropped, dimensions, setDimensions, imgSrc }: CropProps): JSX.Element => {
 
   const canvas = canvasRef.current
 
   if (!canvas) {
-    return
+    return <></>
   }
 
   const [difference, setDifference] = useState({
@@ -105,7 +105,7 @@ export const Crop = ({ canvasRef, currentCropped, setCurrentCropped, dimensions,
           canvasRef,
           imgRef
         )}
-        onMouseLeave={(event) => mouseLeave(
+        onMouseLeave={(event: any) => mouseLeave(
           event,
           setIsDragging,
           setIsResize,
@@ -198,13 +198,24 @@ export const RegularCanvas = ({
           boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
         }}
       />
-
     </>
   )
 }
 
 
-export const TextOnImage = ({ canvasRef, tempPrompt, setTempPrompt, currentClicked, setCurrentClicked, setTextForm, imgSrc, allTextTags }: any) => {
+export const TextOnImages = ({
+  canvasRef,
+  tempPrompt,
+  setTempPrompt,
+  currentClicked,
+  setCurrentClicked,
+  setTextForm,
+  imgSrc,
+  allTextTags,
+  dimensions }: TextOnImageProps) => {
+
+  const [isDraggingText, setIsDraggingText] = useState<boolean>(false)
+  const [draggingText, setDraggingText] = useState<number>(0)
 
   return (
     <div>
@@ -222,16 +233,46 @@ export const TextOnImage = ({ canvasRef, tempPrompt, setTempPrompt, currentClick
             setTempPrompt,
             setCurrentClicked,
             imgSrc,
-            allTextTags
+            allTextTags,
+            isDraggingText,
+            setIsDraggingText,
+            draggingText,
+            setDraggingText
           )
           setTextForm({
             text: "",
             color: "",
-            size: ""
+            size: 0
           })
         }}
-      // onClick={handleTagClick}
-      // onMouseMove={handleTagMouseMove}
+        // onClick={handleTagClick}
+        onMouseMove={(event) => {
+
+          handleMouseMove(
+            event,
+            isDraggingText,
+            setIsDraggingText,
+            draggingText,
+            setDraggingText,
+            canvasRef,
+            allTextTags,
+            dimensions
+          )
+        }}
+        onMouseDown={(event) => {
+          handleMouseDown(
+            event,
+            isDraggingText,
+            setIsDraggingText,
+            draggingText,
+            setDraggingText,
+            canvasRef,
+            allTextTags
+          )
+
+        }}
+      // onMouseLeave={""}
+      // onMouseUp={""}
       />
     </div>
   )

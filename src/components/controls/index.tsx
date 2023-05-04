@@ -1,7 +1,7 @@
 import { customAlphabet } from "nanoid"
-import { createContext, useEffect, useMemo, useRef, useState } from "react"
+import { FormEvent, createContext, useEffect, useMemo, useRef, useState } from "react"
 import { HideTags, ShowTags } from "../../assets/icons"
-import { Cropped, annotation, controlsProps, controlsType } from "../../types"
+import { Cropped, TextObjectProps, annotation, controlsProps, controlsType, textFormProps } from "../../types"
 import { handleToolClick, tools } from "../../utils/data"
 
 import {
@@ -17,7 +17,7 @@ import {
 import { Button } from "./buttons"
 import "./index.css"
 
-import { Crop, DrawCanvas, RegularCanvas, TagCanvas, TextOnImage } from "../canvases"
+import { Crop, DrawCanvas, RegularCanvas, TagCanvas, TextOnImages } from "../canvases"
 import { flipHorizontally, flipVertically } from "../flip"
 import TagAnnotationForm from "../forms/TagAnnotForm"
 import TempRedTag from "../prompts/ConfirmSubmitTag"
@@ -69,7 +69,7 @@ export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Elem
   const [tempPrompt, setTempPrompt] = useState(false)
   const [currentClicked, setCurrentClicked] = useState({
     x: 0,
-    y: 0
+    y: 0,
   })
   // const [name, setName] = useState("Mks");
 
@@ -84,7 +84,7 @@ export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Elem
   const [TextForm, setTextForm] = useState({
     text: "",
     color: "",
-    size: ""
+    size: 0
   })
   const [lineWidth, setLineWidth] = useState<number>(4)
   const [lineColor, setLineColor] = useState<string>("#000")
@@ -134,7 +134,7 @@ export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Elem
     )
   }
 
-  const demo = (textForm: any) => {
+  const demo = (textForm: textFormProps) => {
     textOnChangeHandler1(
       textForm,
       canvasRef,
@@ -153,7 +153,7 @@ export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Elem
           <TextOnImageControl
             tempPrompt={tempPrompt}
             textOnChangeHandler={demo}
-            onSubmit={(event: any) => submitHandler(
+            onSubmit={(event: FormEvent<HTMLFormElement>) => submitHandler(
               event,
               allTextTags,
               setAllTextTags,
@@ -235,7 +235,6 @@ export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Elem
     canvas!.width = width
     canvas!.height = height
     const ctx = canvas!.getContext("2d")
-    console.log('currentCropped', currentCropped)
     const image = new Image()
     image.src = imgSrc
     image.onload = () => {
@@ -287,16 +286,13 @@ export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Elem
     const textHeight = parseInt(ctx!.font, 10)
     image.onload = () => {
       ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height)
-      allTextTags.forEach((texts: any) => {
+      allTextTags.forEach((texts: TextObjectProps) => {
         const { x, y, text, color, size } = texts
         ctx!.fillStyle = color
         ctx!.font = `${size || 22}px monospace`
         ctx!.beginPath()
         ctx!.fillText(text, x + 10, y + (textHeight / 4))
       })
-
-      // setTag("")
-      // setCurrentAnnotation({ x: 0, y: 0 })
     }
   }, [allTextTags])
 
@@ -481,7 +477,7 @@ export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Elem
                 setDeletePos
               )
             }
-            handleTagMouseMove={(event: any) =>
+            handleTagMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) =>
               handleCanvasMouseMove(
                 event,
                 canvasRef,
@@ -504,7 +500,7 @@ export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Elem
             imgSrc={imgSrc}
           />
         ) : currentControl === "text-on-image" ?
-          <TextOnImage
+          <TextOnImages
             allTextTags={allTextTags}
             tempPrompt={tempPrompt}
             setTempPrompt={setTempPrompt}
@@ -513,6 +509,7 @@ export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Elem
             setCurrentClicked={setCurrentClicked}
             setTextForm={setTextForm}
             imgSrc={imgSrc}
+            dimensions={dimensions}
           /> : (
             <RegularCanvas canvasRef={canvasRef} />
           )}

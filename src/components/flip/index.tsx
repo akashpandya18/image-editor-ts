@@ -16,8 +16,8 @@ export const flipHorizontally = (
   LoadImageFlip(ctx, canvasRef, imgSrc, annotations)
 }
 export const flipVertically = (
-  canvasRef: any,
-  imgSrc: any,
+  canvasRef: React.RefObject<HTMLCanvasElement>,
+  imgSrc: string,
   annotations: annotation[]
 ) => {
   const canvas = canvasRef.current
@@ -32,8 +32,8 @@ export const flipVertically = (
 }
 export const LoadImageFlip = (
   ctx: CanvasRenderingContext2D,
-  canvasRef: any,
-  imgSrc: any,
+  canvasRef: React.RefObject<HTMLCanvasElement>,
+  imgSrc: string,
   annotations: annotation[]
 ) => {
   const img = new Image()

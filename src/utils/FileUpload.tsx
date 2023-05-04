@@ -12,7 +12,7 @@ const FileUpload = ({ onSelectFile }: props) => {
     <div>
       <button
         className='upload-file-btn'
-        onClick={() => fileInputRef.current && fileInputRef.current.click()}
+        onClick={() => fileInputRef.current && fileInputRef.current?.click()}
       >
         <svg
           className='upload-file-svg'

@@ -1,7 +1,15 @@
 import React from 'react'
 import { Close } from "../../assets/icons"
 
-const TextOnImageForm = ({ position, onSubmit }: any) => {
+interface positionProps {
+    position: {
+        x: number
+        y: number
+    }
+    onSubmit: any
+}
+
+const TextOnImageForm = ({ position, onSubmit }: positionProps) => {
     return (
         <div style={{
             position: "absolute",

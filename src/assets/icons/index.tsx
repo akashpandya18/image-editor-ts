@@ -21,8 +21,8 @@ export const Tornado = () => {
         />
       </svg>
     </>
-  );
-};
+  )
+}
 export const Close = () => {
   return (
     <>
@@ -47,8 +47,8 @@ export const Close = () => {
         </defs>
       </svg>
     </>
-  );
-};
+  )
+}
 export const Check = () => {
   return (
     <>
@@ -72,8 +72,8 @@ export const Check = () => {
         </defs>
       </svg>
     </>
-  );
-};
+  )
+}
 // export const RotateLeft = () => {
 //   return (
 //     <>
@@ -135,8 +135,8 @@ export const RotateRight = () => {
         </defs>
       </svg>
     </>
-  );
-};
+  )
+}
 export const Flip = () => {
   return (
     <>
@@ -162,8 +162,8 @@ export const Flip = () => {
         </defs>
       </svg>
     </>
-  );
-};
+  )
+}
 export const BrightnessUp = () => {
   return (
     <>
@@ -182,8 +182,8 @@ export const BrightnessUp = () => {
         />
       </svg>
     </>
-  );
-};
+  )
+}
 // export const BrightnessDown = () => {
 //   return (
 //     <>
@@ -230,8 +230,8 @@ export const Crop = () => {
         </defs>
       </svg>
     </>
-  );
-};
+  )
+}
 export const Blur = () => {
   return (
     <>
@@ -256,8 +256,8 @@ export const Blur = () => {
         </defs>
       </svg>
     </>
-  );
-};
+  )
+}
 export const Zoom = () => {
   return (
     <>
@@ -283,8 +283,8 @@ export const Zoom = () => {
         </defs>
       </svg>
     </>
-  );
-};
+  )
+}
 export const Tag = () => {
   return (
     <>
@@ -313,8 +313,8 @@ export const Tag = () => {
         </defs>
       </svg>
     </>
-  );
-};
+  )
+}
 export const TextOnImage = () => {
   return (
     <>
@@ -335,8 +335,8 @@ export const TextOnImage = () => {
         </g>
       </svg>
     </>
-  );
-};
+  )
+}
 export const ShowTags = () => {
   return (
     <>
@@ -362,8 +362,8 @@ export const ShowTags = () => {
         </defs>
       </svg>
     </>
-  );
-};
+  )
+}
 export const HideTags = () => {
   return (
     <>
@@ -389,8 +389,8 @@ export const HideTags = () => {
         </defs>
       </svg>
     </>
-  );
-};
+  )
+}
 export const ScreenShot = () => {
   return (
     <>
@@ -425,8 +425,8 @@ export const ScreenShot = () => {
         </defs>
       </svg>
     </>
-  );
-};
+  )
+}
 export const Draw = () => {
   return (
     <>
@@ -455,8 +455,8 @@ export const Draw = () => {
         </defs>
       </svg>
     </>
-  );
-};
+  )
+}
 export const More = () => {
   return (
     <>
@@ -479,8 +479,8 @@ export const More = () => {
         </defs>
       </svg>
     </>
-  );
-};
+  )
+}
 export const FlipVertical = () => {
   return (
     <>
@@ -515,8 +515,8 @@ export const FlipVertical = () => {
         </defs>
       </svg>
     </>
-  );
-};
+  )
+}
 export const FlipHorizontal = () => {
   return (
     <>
@@ -542,5 +542,5 @@ export const FlipHorizontal = () => {
         </defs>
       </svg>
     </>
-  );
-};
+  )
+}

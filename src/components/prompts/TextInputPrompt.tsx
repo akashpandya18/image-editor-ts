@@ -1,6 +1,5 @@
 interface props {
     position: { x: number; y: number }
-    // TextForm: any
 }
 
 const TextInputPrompt = ({ position }: props) => {

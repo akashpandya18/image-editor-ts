@@ -121,7 +121,7 @@ import { CropImageProps, Cropped, differenceProps, startingNodeProps } from "../
 export const mouseDown = (
   event: React.MouseEvent<HTMLCanvasElement>,
   currentCropped: Cropped,
-  setCroppingNode: any,
+  setCroppingNode: React.Dispatch<React.SetStateAction<number>>,
   setIsResize: React.Dispatch<React.SetStateAction<boolean>>,
   setIsDragging: React.Dispatch<React.SetStateAction<boolean>>,
   setstartingNode: React.Dispatch<React.SetStateAction<startingNodeProps>>,
@@ -243,8 +243,6 @@ export const saveImage = (setImgSrc: any, canvasRef: any, currentCropped: any) =
     const croppedDataUrl = dummyCanvas.toDataURL()
     setImgSrc(croppedDataUrl)
 
-
-    console.log('currentCropped', currentCropped)
   }
 }
 
@@ -286,10 +284,10 @@ export const mouseMove = (
   isResize: boolean,
   isDragging: boolean,
   startingNode: startingNodeProps,
-  canvasRef: any,
-  dimensions: any,
+  canvasRef: React.RefObject<HTMLCanvasElement>,
+  dimensions: { height: number; width: number },
   imgRef: any,
-  imgSrc: any
+  imgSrc: string
 ) => {
   const x = event.nativeEvent.offsetX
   const y = event.nativeEvent.offsetY
@@ -360,11 +358,11 @@ export const mouseMove = (
   if (isDragging) {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx!.clearRect(0, 0, canvas!.width, canvas!.height)
     const image = new Image()
     image.src = images
 
-    ctx.drawImage(image, 0, 0, dimensions.width, dimensions.height)
+    ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height)
     ctx!.strokeStyle = 'white'
     ctx!.setLineDash([5, 5])
     ctx!.lineWidth = 2
@@ -640,7 +638,7 @@ export const mouseUP = (
   isDragging: boolean,
   setIsDragging: React.Dispatch<React.SetStateAction<boolean>>,
   startingNode: startingNodeProps,
-  canvasRef: any,
+  canvasRef: React.RefObject<HTMLCanvasElement>,
   imgRef: any,
 ) => {
   const x = event.nativeEvent.offsetX
