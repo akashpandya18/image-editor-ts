@@ -117,6 +117,7 @@ span {
   border: none;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.2);
 }
+
 .flip-button-sure {
   display: block;
   border-radius: 7px;
@@ -173,11 +174,29 @@ select {
   border-radius: 2px;
   padding: 0.25rem 2rem 0.25rem 0.75rem;
 }
+
 select {
   width: 100px;
   height: 37px;
   padding: 4px;
   line-height: 32px;
   text-indent: 4px;
+  cursor: pointer;
+}
+
+.save-image {
+  height: 33px;
+  cursor: pointer;
+  background-color: #2294fb;
+  border: none;
+  border-radius: 5px
+}
+
+:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button {
   cursor: pointer;
 }

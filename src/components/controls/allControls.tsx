@@ -4,6 +4,7 @@ import { controlsType, propsFlip, propsMore, propsTag } from "../../types"
 import { controls } from "../../utils/data"
 import "./index.css"
 import UniversalSlider from "./sliders"
+import { saveImage } from "../crop"
 
 export function TagControls({ annotations }: propsTag) {
   // const messageRef = useRef<HTMLDivElement>(null);
@@ -99,14 +100,14 @@ export function DrawControl() {
 }
 export const TextOnImageControl = ({ tempPrompt, textOnChangeHandler, onSubmit, allTextTags, setTempPrompt, value, TextForm, setTextForm, canvasRef }: any) => {
 
-  const [formData, setFormData] = useState({ text: '', size: '16', color: '' })
+  const [formData, setFormData] = useState({ text: '', size: '32', color: '#ffffff' })
 
+  let data = {
+    text: "",
+    color: "",
+    size: ""
+  }
   const handleInputChange = (event: any) => {
-    let data = {
-      text: "",
-      color: "",
-      size: ""
-    }
     const { name, value } = event.target
     data = {
       ...formData,
@@ -226,18 +227,11 @@ export const TextOnImageControl = ({ tempPrompt, textOnChangeHandler, onSubmit, 
           </div>
         )
       }
-      {/* {allTextTags.map((e: any, index: number) => {
-        console.log('e', e)
-        return (
-          <div key={index}>
-            {e.text}
-          </div>
-        )
-      })} */}
     </>
   )
 }
-export function CropControl({ select, img }: any) {
+export function CropControl({ select, img, setImgSrc, canvasRef, currentCropped, selectCanvas, setselectCanvas }: any) {
+  console.log(canvasRef, "any")
   return (
     <>
       <h3>Crop</h3>
@@ -245,23 +239,40 @@ export function CropControl({ select, img }: any) {
         display: 'flex',
         flexDirection: 'column'
       }}>
-        <button style={{
-          cursor: "pointer",
-          backgroundColor: "black",
-          color: "white",
-          paddingBlock: "7px",
-          paddingInline: "15px",
-          marginBottom: "10px",
-          width: "fit-content"
-        }} onClick={() => select()}>Select rectangle</button>
-        <img src={img}
+        <div style={{
+          display: "flex",
+          columnGap: "20px"
+        }}>
+          <button
+            disabled={selectCanvas}
+            style={{
+              backgroundColor: "black",
+              color: "white",
+              paddingBlock: "7px",
+              paddingInline: "15px",
+              marginBottom: "10px",
+              width: "fit-content"
+            }} onClick={() => select()}>Select rectangle</button>
+          <button
+            className="save-image"
+            disabled={currentCropped.width <= 0 && currentCropped.height <= 0}
+            type="button"
+            onClick={() => {
+              saveImage(setImgSrc, canvasRef, currentCropped)
+            }}
+          >
+            <Check />
+          </button>
+
+        </div>
+        {img !== "data:," && <img src={img}
           style={{
             maxWidth: '400px',
             maxHeight: '223px',
             objectFit: 'contain'
           }}
-
         />
+        }
       </div>
     </>
   )

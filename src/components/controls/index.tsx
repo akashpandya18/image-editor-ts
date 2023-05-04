@@ -43,9 +43,7 @@ export const TextContext = createContext({
 })
 
 
-export default function Controls({
-  imgSrc,
-}: controlsProps): JSX.Element {
+export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Element {
   const [annotations, setAnnotations] = useState<annotation[]>([])
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
   const [currentControl, setCurrentControl] =
@@ -143,26 +141,6 @@ export default function Controls({
       currentClicked,
       imgSrc
     )
-    // console.log('textForm', textForm)
-
-    // let newCode = { ...textForm }
-
-    // clo
-
-    // sette
-    // setTextForm({
-    //   text: textForm.text,
-    //   color: textForm.color,
-    //   size: textForm.size
-    // })
-
-    // setTextForm({
-    //   text: textForm.text,
-    //   color: textForm.color,
-    //   size: textForm.size
-    // })
-
-    // setText(textForm.text)
 
   }
 
@@ -190,7 +168,7 @@ export default function Controls({
             canvasRef={canvasRef}
           />
         ) : currentControl === "crop" ? (
-          <CropControl img={croppedImage} select={select} />
+          <CropControl img={croppedImage} select={select} setImgSrc={setImgSrc} canvasRef={canvasRef} currentCropped={currentCropped} selectCanvas={selectCanvas} setselectCanvas={setselectCanvas} />
         ) : currentControl === "flip" ? (
           <FlipControl
             flipHorizontally={() =>
@@ -242,6 +220,12 @@ export default function Controls({
     setTag("")
     setDeleteTag(false)
     setDeletePos({ xN: 0, yN: 0 })
+    setCurrentCropped({
+      height: 0,
+      startingX: 0,
+      startingY: 0,
+      width: 0
+    })
     setDeleteTagId("")
     setShowAllTags(false)
     setShowH(false)
@@ -251,6 +235,7 @@ export default function Controls({
     canvas!.width = width
     canvas!.height = height
     const ctx = canvas!.getContext("2d")
+    console.log('currentCropped', currentCropped)
     const image = new Image()
     image.src = imgSrc
     image.onload = () => {
@@ -288,8 +273,7 @@ export default function Controls({
       setTag("")
       setCurrentAnnotation({ x: 0, y: 0 })
     }
-  }, [
-  ])
+  }, [])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -307,7 +291,6 @@ export default function Controls({
         const { x, y, text, color, size } = texts
         ctx!.fillStyle = color
         ctx!.font = `${size || 22}px monospace`
-        console.log('texts', texts)
         ctx!.beginPath()
         ctx!.fillText(text, x + 10, y + (textHeight / 4))
       })
@@ -343,23 +326,62 @@ export default function Controls({
       }))
     }
 
+    if (currentCropped.width < 0) {
+      setCurrentCropped((precState) => ({
+        ...precState,
+        startingX: precState.startingX - Math.abs(precState.width),
+        width: Math.abs(precState.width)
+      }))
+    }
+    if (currentCropped.height < 0) {
+      setCurrentCropped((precState) => ({
+        ...precState,
+        startingY: precState.startingY - Math.abs(precState.height),
+        height: Math.abs(precState.height)
+      }))
+    }
+
+    if (currentCropped.startingX == 0 && currentCropped.startingY == 0 && currentCropped.height == 0 && currentCropped.width == 0) {
+      setselectCanvas(false)
+    } else {
+      setselectCanvas(true)
+    }
+
     if (selectCanvas) {
       const canvas1 = canvasRef.current
       const ctx1 = canvas1?.getContext('2d')
       let newCanvas = document.createElement("canvas")
       let newCtx = newCanvas.getContext("2d")
-
       const { width, height } = currentCropped
-
       newCanvas.height = height
       newCanvas.width = width
-
       const imageData = ctx1!.getImageData(currentCropped.startingX + 2, currentCropped.startingY + 2, currentCropped.width - 3, currentCropped.height - 3)
       newCtx!.putImageData(imageData, 0, 0)
       let crop = newCanvas.toDataURL()
       setCroppedImage(crop)
     }
   }, [currentCropped])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const ctx = canvas!.getContext("2d")
+    const { width, height } = dimensions
+    canvas!.width = width
+    canvas!.height = height
+    const image = new Image()
+    image.src = imgSrc
+
+    image.onload = () => {
+      ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height)
+    }
+    setCurrentCropped({
+      height: 0,
+      startingX: 0,
+      startingY: 0,
+      width: 0
+    })
+  }, [currentControl])
+
 
   useEffect(() => {
     const clone = canvasRef.current
@@ -426,8 +448,6 @@ export default function Controls({
       newCanvas.height = imgY
       newCanvas.width = imgY
 
-      console.log('imgx,imgY', imgX, imgY)
-
       const imageData = ctx1!.getImageData(dimensions.width / 4 + 2, dimensions.height / 4 + 2, dimensions.width / 4 - 3, dimensions.height / 4 - 3)
       newCtx!.putImageData(imageData, 0, 0)
       let crop = newCanvas.toDataURL()
@@ -481,7 +501,7 @@ export default function Controls({
             setCurrentCropped={setCurrentCropped}
             dimensions={dimensions}
             setDimensions={setDimensions}
-            imgSrc={cloneRef}
+            imgSrc={imgSrc}
           />
         ) : currentControl === "text-on-image" ?
           <TextOnImage
@@ -560,7 +580,7 @@ export default function Controls({
         {showH && <ShowTagOnHover position={hoverPos} tag={hoverTag} />}
 
         <MainCanvasControls
-          clearFunction={() => setClear(!clear)}
+          clearFunction={() => { setClear(!clear) }}
           showHideFunction={() =>
             showAllTags
               ? hideTags(setShowAllTags, imgSrc, canvasRef, annotations)

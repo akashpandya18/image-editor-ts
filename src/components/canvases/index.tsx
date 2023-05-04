@@ -88,6 +88,7 @@ export const Crop = ({ canvasRef, currentCropped, setCurrentCropped, dimensions,
           canvasRef,
           dimensions,
           imgRef,
+          imgSrc
         )}
         onMouseUp={(event) => mouseUP(
           event,

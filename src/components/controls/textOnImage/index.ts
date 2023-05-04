@@ -7,8 +7,6 @@ export const clickHandler = (
   imgSrc: any,
   allTextTags: any,
 ) => {
-  // console.log(event, canvasRef)
-
   const x = event.nativeEvent.offsetX
   const y = event.nativeEvent.offsetY
   const canvas = canvasRef.current
@@ -29,12 +27,7 @@ export const clickHandler = (
     )
   })
 
-  console.log(clickrect, 'is clicking')
-  // console.log('clickedDot', clickedDot)
-
   if (!clickrect) {
-    console.log('clickrect', clickrect)
-
     ctx!.strokeStyle = 'yellow'
     ctx!.setLineDash([10, 10])
     ctx!.lineWidth = 2
@@ -69,7 +62,6 @@ export const textOnChangeHandler1 = (
   imgSrc: any,
 ) => {
   const { text, color, size } = textForm
-  // console.log('textForm', textForm)
   const canvas = canvasRef.current
   const ctx = canvas!.getContext('2d')
   ctx!.strokeStyle = 'yellow'
@@ -83,6 +75,8 @@ export const textOnChangeHandler1 = (
 
   ctx.fillStyle = color
   ctx.strokeStyle = 'gray'
+
+  console.log('size', size)
 
   ctx.font = `${size || 22}px monospace`
 
@@ -148,5 +142,4 @@ export const submitHandler = (
     },
   ])
   setTempPrompt(false)
-  console.log('tempPrompt', tempPrompt)
 }

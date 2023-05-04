@@ -13,8 +13,14 @@ export interface annotation {
   tag: string
 }
 export interface controlsProps {
-  imgSrc: string;
-  setImgSrc: React.Dispatch<React.SetStateAction<string>>;
+  imgSrc: string,
+  setImgSrc: any
+}
+export interface controlsType {
+  id: number
+  name: string
+  type: string
+  icon: any
 }
 export interface DrawProps {
   canvasRef: React.RefObject<HTMLCanvasElement>

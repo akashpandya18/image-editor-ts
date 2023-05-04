@@ -5,7 +5,6 @@ interface props {
 
 const TextInputPrompt = ({ position }: props) => {
 
-    // console.log('textForm', TextForm)
 
     return (
         <div
@@ -20,11 +19,6 @@ const TextInputPrompt = ({ position }: props) => {
                 height: 'fit-content'
             }}
         >
-            {/* <p style={{
-                fontSize: `${TextForm.size}px`,
-                color: `${TextForm.color}`,
-                margin: 0
-            }}> {TextForm.text}</p> */}
         </div>
     )
 }

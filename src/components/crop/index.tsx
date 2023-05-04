@@ -211,6 +211,46 @@ export const mouseDown = (
 
 }
 
+export const saveImage = (setImgSrc: any, canvasRef: any, currentCropped: any) => {
+
+
+  console.log(canvasRef, "saved image")
+  const canvas = canvasRef.current
+  const ctx = canvas.getContext('2d')
+
+  const dummyCanvas = document.createElement('canvas')
+  dummyCanvas.width = currentCropped.width
+  dummyCanvas.height = currentCropped.height
+
+  const dmmyctx = dummyCanvas.getContext('2d')
+
+  const image = new Image()
+  image.src = canvas.toDataURL()
+
+  image.onload = () => {
+    dmmyctx?.drawImage(
+      image,
+      currentCropped.startingX + 2,
+      currentCropped.startingY + 2,
+      currentCropped.width - 3,
+      currentCropped.height - 3,
+      0,
+      0,
+      currentCropped.width,
+      currentCropped.height
+    )
+
+    const croppedDataUrl = dummyCanvas.toDataURL()
+    setImgSrc(croppedDataUrl)
+
+
+    console.log('currentCropped', currentCropped)
+  }
+}
+
+
+
+
 // useEffect(() => {
 //   if (currentCropped.startingX < 0) {
 //     setCurrentCropped((prevState) => ({
@@ -249,6 +289,7 @@ export const mouseMove = (
   canvasRef: any,
   dimensions: any,
   imgRef: any,
+  imgSrc: any
 ) => {
   const x = event.nativeEvent.offsetX
   const y = event.nativeEvent.offsetY
@@ -315,12 +356,15 @@ export const mouseMove = (
     document.body.style.setProperty('cursor', 'default')
   }
 
+  let images = imgSrc
   if (isDragging) {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')
-    const img = imgRef.current
-    canvasRef!.width = canvas!.width // Clear the canvas and resize it
-    ctx!.drawImage(img!, 0, 0, dimensions.width, dimensions.height)
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    const image = new Image()
+    image.src = images
+
+    ctx.drawImage(image, 0, 0, dimensions.width, dimensions.height)
     ctx!.strokeStyle = 'white'
     ctx!.setLineDash([5, 5])
     ctx!.lineWidth = 2
@@ -351,6 +395,7 @@ export const mouseMove = (
       currentCropped.width,
       currentCropped.height,
     )
+
     ctx!.setLineDash([0, 0])
     ctx!.beginPath()
     ctx!.lineWidth = 3
@@ -421,6 +466,7 @@ export const mouseMove = (
     const ctx = canvas?.getContext('2d')
     const img = imgRef.current
     canvas!.width = canvas!.width // Clear the canvas and resize it
+    ctx!.clearRect(0, 0, canvas!.width, canvas!.height)
     ctx!.drawImage(img!, 0, 0, dimensions.width, dimensions.height)
     ctx!.strokeStyle = 'white'
     ctx!.setLineDash([5, 5])
@@ -568,6 +614,7 @@ export const mouseMove = (
   }
 }
 
+
 const cropImage = (props: CropImageProps) => {
   const {
     canvasRef,
@@ -580,6 +627,7 @@ const cropImage = (props: CropImageProps) => {
 
 
 }
+
 export const mouseUP = (
   event: React.MouseEvent<HTMLCanvasElement>,
   difference: differenceProps,

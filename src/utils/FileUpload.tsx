@@ -1,12 +1,12 @@
-import React, { useRef } from "react";
-import "./FileUpload.css";
+import React, { useRef } from "react"
+import "./FileUpload.css"
 
 interface props {
-  onSelectFile: (e: any) => void;
+  onSelectFile: (e: any) => void
 }
 
 const FileUpload = ({ onSelectFile }: props) => {
-  const fileInputRef = useRef<any>(null);
+  const fileInputRef = useRef<any>(null)
 
   return (
     <div>
@@ -40,7 +40,7 @@ const FileUpload = ({ onSelectFile }: props) => {
         ref={fileInputRef}
       />
     </div>
-  );
-};
+  )
+}
 
-export default FileUpload;
+export default FileUpload
