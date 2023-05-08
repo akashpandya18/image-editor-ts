@@ -111,7 +111,7 @@ export interface TextOnImageProps {
   setCurrentClicked: React.Dispatch<React.SetStateAction<{
     x: number
     y: number
-  } | null>>
+  }>>
 
   setTextForm: React.Dispatch<React.SetStateAction<{
     text: string
@@ -124,6 +124,11 @@ export interface TextOnImageProps {
     height: number,
     width: number
   }
+  setAllTextTags: any,
+  setIsEditing: any,
+  isEditing: any
+  setFormData: any
+
 }
 
 interface TextTag {

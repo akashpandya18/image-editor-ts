@@ -98,15 +98,15 @@ export function DrawControl() {
     </>
   )
 }
-export const TextOnImageControl = ({ tempPrompt, textOnChangeHandler, onSubmit, allTextTags, setTempPrompt, value, TextForm, setTextForm, canvasRef }: any) => {
+export const TextOnImageControl = ({ tempPrompt, textOnChangeHandler, onSubmit, allTextTags, setTempPrompt, value, TextForm, setTextForm, canvasRef, formData, setFormData }: any) => {
 
-  const [formData, setFormData] = useState({ text: '', size: '32', color: '#ffffff' })
 
   let data = {
     text: "",
     color: "",
     size: ""
   }
+
   const handleInputChange = (event: any) => {
     const { name, value } = event.target
     data = {
@@ -231,7 +231,6 @@ export const TextOnImageControl = ({ tempPrompt, textOnChangeHandler, onSubmit, 
   )
 }
 export function CropControl({ select, img, setImgSrc, canvasRef, currentCropped, selectCanvas, setselectCanvas }: any) {
-  console.log(canvasRef, "any")
   return (
     <>
       <h3>Crop</h3>

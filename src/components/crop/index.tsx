@@ -393,7 +393,6 @@ export const mouseMove = (
       currentCropped.width,
       currentCropped.height,
     )
-
     ctx!.setLineDash([0, 0])
     ctx!.beginPath()
     ctx!.lineWidth = 3
@@ -458,7 +457,6 @@ export const mouseMove = (
     ctx!.fill()
     ctx!.stroke()
   }
-
   if (isResize) {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')

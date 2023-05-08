@@ -72,6 +72,7 @@ export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Elem
     y: 0,
   })
   // const [name, setName] = useState("Mks");
+  const [isEditing, setIsEditing] = useState(false)
 
 
   const [allTextTags, setAllTextTags] = useState([])
@@ -88,12 +89,15 @@ export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Elem
   })
   const [lineWidth, setLineWidth] = useState<number>(4)
   const [lineColor, setLineColor] = useState<string>("#000")
+  const [formData, setFormData] = useState({ text: '', size: 32, color: '#ffffff' })
 
   const ref = useRef(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const nanoid = customAlphabet("1234567890abcdef", 10)
   const id = nanoid(5)
+
+
 
   function Tools() {
     return (
@@ -139,9 +143,9 @@ export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Elem
       textForm,
       canvasRef,
       currentClicked,
-      imgSrc
+      imgSrc,
+      isEditing,
     )
-
   }
 
   function SelectedControl(): JSX.Element {
@@ -159,8 +163,10 @@ export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Elem
               setAllTextTags,
               currentClicked,
               setTempPrompt,
-              tempPrompt
+              tempPrompt,
+              setFormData
             )}
+            formData={formData} setFormData={setFormData}
             allTextTags={allTextTags}
             setTempPrompt={setTempPrompt}
             TextForm={TextForm}
@@ -502,6 +508,7 @@ export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Elem
         ) : currentControl === "text-on-image" ?
           <TextOnImages
             allTextTags={allTextTags}
+            setAllTextTags={setAllTextTags}
             tempPrompt={tempPrompt}
             setTempPrompt={setTempPrompt}
             canvasRef={canvasRef}
@@ -510,6 +517,9 @@ export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Elem
             setTextForm={setTextForm}
             imgSrc={imgSrc}
             dimensions={dimensions}
+            isEditing={isEditing}
+            setIsEditing={setIsEditing}
+            setFormData={setFormData}
           /> : (
             <RegularCanvas canvasRef={canvasRef} />
           )}
@@ -535,7 +545,8 @@ export default function Controls({ imgSrc, setImgSrc }: controlsProps): JSX.Elem
                   setTag,
                   setCurrentAnnotation,
                   setTempRedPrompt,
-                  showAllTags
+                  showAllTags,
+
                 )
               }
               position={currentAnnotation}

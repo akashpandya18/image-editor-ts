@@ -105,7 +105,7 @@ export const handleSubmitTag = (
     React.SetStateAction<{ x: number; y: number }>
   >,
   setTempRedPrompt: React.Dispatch<React.SetStateAction<boolean>>,
-  showAllTags: boolean
+  showAllTags: boolean,
 ): void => {
   e.preventDefault()
   const x = currentAnnotation.x
@@ -178,6 +178,7 @@ export const handleSubmitTag = (
 
   setTag("")
   setCurrentAnnotation({ x: 0, y: 0 })
+
   setTempRedPrompt(false)
 }
 

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react"
 import { CropProps, DrawProps, TagProps, TextOnImageProps } from "../../types"
 import { mouseDown, mouseLeave, mouseMove, mouseUP } from "../crop"
-import { clickHandler, handleMouseDown, handleMouseMove } from "../controls/textOnImage"
+import { clickHandler, handleMouseDown, handleMouseMove, handleMouseUp } from "../controls/textOnImage"
 
 export const TagCanvas = ({
   canvasRef,
@@ -212,10 +212,15 @@ export const TextOnImages = ({
   setTextForm,
   imgSrc,
   allTextTags,
-  dimensions }: TextOnImageProps) => {
+  dimensions,
+  setAllTextTags,
+  isEditing,
+  setIsEditing,
+  setFormData
+}: TextOnImageProps) => {
 
   const [isDraggingText, setIsDraggingText] = useState<boolean>(false)
-  const [draggingText, setDraggingText] = useState<number>(0)
+  const [draggingText, setDraggingText] = useState<string>("")
 
   return (
     <div>
@@ -237,7 +242,10 @@ export const TextOnImages = ({
             isDraggingText,
             setIsDraggingText,
             draggingText,
-            setDraggingText
+            setDraggingText,
+            isEditing,
+            setIsEditing,
+            setFormData
           )
           setTextForm({
             text: "",
@@ -247,7 +255,6 @@ export const TextOnImages = ({
         }}
         // onClick={handleTagClick}
         onMouseMove={(event) => {
-
           handleMouseMove(
             event,
             isDraggingText,
@@ -256,7 +263,9 @@ export const TextOnImages = ({
             setDraggingText,
             canvasRef,
             allTextTags,
-            dimensions
+            dimensions,
+            imgSrc,
+            currentClicked
           )
         }}
         onMouseDown={(event) => {
@@ -267,12 +276,25 @@ export const TextOnImages = ({
             draggingText,
             setDraggingText,
             canvasRef,
-            allTextTags
+            allTextTags,
+            setCurrentClicked
           )
 
         }}
-      // onMouseLeave={""}
-      // onMouseUp={""}
+        // onMouseLeave={""}
+        onMouseUp={(event) => {
+          handleMouseUp(
+            event,
+            isDraggingText,
+            setIsDraggingText,
+            draggingText,
+            setDraggingText,
+            canvasRef,
+            allTextTags,
+            setAllTextTags,
+            currentClicked
+          )
+        }}
       />
     </div>
   )
