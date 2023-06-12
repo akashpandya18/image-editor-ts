@@ -1,6 +1,6 @@
-import { TempRedTagProps } from "../../types";
+import { submitTagsProps } from "../../types";
 
-export default function TempRedTag({ position }: TempRedTagProps) {
+export default function TempRedTag({ position }: submitTagsProps) {
   return (
     <div
       style={{

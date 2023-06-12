@@ -1,6 +1,15 @@
 import { TagAnnotationFormProps } from "../../types";
 import { Close } from "../../assets/icons";
 import "../styles/index.css";
+import React from "react";
+interface props {
+  tags: string;
+  handleInputChange: (e: any) => void;
+  onSubmit: (e: any) => void;
+  position: { x: number; y: number };
+  refer: any;
+  handleCloseInput: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
 function TagAnnotationForm({
   tags,
@@ -11,54 +20,57 @@ function TagAnnotationForm({
   handleCloseInput
 }: TagAnnotationFormProps) {
   return (
-    <div
-      ref={refer}
-      style={{
-        position: "absolute",
-        zIndex: 9,
-        top: position.y,
-        left: position.x
-      }}
-    >
-      <form
-        onSubmit={onSubmit}
+    <>
+      <div
+        ref={refer}
         style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start"
+          position: "absolute",
+          zIndex: 9,
+          top: position.y,
+          left: position.x,
         }}
       >
-        <input
-          className={"TagInput"}
-          type={"text"}
-          name={"tag"}
-          maxLength={20}
-          value={tags}
-          onChange={(e) => handleInputChange(e)}
-          autoFocus
-          autoComplete={"off"}
-        />
-        <div
+        <form
+          onSubmit={onSubmit}
           style={{
             display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            width: "40%"
+            flexDirection: "column",
+            alignItems: "flex-start",
           }}
         >
-          <button className={"TagSubmit"} type={"submit"}>
-            Submit
-          </button>
-
-          <button
-            className={"TagSubmitClose"}
-            onClick={() => handleCloseInput(false)}
+          <input
+            className='TagInput'
+            type='text'
+            name='tag'
+            maxLength={20}
+            value={tags}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              handleInputChange(e)
+            }
+            autoFocus
+            autoComplete='off'
+          />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "40%",
+            }}
           >
-            <Close />
-          </button>
-        </div>
-      </form>
-    </div>
+            <button className='TagSubmit' type='submit'>
+              Submit
+            </button>
+            <button
+              className='TagSubmitClose'
+              onClick={() => handleCloseInput(false)}
+            >
+              <Close />
+            </button>
+          </div>
+        </form>
+      </div>
+    </>
   );
 }
 

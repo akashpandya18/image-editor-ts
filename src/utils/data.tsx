@@ -11,7 +11,7 @@ export function handleToolClick(
     (value: SetStateAction<string>): void;
     (arg0: string): void;
   }
-) {
+): void {
   setActiveIndex(index);
   switch (key) {
     case "tag-annotation":

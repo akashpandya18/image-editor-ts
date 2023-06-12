@@ -1,6 +1,6 @@
-import { ShowTagOnHoverProps } from "../../types";
+import { tagOnHoverProps } from "../../types";
 
-export default function ShowTagOnHover({ position, tag }: ShowTagOnHoverProps) {
+export default function ShowTagOnHover({ position, tag }: tagOnHoverProps) {
   return (
     <div
       style={{

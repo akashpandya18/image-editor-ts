@@ -1,11 +1,11 @@
-import { DeleteTagProps } from "../../types";
 import { Check, Close } from "../../assets/icons";
+import { deleteTagProps } from "../../types";
 
 export const DeleteTag = ({
   position,
   setPromptOff,
   deleteTagSubmit,
-}: DeleteTagProps) => {
+}: deleteTagProps) => {
   return (
     <div
       style={{

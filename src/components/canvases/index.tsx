@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-  DrawProps,
-  // MoreOptionsCanvasProps,
-  // TagProps
-} from "../../types";
+import { DrawProps, TagProps } from "../../types";
 
 // export const TagCanvas = ({
 //   canvasRef,
@@ -80,6 +76,24 @@ export const DrawCanvas = ({ canvasRef }: DrawProps) => {
         onClick={(event: React.MouseEvent<HTMLCanvasElement>) =>
           clickDot(event)
         }
+        style={{
+          borderRadius: "7px",
+          boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
+        }}
+      />
+    </>
+  );
+};
+
+export const RegularCanvas = ({
+  canvasRef,
+}: {
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+}) => {
+  return (
+    <>
+      <canvas
+        ref={canvasRef}
         style={{
           borderRadius: "7px",
           boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",

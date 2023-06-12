@@ -94,10 +94,17 @@ span {
   padding: 1rem;
 }
 
+.buttondiv-main {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
 .button-div {
   display: flex;
   gap: 10px;
-  margin-top: 10px;
 }
 
 .flip-button {
@@ -109,4 +116,50 @@ span {
   cursor: pointer;
   border: none;
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.flip-button-sure {
+  display: block;
+  border-radius: 7px;
+  background-color: #2294fb;
+  color: #fff;
+  padding: 0.7rem;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.089);
+}
+
+.tag-main {
+  max-height: 300px;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  background-color: #f1f1f1;
+  border-radius: 10px;
+}
+
+.tag-main::-webkit-scrollbar {
+  display: none;
+}
+
+/* .tag-head {
+  font-size: 24px;
+  color: #2a2a2a;
+  font-weight: 600;
+  text-align: center;
+  margin: 0 0 0.5rem 0;
+} */
+
+.tag-ol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  list-style: disc;
+}
+
+.list-tags {
+  font-size: 20px;
+  color: #505050;
+  font-weight: 400;
+  cursor: pointer;
 }

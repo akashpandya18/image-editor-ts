@@ -15,11 +15,16 @@ import {
   hideTags,
   showTags
 } from "../TagAnnotation";
-import { Button } from "./buttons"
+import "./index.css";
+import { Button } from "./buttons";
+import { handleToolClick, tools } from "../../utils/data";
 import {
+  CropControl,
+  DrawControl,
   FlipControl,
   MoreControls,
-  TagControls
+  TagControls,
+  TextOnImageControl,
 } from "./allControls";
 import MainCanvasControls from "./mainCanvasControls";
 import { customAlphabet } from "nanoid";
@@ -32,18 +37,14 @@ import ShowTagOnHover from "../prompts/showTagOnHover";
 import { DeleteTag } from "../prompts/deleteTag";
 import TagAnnotationForm from "../forms/TagAnnotForm";
 import TempRedTag from "../prompts/ConfirmSubmitTag";
-import {
-  flipHorizontally,
-  flipVertically
-} from "../flip";
-import { DrawCanvas } from "../canvases";
-import {
-  HideTags,
-  ShowTags
-} from "../../assets/icons";
-import "./index.css";
+import { HideTags, ShowTags } from "../../assets/icons";
+import { flipHorizontally, flipVertically } from "../flip";
+import { DrawCanvas, RegularCanvas, TagCanvas } from "../canvases";
 
-export default function Controls({ imgSrc }: controlsProps): JSX.Element {
+export default function Controls({
+  imgSrc,
+  setImgSrc,
+}: controlsProps): JSX.Element {
   const [annotations, setAnnotations] = useState<annotation[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [currentControl, setCurrentControl] = useState<string>("tag-annotation");
@@ -63,13 +64,8 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   const [deleteTagId, setDeleteTagId] = useState("");
   const [currentAnnotation, setCurrentAnnotation] = useState({ x: 0, y: 0 });
   const [tag, setTag] = useState("");
-  // more
-  const [blur, setBlur] = useState<number>(0);
-  const [zoom, setZoom] = useState<number>(1);
-  // const [offset, setOffset] = useState({ x: 0, y: 0 });
-  // const [dragging, setDragging] = useState(false);
-  const [rotate, setRotate] = useState<number>(0);
-  const [brightness, setBrightness] = useState<number>(1);
+  const [lineWidth, setLineWidth] = useState<number>(4);
+  const [lineColor, setLineColor] = useState<string>("#000");
 
   // const touch = useRef({ x: 0, y: 0 });
   const ref = useRef(null);
@@ -78,10 +74,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
   const nanoid = customAlphabet("1234567890abcdef", 10);
   const id = nanoid(5);
 
-  const lineWidth = 4;
-  const lineColor = "#000000";
-
-  function Tools() {
+  function Tools(): JSX.Element {
     return (
       <div className={"controls-main"}>
         {/* tools */}
@@ -118,15 +111,15 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
     );
   }
 
-  function SelectedControl() {
+  function SelectedControl(): JSX.Element {
     return (
       <>
         {currentControl === "tag-annotation" ? (
           <TagControls annotations={annotations} />
         ) : currentControl === "text-on-image" ? (
-          console.log("ToI")
+          <TextOnImageControl />
         ) : currentControl === "crop" ? (
-          console.log("crop")
+          <CropControl />
         ) : currentControl === "flip" ? (
           <FlipControl
             flipHorizontally={() =>
@@ -137,7 +130,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
             }
           />
         ) : currentControl === "draw" ? (
-          console.log("draw")
+          <DrawControl />
         ) : currentControl === "more" ? (
           <MoreControls
             blur={blur}
@@ -187,7 +180,7 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
     setRotate(0);
     setBrightness(1);
 
-    const canvas = canvasRef.current;
+    const canvas: HTMLCanvasElement | null = canvasRef.current;
     const { width, height } = dimensions;
     canvas!.width = width;
     canvas!.height = height;
@@ -264,8 +257,10 @@ export default function Controls({ imgSrc }: controlsProps): JSX.Element {
               )
             }
           />
-        ) : (
+        ) : currentControl === "draw" ? (
           <DrawCanvas canvasRef={canvasRef} />
+        ) : (
+          <RegularCanvas canvasRef={canvasRef} />
         )}
 
         {tempRedPrompt && (
