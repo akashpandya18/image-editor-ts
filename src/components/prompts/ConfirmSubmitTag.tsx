@@ -9,8 +9,8 @@ export default function TempRedTag({ position }: submitTagsProps) {
         left: position.x - 10,
         position: "absolute",
         zIndex: 9,
-        width: "20px",
-        height: "20px",
+        width: "1.25rem",
+        height: "1.25rem",
         backgroundColor: "red",
         borderRadius: "50%"
       }}

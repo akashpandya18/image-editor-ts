@@ -1,5 +1,6 @@
 import React from "react";
 import { annotationProps } from "../../types";
+import {showTags} from "../TagAnnotation";
 
 export const flipHorizontally = (
   canvasRef: React.RefObject<HTMLCanvasElement>,
@@ -7,13 +8,19 @@ export const flipHorizontally = (
   annotations: annotationProps[],
   flipHorizontal: boolean,
   setFlipHorizontal: React.Dispatch<React.SetStateAction<boolean>>,
-  drawing: string
+  drawing: string,
+  showAllTags: boolean,
+  setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   const canvas = canvasRef.current;
   if (!canvas) return;
 
   const context = canvas.getContext("2d");
   if (!context) return;
+
+  if (showAllTags) {
+    showTags(setShowAllTags, imgSrc, canvasRef, annotations, drawing);
+  }
 
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.translate(canvas.width, 0);
@@ -28,13 +35,19 @@ export const flipVertically = (
   annotations: annotationProps[],
   flipVertical: boolean,
   setFlipVertical: React.Dispatch<React.SetStateAction<boolean>>,
-  drawing: string
+  drawing: string,
+  showAllTags: boolean,
+  setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   const canvas = canvasRef.current;
   if (!canvas) return;
 
   const context = canvas.getContext("2d");
   if (!context) return;
+
+  if (showAllTags) {
+    showTags(setShowAllTags, imgSrc, canvasRef, annotations, drawing);
+  }
 
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.translate(0, canvas.height);

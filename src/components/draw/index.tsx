@@ -7,6 +7,16 @@ export const saveDrawing = (
   setDrawing: any
 ) => {
   const canvas = canvasRef.current;
+  // if (!canvas) return;
+  // const context = canvas!.getContext("2d");
+  // if (!context) return;
+
+  // const image = new Image();
+  // image.src = canvas!.toDataURL();
+  // blur = blur / 16;
+  // context!.filter = `blur(${blur}rem) brightness(${brightness})`;
+  // context!.drawImage(image, 0, 0, canvas.width, canvas.height);
+  // console.log("save", canvas.toDataURL());
   setDrawing(canvas?.toDataURL());
 };
 

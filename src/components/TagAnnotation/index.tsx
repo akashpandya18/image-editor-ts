@@ -135,7 +135,7 @@ export const handleSubmitTag = (
         tempAnnot.forEach((annotationData: any) => {
           const { x, y, tag } = annotationData;
           //tag
-          context!.font = "24px Arial";
+          context!.font = "1.5rem Arial";
           // Draw the background color rectangle
           let textWidth = context!.measureText(tag).width;
           //tags
@@ -286,7 +286,7 @@ export const showTags = (
     annotations.forEach((annotationData: any) => {
       const { x, y, tag } = annotationData;
       //tag
-      context!.font = "24px Arial";
+      context!.font = "1.5rem Arial";
       // Draw the background color rectangle
       let textWidth = context!.measureText(tag).width;
 
@@ -296,6 +296,7 @@ export const showTags = (
       context!.arc(x, y, 10, 0, 2 * Math.PI);
       context!.fill();
 
+      // setting tags position
       if (x - image.width > -200 && y - image.height < -100) {
         // console.log("x - image.width > -200 && y - image.height < -100", 1111);
         context!.fillStyle = "#2A2A2A";

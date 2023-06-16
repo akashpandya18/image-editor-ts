@@ -12,8 +12,8 @@ export default function ShowTagOnHover({ position, tag }: tagOnHoverProps) {
         backgroundColor: "#2a2a2a",
         color: "#fff",
         padding: "0.5rem",
-        borderRadius: "7px",
-        fontSize: "20px"
+        borderRadius: "0.438rem",
+        fontSize: "1.25rem"
       }}
     >
       {tag}

@@ -3,13 +3,13 @@
   flex-direction: row;
   align-items: flex-start;
   justify-content: center;
-  gap: 20px;
+  gap: 1.25rem;
   padding: 1rem 0;
 }
 
 .options-div {
   padding: 1rem;
-  border-radius: 7px;
+  border-radius: 0.438rem;
   background-color: #fafafa;
 }
 
@@ -19,14 +19,14 @@
 }
 
 .checkbox {
-  height: 18px;
-  width: 18px;
-  margin: 0 10px 0 0;
+  height: 1.125rem;
+  width: 1.125rem;
+  margin: 0 0.625rem 0 0;
   cursor: pointer;
 }
 
 .filter-options-div label {
-  font-size: 18px;
+  font-size: 1.125rem;
   cursor: pointer;
 }
 
@@ -43,14 +43,14 @@
   align-items: center;
   justify-content: space-between;
   height: auto;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .controls-2div {
   padding: 1rem;
-  width: 400px;
+  width: 25rem;
   height: auto;
-  border-radius: 7px;
+  border-radius: 0.438rem;
   background-color: #fafafa;
 }
 
@@ -69,7 +69,7 @@
 
 .tools-button {
   display: block;
-  border-radius: 7px;
+  border-radius: 0.438rem;
   padding: 1rem;
   cursor: pointer;
   border: none;
@@ -77,15 +77,15 @@
 
 span {
   text-align: center;
-  margin-top: 4px;
+  margin-top: 0.25rem;
   color: #2b2b2b;
 }
 
 .showControls-div {
   padding: 1rem;
-  width: 400px;
+  width: 25rem;
   height: auto;
-  border-radius: 7px;
+  border-radius: 0.438rem;
   background-color: #fafafa;
 }
 
@@ -103,17 +103,17 @@ span {
 
 .controlsMap-icon {
   display: block;
-  border-radius: 7px;
+  border-radius: 0.438rem;
   background-color: #000;
   color: #fff;
   padding: 1rem;
-  width: 24px;
+  width: 1.5rem;
 }
 
 .selectedTools-div {
-  max-width: 1080px;
-  max-height: 700px;
-  border-radius: 7px;
+  max-width: 67.5rem;
+  max-height: 43.75rem;
+  border-radius: 0.438rem;
   padding: 1rem;
 }
 
@@ -122,42 +122,42 @@ span {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 0.625rem;
 }
 
 .button-div {
   display: flex;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .flip-button {
   display: block;
-  border-radius: 7px;
+  border-radius: 0.438rem;
   background-color: #2a2a2a;
   color: #fff;
   padding: 0.7rem;
   cursor: pointer;
   border: none;
-  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0.25rem 0.25rem 0 rgba(0, 0, 0, 0.2);
 }
 
 .flip-button-sure {
   display: block;
-  border-radius: 7px;
+  border-radius: 0.438rem;
   background-color: #2294fb;
   color: #fff;
   padding: 0.7rem;
   cursor: pointer;
   border: none;
-  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.089);
+  box-shadow: 0 0.25rem 0.25rem 0 rgba(0, 0, 0, 0.089);
 }
 
 .tag-main {
-  max-height: 300px;
+  max-height: 18.75rem;
   overflow-y: scroll;
   scroll-behavior: smooth;
   background-color: #f1f1f1;
-  border-radius: 10px;
+  border-radius: 0.625rem;
 }
 
 .tag-main::-webkit-scrollbar {
@@ -168,12 +168,12 @@ span {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  gap: 0.625rem;
   list-style: disc;
 }
 
 .list-tags {
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #505050;
   font-weight: 400;
   cursor: pointer;

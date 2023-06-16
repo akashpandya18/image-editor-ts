@@ -15,8 +15,8 @@ export const RegularCanvas = ({ canvasRef }: {
     <canvas
       ref={canvasRef}
       style={{
-        borderRadius: "7px",
-        boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)"
+        borderRadius: "0.438rem",
+        boxShadow: "0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.2)"
       }}
     />
   );
@@ -31,8 +31,8 @@ export const TagCanvas = ({
     <canvas
       ref={canvasRef}
       style={{
-        borderRadius: "7px",
-        boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)"
+        borderRadius: "0.438rem",
+        boxShadow: "0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.2)"
       }}
       onClick={handleTagClick}
       onMouseMove={handleTagMouseMove}
@@ -95,8 +95,8 @@ export const PenCanvas = ({ canvasRef }: PenProps) => {
       onMouseLeave={stopDrawing}
       onClick={(event: React.MouseEvent<HTMLCanvasElement>) => clickDot(event)}
       style={{
-        borderRadius: "7px",
-        boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)"
+        borderRadius: "0.438rem",
+        boxShadow: "0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.2)"
       }}
     />
   );
@@ -162,7 +162,8 @@ export const MoreFilterCanvas = ({
     const degToRad = (rotate: number) => rotate * deg;
 
     image.onload = () => {
-      context!.filter = `blur(${blur}px) brightness(${brightness})`;
+      blur = blur / 16;
+      context!.filter = `blur(${blur}rem) brightness(${brightness})`;
 
       context.clearRect(0, 0, canvas.width, canvas.height);
       context.save();
@@ -183,8 +184,8 @@ export const MoreFilterCanvas = ({
     <canvas
       ref={canvasRef}
       style={{
-        borderRadius: "7px",
-        boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)"
+        borderRadius: "0.438rem",
+        boxShadow: "0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.2)"
       }}
     />
   );

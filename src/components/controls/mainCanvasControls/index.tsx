@@ -25,7 +25,7 @@ export default function MainCanvasControls({
         alignItems: "center",
         justifyContent: "left",
         width: "100%",
-        gap: "10px",
+        gap: "0.625rem",
         marginTop: "1rem"
       }}
     >
@@ -36,12 +36,12 @@ export default function MainCanvasControls({
               <button
                 style={{
                   border: "none",
-                  borderRadius: "7px",
-                  padding: "10px",
+                  borderRadius: "0.438rem",
+                  padding: "0.625rem",
                   color: "#fff",
                   cursor: "pointer",
                   backgroundColor: "#2a2a2a",
-                  boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.2)"
+                  boxShadow: "0 0.25rem 0.25rem 0 rgba(0, 0, 0, 0.2)"
                 }}
                 onClick={(e: any) => {
                   switch (item.type) {

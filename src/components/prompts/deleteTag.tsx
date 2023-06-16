@@ -17,21 +17,21 @@ export const DeleteTag = ({
         left: position.xN - 100,
         position: "absolute",
         zIndex: 9,
-        width: "200px",
-        height: "50px",
+        width: "12.5rem",
+        height: "3.125rem",
         backgroundColor: "#fafafa",
-        borderRadius: "7px",
+        borderRadius: "0.438rem",
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "10px"
+        padding: "0.625rem"
       }}
     >
       <p
         style={{
           textAlign: "left",
-          fontSize: "20px"
+          fontSize: "1.25rem"
         }}
       >
         Delete this tag?
@@ -40,12 +40,12 @@ export const DeleteTag = ({
         onClick={deleteTagSubmit}
         style={{
           border: "none",
-          borderRadius: "7px",
-          padding: "4px",
+          borderRadius: "0.438rem",
+          padding: "0.25rem",
           color: "#fff",
           backgroundColor: "#2a2a2a",
           cursor: "pointer",
-          boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.2)"
+          boxShadow: "0 0.125rem 0.125rem 0 rgba(0, 0, 0, 0.2)"
         }}
       >
         <Check />
@@ -54,12 +54,12 @@ export const DeleteTag = ({
         onClick={setPromptOff}
         style={{
           border: "none",
-          borderRadius: "7px",
-          padding: "4px",
+          borderRadius: "0.438rem",
+          padding: "0.25rem",
           color: "#2a2a2a",
           backgroundColor: "#fff",
           cursor: "pointer",
-          boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.2)"
+          boxShadow: "0 0.125rem 0.125rem 0 rgba(0, 0, 0, 0.2)"
         }}
       >
         <Close />

@@ -66,7 +66,7 @@ export default function Controls({
   const [annotations, setAnnotations] = useState<annotationProps[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [currentControl, setCurrentControl] = useState<string>("tag-annotation");
-  const [blur, setBlur] = useState<number>(0);
+  let [blur, setBlur] = useState<number>(0);
   const [zoom, setZoom] = useState<number>(1);
   const [rotate, setRotate] = useState<number>(0);
   const [brightness, setBrightness] = useState<number>(1);
@@ -227,7 +227,7 @@ export default function Controls({
     image.onload = () => {
       // setting tag/annotation on canvas
       setTimeout(() => {
-        context!.drawImage(image, 0, 0, canvas.width, canvas.height);
+        // context!.drawImage(image, 0, 0, canvas.width, canvas.height);
         annotations.forEach((annotationData: any) => {
           const { x, y } = annotationData;
           context!.beginPath();
@@ -242,11 +242,11 @@ export default function Controls({
 
       // setting blur and brightness value on canvas
       context!.clearRect(0, 0, canvas!.width, canvas!.height);
-
+      blur = blur / 16;
+      context!.filter = `blur(${blur}rem) brightness(${brightness})`;
       setTimeout(() => {
         context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
       });
-      context!.filter = `blur(${blur}px) brightness(${brightness})`;
 
       // setting zoom value on canvas
       if (canvas) {
@@ -333,12 +333,12 @@ export default function Controls({
             <CropControl />
           ) : currentControl === "flip" ? (
             <FlipControl
-              flipHorizontally={() => flipHorizontally(canvasRef, imgSrc, annotations, flipHorizontal, setFlipHorizontal, drawing)}
-              flipVertically={() => flipVertically(canvasRef, imgSrc, annotations, flipVertical, setFlipVertical, drawing)}
+              flipHorizontally={() => flipHorizontally(canvasRef, imgSrc, annotations, flipHorizontal, setFlipHorizontal, drawing, showAllTags, setShowAllTags)}
+              flipVertically={() => flipVertically(canvasRef, imgSrc, annotations, flipVertical, setFlipVertical, drawing, showAllTags, setShowAllTags)}
             />
           ) : currentControl === "pen" ? (
             <PenControl
-              saveDrawing={() => saveDrawing(canvasRef, setDrawing)}
+              saveDrawing={() => saveDrawing(canvasRef, setDrawing,)}
               clearDrawing={() => clearDrawing(canvasRef, imgSrc, annotations, setDrawing, showAllTags, setShowAllTags)}
             />
           ) : currentControl === "more" && (

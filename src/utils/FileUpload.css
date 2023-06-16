@@ -9,7 +9,7 @@
   align-items: center;
   flex-direction: column;
   padding: 3rem;
-  border-width: 2px;
+  border-width: 0.125rem;
   border-radius: 0.5rem;
   border-color: var(--gray300);
   border-style: dashed;

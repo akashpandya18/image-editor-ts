@@ -69,11 +69,11 @@ export function PenControl({ saveDrawing, clearDrawing }: any) {
       <button
         style={{
           border: "none",
-          borderRadius: "7px",
+          borderRadius: "0.438rem",
           color: "#fff",
           cursor: "pointer",
           backgroundColor: "#2a2a2a",
-          boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.2)",
+          boxShadow: "0 0.25rem 0.25rem 0 rgba(0, 0, 0, 0.2)",
           padding: "0.7rem"
         }}
         onClick={saveDrawing}
@@ -84,13 +84,13 @@ export function PenControl({ saveDrawing, clearDrawing }: any) {
       <button
         style={{
           border: "none",
-          borderRadius: "7px",
+          borderRadius: "0.438rem",
           color: "#fff",
           cursor: "pointer",
           backgroundColor: "#2a2a2a",
-          boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.2)",
-          padding: "0.6rem",
-          marginLeft: "5px"
+          boxShadow: "0 0.25rem 0.25rem 0 rgba(0, 0, 0, 0.2)",
+          padding: "0.7rem",
+          marginLeft: "0.313rem"
         }}
         onClick={clearDrawing}
       >
