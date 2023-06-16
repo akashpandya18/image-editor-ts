@@ -1,4 +1,8 @@
-import { Check, Close } from "../../assets/icons";
+import React from "react";
+import {
+  Check,
+  Close
+} from "../../assets/icons";
 import { deleteTagProps } from "../../types";
 
 export const DeleteTag = ({

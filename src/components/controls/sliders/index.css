@@ -2,13 +2,13 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
   margin-left: 0.5rem;
 }
 
 .brightness-label {
-  width: 120px;
+  width: 80px;
+  margin-right: 3rem;
 }
 
 /********** Range Input Styles **********/

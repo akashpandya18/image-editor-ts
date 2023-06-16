@@ -3,8 +3,6 @@ import React, {
   useEffect,
   useRef
 } from "react";
-import { handleToolClick } from "../../utils/data";
-import { tools } from "../../utils/constant";
 import {
   handleCanvasClick,
   handleCanvasMouseMove,
@@ -17,45 +15,65 @@ import {
 } from "../TagAnnotation";
 import "./index.css";
 import { Button } from "./buttons";
-import { handleToolClick, tools } from "../../utils/data";
+import {
+  controls,
+  filterOptions,
+  handleToolClick,
+  tools
+} from "../../utils/data";
 import {
   CropControl,
-  DrawControl,
+  PenControl,
   FlipControl,
-  MoreControls,
   TagControls,
-  TextOnImageControl,
+  TextOnImageControl
 } from "./allControls";
 import MainCanvasControls from "./mainCanvasControls";
 import { customAlphabet } from "nanoid";
 import {
   controlsType,
-  annotation,
-  controlsProps
+  annotationProps,
+  controlsProps,
+  filterOptionsProps
 } from "../../types";
 import ShowTagOnHover from "../prompts/showTagOnHover";
 import { DeleteTag } from "../prompts/deleteTag";
 import TagAnnotationForm from "../forms/TagAnnotForm";
 import TempRedTag from "../prompts/ConfirmSubmitTag";
-import { HideTags, ShowTags } from "../../assets/icons";
-import { flipHorizontally, flipVertically } from "../flip";
-import { DrawCanvas, RegularCanvas, TagCanvas } from "../canvases";
+import {
+  HideTags,
+  ShowTags
+} from "../../assets/icons";
+import {
+  flipHorizontally,
+  flipVertically
+} from "../flip";
+import {
+  RegularCanvas,
+  PenCanvas,
+  TagCanvas,
+  MoreFilterCanvas
+} from "../canvases";
+import "./sliders/index.css";
+import {
+  saveDrawing,
+  clearDrawing
+} from "../draw";
 
 export default function Controls({
-  imgSrc,
-  setImgSrc,
+  imgSrc
 }: controlsProps): JSX.Element {
-  const [annotations, setAnnotations] = useState<annotation[]>([]);
+  const [annotations, setAnnotations] = useState<annotationProps[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [currentControl, setCurrentControl] = useState<string>("tag-annotation");
+  const [blur, setBlur] = useState<number>(0);
+  const [zoom, setZoom] = useState<number>(1);
+  const [rotate, setRotate] = useState<number>(0);
+  const [brightness, setBrightness] = useState<number>(1);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [clear, setClear] = useState<boolean>(false);
-  const [hoverTag,
-    // setHoverTag
-  ] = useState("");
-  const [hoverPos,
-    // setHoverPos
-  ] = useState({ x: 0, y: 0 });
+  const [hoverTag, setHoverTag] = useState("");
+  const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 });
   const [showH, setShowH] = useState(false);
   const [tempRedPrompt, setTempRedPrompt] = useState(false);
   const [deleteTag, setDeleteTag] = useState(false);
@@ -64,18 +82,219 @@ export default function Controls({
   const [deleteTagId, setDeleteTagId] = useState("");
   const [currentAnnotation, setCurrentAnnotation] = useState({ x: 0, y: 0 });
   const [tag, setTag] = useState("");
-  const [lineWidth, setLineWidth] = useState<number>(4);
-  const [lineColor, setLineColor] = useState<string>("#000");
+  const [flipHorizontal, setFlipHorizontal] = useState<boolean>(false);
+  const [flipVertical, setFlipVertical] = useState<boolean>(false);
+  const [drawing, setDrawing] = useState("");
 
-  // const touch = useRef({ x: 0, y: 0 });
+  const lineWidth = 4;
+  const lineColor = "#000";
   const ref = useRef(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
   const nanoid = customAlphabet("1234567890abcdef", 10);
   const id = nanoid(5);
 
-  function Tools(): JSX.Element {
-    return (
+  // set range slider values
+  const handleEffectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if (e.target.id === "blur") {
+      setBlur(Number(e.target.value));
+    }
+    if (e.target.id === "zoom") {
+      setZoom(Number(e.target.value));
+    }
+    if (e.target.id === "rotate") {
+      setRotate(Number(e.target.value));
+    }
+    if (e.target.id === "brightness") {
+      setBrightness(Number(e.target.value));
+    }
+  };
+
+  // return range slider value
+  const inputValue = (name: string) => {
+    if (name === "blur") {
+      return blur;
+    }
+    if (name === "zoom") {
+      return zoom;
+    }
+    if (name === "rotate") {
+      return rotate;
+    }
+    if (name === "brightness") {
+      return brightness;
+    }
+  };
+
+  // set height and width of image on canvas
+  useEffect(() => {
+    const img = new Image();
+    img.src = imgSrc;
+    img.onload = () => {
+      const { width, height } = img;
+      if (width > 1000) {
+        const ratio = width / height;
+        const newHeight = 1000 / ratio;
+        const newWidth = 563 * ratio;
+        setDimensions({ width: newWidth, height: newHeight });
+      // } else if (width < 500) {
+      //   setDimensions({ width: 500, height: 490 });
+      } else {
+        setDimensions({ width, height });
+      }
+    };
+  }, [imgSrc]);
+
+  // clear all filters
+  useEffect(() => {
+    setAnnotations([]);
+    setTempRedPrompt(false);
+    setCurrentAnnotation({ x: 0, y: 0 });
+    setTag("");
+    setDeleteTag(false);
+    setDeletePos({ xN: 0, yN: 0 });
+    setDeleteTagId("");
+    setShowAllTags(false);
+    setShowH(false);
+    setBlur(0);
+    setZoom(1);
+    setRotate(0);
+    setBrightness(1);
+    setFlipVertical(false);
+    setFlipHorizontal(false);
+    setDrawing("");
+
+    const canvas: HTMLCanvasElement | null = canvasRef.current;
+    const { width, height } = dimensions;
+    canvas!.width = width;
+    canvas!.height = height;
+    const context = canvas!.getContext("2d");
+    const image = new Image();
+    image.src = imgSrc;
+    image.onload = () => {
+      context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
+    };
+  }, [dimensions, imgSrc, clear]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas?.getContext("2d");
+
+    if (context) {
+      context.lineWidth = lineWidth;
+      context.strokeStyle = lineColor;
+    }
+  }, [canvasRef, lineWidth, lineColor]);
+
+  const flipValue = (canvas: HTMLCanvasElement | null, context: CanvasRenderingContext2D) => {
+    if (!canvas) return;
+
+    if (flipHorizontal && !flipVertical) {
+      context.translate(canvas.width, 0);
+      context.scale(-1, 1);
+    } else if (flipVertical && !flipHorizontal) {
+      context.translate(0, canvas.height);
+      context.scale(1, -1);
+    } else if (flipVertical && flipHorizontal) {
+      context.translate(canvas.width, 0);
+      context.scale(-1, 1);
+      context.translate(0, canvas.height);
+      context.scale(1, -1);
+    }
+  };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const context = canvas!.getContext("2d");
+    if (!context) return;
+
+    const { width, height } = dimensions;
+    canvas!.width = width;
+    canvas!.height = height;
+
+    const image = new Image();
+    if (drawing !== "") {
+      image.src = drawing
+    } else {
+      image.src = imgSrc;
+    }
+
+    image.width = canvas!.width;
+    image.height = canvas!.height;
+
+    image.onload = () => {
+      // setting tag/annotation on canvas
+      setTimeout(() => {
+        context!.drawImage(image, 0, 0, canvas.width, canvas.height);
+        annotations.forEach((annotationData: any) => {
+          const { x, y } = annotationData;
+          context!.beginPath();
+          context!.fillStyle = "yellow";
+          context!.arc(x, y, 10, 0, 2 * Math.PI);
+          context!.fill();
+        });
+      }, 10);
+
+      // setting flip on canvas
+      flipValue(canvas, context);
+
+      // setting blur and brightness value on canvas
+      context!.clearRect(0, 0, canvas!.width, canvas!.height);
+
+      setTimeout(() => {
+        context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
+      });
+      context!.filter = `blur(${blur}px) brightness(${brightness})`;
+
+      // setting zoom value on canvas
+      if (canvas) {
+        // Clear canvas and scale it
+        const centerX = canvas!.width / 2;
+        const centerY = canvas!.height / 2;
+
+        context!.translate(centerX, centerY);
+        context!.scale(zoom, zoom);
+        context!.translate(-centerX, -centerY)
+        context!.clearRect(0, 0, width, height);
+      }
+
+      // if show all tag is true
+      if (showAllTags) {
+        showTags(setShowAllTags, imgSrc, canvasRef, annotations, drawing);
+      }
+
+      setTag("");
+      setCurrentAnnotation({ x: 0, y: 0 });
+      setTempRedPrompt(false);
+    };
+  }, [currentControl, blur, zoom, brightness]);
+
+  return (
+    <div className={"controls-out"}>
+      {/* filter options */}
+      <div className={"options-div"}>
+        <div>
+          <h3> Tabs </h3>
+          {filterOptions.map((filterOptionsValue: filterOptionsProps) => {
+            return (
+              <div className={"filter-options-div"} key={filterOptionsValue.id}>
+                <input
+                  type={"checkbox"}
+                  name={filterOptionsValue.name}
+                  value={filterOptionsValue.name}
+                  className={"checkbox"}
+                  // onChange={() => filterOptionsValue.checked = !filterOptionsValue.checked}
+                  // checked={filterOptionsValue.checked}
+                />
+                <label> {filterOptionsValue.name} </label>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       <div className={"controls-main"}>
         {/* tools */}
         <div className={"controls-2div"}>
@@ -103,132 +322,59 @@ export default function Controls({
             })}
           </div>
         </div>
+
         {/* controls */}
         <div className={"showControls-div"}>
-          <SelectedControl />
+          {currentControl === "tag-annotation" ? (
+            <TagControls annotations={annotations}/>
+          ) : currentControl === "text-on-image" ? (
+            <TextOnImageControl />
+          ) : currentControl === "crop" ? (
+            <CropControl />
+          ) : currentControl === "flip" ? (
+            <FlipControl
+              flipHorizontally={() => flipHorizontally(canvasRef, imgSrc, annotations, flipHorizontal, setFlipHorizontal, drawing)}
+              flipVertically={() => flipVertically(canvasRef, imgSrc, annotations, flipVertical, setFlipVertical, drawing)}
+            />
+          ) : currentControl === "pen" ? (
+            <PenControl
+              saveDrawing={() => saveDrawing(canvasRef, setDrawing)}
+              clearDrawing={() => clearDrawing(canvasRef, imgSrc, annotations, setDrawing, showAllTags, setShowAllTags)}
+            />
+          ) : currentControl === "more" && (
+            <div>
+              <h3> More Controls </h3>
+              <div className={"showControls-grid"}>
+                {controls.map((x: controlsType) => {
+                  return (
+                    <div key={x.id} className={"controlsMap-div"}>
+                      <div className={"controlsMap-icon"}> {x.icon} </div>
+                      <div className={"brightness-slider"}>
+                        <label className={"brightness-label"} htmlFor={"brightness"}>
+                          {x.name} :
+                        </label>
+                        <input
+                          type={"range"}
+                          id={x.type}
+                          name={x.type}
+                          min={x.type === "zoom" ? 0.2 : x.type === "rotate" ? -180 : x.type === "brightness" ? 0.2 : 0}
+                          max={x.type === "zoom" ? 1.5 : x.type === "rotate" ? 180 : x.type === "blur" ? 5 : 1}
+                          step={x.type === "zoom" ? 0.1 : x.type === "rotate" ? 45 : x.type === "blur" ? 1 : 0.2}
+                          value={inputValue(x.type)}
+                          onChange={(e: any) => handleEffectChange(e)}
+                          autoComplete={"off"}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
-    );
-  }
 
-  function SelectedControl(): JSX.Element {
-    return (
-      <>
-        {currentControl === "tag-annotation" ? (
-          <TagControls annotations={annotations} />
-        ) : currentControl === "text-on-image" ? (
-          <TextOnImageControl />
-        ) : currentControl === "crop" ? (
-          <CropControl />
-        ) : currentControl === "flip" ? (
-          <FlipControl
-            flipHorizontally={() =>
-              flipHorizontally(canvasRef, imgSrc, annotations)
-            }
-            flipVertically={() =>
-              flipVertically(canvasRef, imgSrc, annotations)
-            }
-          />
-        ) : currentControl === "draw" ? (
-          <DrawControl />
-        ) : currentControl === "more" ? (
-          <MoreControls
-            blur={blur}
-            setBlur={setBlur}
-            zoom={zoom}
-            setZoom={setZoom}
-            rotate={rotate}
-            setRotate={setRotate}
-            brightness={brightness}
-            setBrightness={setBrightness}
-          />
-        ) : (
-          console.log("none")
-        )}
-      </>
-    );
-  }
-
-  useEffect(() => {
-    const img = new Image();
-    img.src = imgSrc;
-    img.onload = () => {
-      const { width, height } = img;
-      if (width > 1000) {
-        const ratio = width / height;
-        const newHeight = 1000 / ratio;
-        const newWidth = 563 * ratio;
-        setDimensions({ width: newWidth, height: newHeight });
-      } else {
-        setDimensions({ width, height });
-      }
-    };
-  }, [imgSrc]);
-
-  useEffect(() => {
-    setAnnotations([]);
-    setTempRedPrompt(false);
-    setCurrentAnnotation({ x: 0, y: 0 });
-    setTag("");
-    setDeleteTag(false);
-    setDeletePos({ xN: 0, yN: 0 });
-    setDeleteTagId("");
-    setShowAllTags(false);
-    setShowH(false);
-    setBlur(0);
-    setZoom(1);
-    setRotate(0);
-    setBrightness(1);
-
-    const canvas: HTMLCanvasElement | null = canvasRef.current;
-    const { width, height } = dimensions;
-    canvas!.width = width;
-    canvas!.height = height;
-    const ctx = canvas!.getContext("2d");
-    const image = new Image();
-    image.src = imgSrc;
-    image.onload = () => {
-      ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
-    };
-  }, [dimensions, imgSrc, clear]);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
-
-    if (context) {
-      context.lineWidth = lineWidth;
-      context.strokeStyle = lineColor;
-    }
-  }, [canvasRef, lineWidth, lineColor]);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas!.getContext("2d");
-    const { width, height } = dimensions;
-    canvas!.width = width;
-    canvas!.height = height;
-    const image = new Image();
-    image.src = imgSrc;
-    image.onload = () => {
-      ctx!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
-      annotations.forEach((annot: any) => {
-        const { x, y } = annot;
-        ctx!.beginPath();
-        ctx!.fillStyle = "yellow";
-        ctx!.arc(x, y, 10, 0, 2 * Math.PI);
-        ctx!.fill();
-      });
-      setTag("");
-      setCurrentAnnotation({ x: 0, y: 0 });
-      setTempRedPrompt(false);
-    };
-  }, [currentControl]);
-
-  return (
-    <div className={"controls-out"}>
-      <Tools />
-      <div className='canvas-div'>
+      <div className={"canvas-div"}>
         {currentControl === "tag-annotation" ? (
           <TagCanvas
             canvasRef={canvasRef}
@@ -257,8 +403,18 @@ export default function Controls({
               )
             }
           />
-        ) : currentControl === "draw" ? (
-          <DrawCanvas canvasRef={canvasRef} />
+        ) : currentControl === "pen" ? (
+          <PenCanvas canvasRef={canvasRef} />
+        ) : currentControl === "more" ? (
+          <MoreFilterCanvas
+            canvasRef={canvasRef}
+            zoom={zoom}
+            blur={blur}
+            rotate={rotate}
+            brightness={brightness}
+            imgSrc={imgSrc}
+            drawing={drawing}
+          />
         ) : (
           <RegularCanvas canvasRef={canvasRef} />
         )}
@@ -270,8 +426,8 @@ export default function Controls({
               refer={ref}
               tags={tag}
               handleCloseInput={setTempRedPrompt}
-              handleInputChange={(e) => handleInputChange(e, setTag)}
-              onSubmit={(e) =>
+              handleInputChange={(e: any) => handleInputChange(e, setTag)}
+              onSubmit={(e: any) =>
                 handleSubmitTag(
                   e,
                   currentAnnotation,
@@ -321,8 +477,8 @@ export default function Controls({
           clearFunction={() => setClear(!clear)}
           showHideFunction={() =>
             showAllTags
-              ? hideTags(setShowAllTags, imgSrc, canvasRef, annotations)
-              : showTags(setShowAllTags, imgSrc, canvasRef, annotations)
+              ? hideTags(setShowAllTags, imgSrc, canvasRef, annotations, drawing)
+              : showTags(setShowAllTags, imgSrc, canvasRef, annotations, drawing)
           }
           screenShotFunction={() => handleScreenShot(canvasRef)}
           iconTag={showAllTags ? <HideTags /> : <ShowTags />}

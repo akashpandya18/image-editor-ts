@@ -1,3 +1,4 @@
+import React from "react";
 import { submitTagsProps } from "../../types";
 
 export default function TempRedTag({ position }: submitTagsProps) {

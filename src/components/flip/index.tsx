@@ -1,57 +1,75 @@
-import { annotation } from "../../types";
+import React from "react";
+import { annotationProps } from "../../types";
 
 export const flipHorizontally = (
-  canvasRef: any,
-  imgSrc: any,
-  annotations: annotation[]
+  canvasRef: React.RefObject<HTMLCanvasElement>,
+  imgSrc: string,
+  annotations: annotationProps[],
+  flipHorizontal: boolean,
+  setFlipHorizontal: React.Dispatch<React.SetStateAction<boolean>>,
+  drawing: string
 ) => {
   const canvas = canvasRef.current;
   if (!canvas) return;
 
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
 
-  ctx.translate(canvas.width, 0);
-  ctx.scale(-1, 1);
-  LoadImageFlip(ctx, canvasRef, imgSrc, annotations);
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.translate(canvas.width, 0);
+  context.scale(-1, 1);
+  setFlipHorizontal(!flipHorizontal);
+  LoadImageFlip(context, canvasRef, imgSrc, annotations, drawing);
 };
+
 export const flipVertically = (
-  canvasRef: any,
-  imgSrc: any,
-  annotations: annotation[]
+  canvasRef: React.RefObject<HTMLCanvasElement>,
+  imgSrc: string,
+  annotations: annotationProps[],
+  flipVertical: boolean,
+  setFlipVertical: React.Dispatch<React.SetStateAction<boolean>>,
+  drawing: string
 ) => {
   const canvas = canvasRef.current;
   if (!canvas) return;
 
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
 
-  ctx.translate(0, canvas.height);
-  ctx.scale(1, -1);
-  LoadImageFlip(ctx, canvasRef, imgSrc, annotations);
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.translate(0, canvas.height);
+  context.scale(1, -1);
+  setFlipVertical(!flipVertical);
+  LoadImageFlip(context, canvasRef, imgSrc, annotations, drawing);
 };
+
 export const LoadImageFlip = (
-  ctx: CanvasRenderingContext2D,
-  canvasRef: any,
-  imgSrc: any,
-  annotations: annotation[]
+  context: CanvasRenderingContext2D,
+  canvasRef: React.RefObject<HTMLCanvasElement>,
+  imgSrc: string,
+  annotations: annotationProps[],
+  drawing: string
 ) => {
   const img = new Image();
   img.onload = () => {
-    ctx.drawImage(
+    context.drawImage(
       img,
       0,
       0,
       canvasRef.current!.width,
       canvasRef.current!.height
     );
-    annotations.forEach((annot: annotation) => {
-      const { x, y } = annot;
-      ctx!.beginPath();
-      ctx!.fillStyle = "yellow";
-      ctx!.arc(x, y, 10, 0, 2 * Math.PI);
-      ctx!.fill();
+    annotations.forEach((annotationData: annotationProps) => {
+      const { x, y } = annotationData;
+      context!.beginPath();
+      context!.fillStyle = "yellow";
+      context!.arc(x, y, 10, 0, 2 * Math.PI);
+      context!.fill();
     });
   };
-  img.src = imgSrc;
+  if (drawing !== "") {
+    img.src = drawing;
+  } else {
+    img.src = imgSrc;
+  }
 };
