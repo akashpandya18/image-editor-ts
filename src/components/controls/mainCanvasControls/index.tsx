@@ -1,6 +1,12 @@
-import { Draw, ScreenShot, Tornado } from "../../../assets/icons";
-import { mainCanvasControlProps } from "../../../types";
+import { Draw, ScreenShot, Tornado } from "../../../assets/icons"
+import { mainCanvasControlProps } from "../../../types"
 
+interface props {
+  clearFunction: (e: any) => void
+  showHideFunction: any
+  screenShotFunction: (e: any) => void
+  iconTag: any
+}
 export default function MainCanvasControls({
   clearFunction,
   showHideFunction,
@@ -11,7 +17,7 @@ export default function MainCanvasControls({
     { id: 1, name: "Clear", type: "clear", icon: <Tornado /> },
     { id: 2, name: "ShowHideTags", type: "show-hide-tags", icon: iconTag },
     { id: 3, name: "ScreenShot", type: "screenshot", icon: <ScreenShot /> },
-  ];
+  ]
 
   return (
     <>
@@ -43,27 +49,27 @@ export default function MainCanvasControls({
                   onClick={(e: any) => {
                     switch (item.type) {
                       case "clear":
-                        clearFunction(e);
-                        break;
+                        clearFunction(e)
+                        break
                       case "show-hide-tags":
-                        showHideFunction();
-                        break;
+                        showHideFunction()
+                        break
                       case "screenshot":
-                        screenShotFunction(e);
-                        break;
+                        screenShotFunction(e)
+                        break
                       default:
-                        console.log("no case");
-                        break;
+                        console.log("no case")
+                        break
                     }
                   }}
                 >
                   {item.icon}
                 </button>
               </div>
-            );
+            )
           }
         )}
       </div>
     </>
-  );
+  )
 }

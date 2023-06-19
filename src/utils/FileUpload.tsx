@@ -1,18 +1,18 @@
-import React, { useRef } from "react";
-import "./FileUpload.css";
+import React, { useRef } from "react"
+import "./FileUpload.css"
 
 interface props {
-  onSelectFile: (e: any) => void;
+  onSelectFile: (e: any) => void
 }
 
 const FileUpload = ({ onSelectFile }: props) => {
-  const fileInputRef = useRef<any>(null);
+  const fileInputRef = useRef<any>(null)
 
   return (
     <div>
       <button
         className='upload-file-btn'
-        onClick={() => fileInputRef.current && fileInputRef.current.click()}
+        onClick={() => fileInputRef.current && fileInputRef.current?.click()}
       >
         <svg
           className='upload-file-svg'
@@ -40,7 +40,7 @@ const FileUpload = ({ onSelectFile }: props) => {
         ref={fileInputRef}
       />
     </div>
-  );
-};
+  )
+}
 
-export default FileUpload;
+export default FileUpload
