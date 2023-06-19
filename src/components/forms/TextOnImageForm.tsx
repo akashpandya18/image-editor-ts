@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react"
 import { Close } from "../../assets/icons"
 
 interface positionProps {
@@ -26,14 +26,14 @@ const TextOnImageForm = ({ position, onSubmit }: positionProps) => {
                 }}
             >
                 <input
-                    className='TagInput'
-                    type='text'
-                    name='tag'
+                    className="TagInput"
+                    type="text"
+                    name="tag"
                     maxLength={20}
                     // value={tags}
                     // onChange={(e) => handleInputChange(e)}
                     autoFocus
-                    autoComplete='off'
+                    autoComplete="off"
                 />
                 <div
                     style={{

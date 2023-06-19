@@ -22,6 +22,7 @@ export interface annotationProps {
 
 export interface controlsProps {
   imgSrc: string;
+  setImgSrc: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export interface PenProps {
@@ -33,7 +34,6 @@ export interface CropProps {
   currentCropped: Cropped
   setCurrentCropped: React.Dispatch<React.SetStateAction<Cropped>>
   dimensions: { height: number; width: number }
-  setDimensions: React.Dispatch<React.SetStateAction<{ height: number; width: number }>>
   imgSrc: string
 }
 
@@ -110,7 +110,7 @@ export interface mainCanvasControlProps {
   iconTag: any
 }
 
-export interface onSelectFilePrps {
+export interface onSelectFileProps {
   target:
   {
     files:
@@ -126,7 +126,6 @@ export interface textFormProps {
 
 export interface TextOnImageProps {
   canvasRef: React.RefObject<HTMLCanvasElement>
-  tempPrompt: boolean
   setTempPrompt: React.Dispatch<React.SetStateAction<boolean>>
   currentClicked: {
     x: number,

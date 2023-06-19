@@ -4,14 +4,24 @@ import React, {
   useRef
 } from "react";
 import {
+  clickHandler,
+  handleMouseDown,
+  handleMouseMove,
+  handleMouseUp
+} from "../controls/textOnImage";
+import {
+  mouseDown,
+  mouseLeave,
+  mouseMove,
+  mouseUP
+} from "../crop";
+import {
   moreFilterProps,
   PenProps,
   TagProps,
   CropProps,
   TextOnImageProps
 } from "../../types";
-import { mouseDown, mouseLeave, mouseMove, mouseUP } from "../crop";
-import { clickHandler, handleMouseDown, handleMouseMove, handleMouseUp } from "../controls/textOnImage";
 
 export const RegularCanvas = ({ canvasRef }: {
   canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -45,32 +55,30 @@ export const TagCanvas = ({
   );
 };
 
-export const TextOnImages = ({
-                               canvasRef,
-                               tempPrompt,
-                               setTempPrompt,
-                               currentClicked,
-                               setCurrentClicked,
-                               setTextForm,
-                               imgSrc,
-                               allTextTags,
-                               dimensions,
-                               setAllTextTags,
-                               isEditing,
-                               setIsEditing,
-                               setFormData
-                             }: TextOnImageProps) => {
-
-  const [isDraggingText, setIsDraggingText] = useState<boolean>(false)
-  const [draggingText, setDraggingText] = useState<string>("")
+export const TextOnImageCanvas = ({
+  canvasRef,
+  setTempPrompt,
+  currentClicked,
+  setCurrentClicked,
+  setTextForm,
+  imgSrc,
+  allTextTags,
+  dimensions,
+  setAllTextTags,
+  isEditing,
+  setIsEditing,
+  setFormData
+}: TextOnImageProps) => {
+  const [isDraggingText, setIsDraggingText] = useState<boolean>(false);
+  const [draggingText, setDraggingText] = useState<string>("");
 
   return (
     <div>
       <canvas
         ref={canvasRef}
         style={{
-          borderRadius: "7px",
-          boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
+          borderRadius: "0.438rem",
+          boxShadow: "0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.2)"
         }}
         onClick={(event) => {
           clickHandler(
@@ -95,7 +103,6 @@ export const TextOnImages = ({
             size: 0
           })
         }}
-        // onClick={handleTagClick}
         onMouseMove={(event) => {
           handleMouseMove(
             event,
@@ -121,9 +128,7 @@ export const TextOnImages = ({
             allTextTags,
             setCurrentClicked
           )
-
         }}
-        // onMouseLeave={""}
         onMouseUp={(event) => {
           handleMouseUp(
             event,
@@ -139,52 +144,47 @@ export const TextOnImages = ({
         }}
       />
     </div>
-  )
-}
+  );
+};
 
-export const Crop = ({ canvasRef, currentCropped, setCurrentCropped, dimensions, setDimensions, imgSrc }: CropProps): JSX.Element => {
-
-  const canvas = canvasRef.current
-
-  if (!canvas) {
-    return <></>
-  }
-
+export const CropCanvas = ({
+  canvasRef,
+  currentCropped,
+  setCurrentCropped,
+  dimensions,
+  imgSrc
+}: CropProps): JSX.Element => {
   const [difference, setDifference] = useState({
     width: 0,
     height: 0,
     x: 0,
     y: 0
-  })
-  const [croppingNode, setCroppingNode] = useState<number>(0)
-  const [isResize, setIsResize] = useState(false)
-  const [isDragging, setIsDragging] = useState(false)
-  const [startingNode, setstartingNode] = useState({
-    x: 0, y: 0
-  })
+  });
+  const [croppingNode, setCroppingNode] = useState<number>(0);
+  const [isResize, setIsResize] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startingNode, setStartingNode] = useState({ x: 0, y: 0 });
 
-  const imgRef = useRef<HTMLImageElement>(null)
-
+  const imgRef = useRef<HTMLImageElement>(null);
   let mouseUp = {
     difference,
     setDifference,
     currentCropped,
     setCurrentCropped,
     croppingNode,
-    setIsResize,
+    isResize,
     isDragging,
     startingNode,
     canvasRef,
     imgRef
-  }
-
+  };
 
   return (
     <div>
       <canvas
         style={{
-          borderRadius: "7px",
-          boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.2)",
+          borderRadius: "0.438rem",
+          boxShadow: "0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.2)"
         }}
         ref={canvasRef}
         onMouseDown={(event) => mouseDown(
@@ -193,9 +193,8 @@ export const Crop = ({ canvasRef, currentCropped, setCurrentCropped, dimensions,
           setCroppingNode,
           setIsResize,
           setIsDragging,
-          setstartingNode
+          setStartingNode
         )}
-
         onMouseMove={(event) => mouseMove(
           event,
           setDifference,
@@ -228,13 +227,20 @@ export const Crop = ({ canvasRef, currentCropped, setCurrentCropped, dimensions,
           event,
           setIsDragging,
           setIsResize,
-          mouseUp = mouseUp
+          mouseUp //mouseUp = mouseUp
         )}
       />
-      <img src={imgSrc} alt="uploaded" height={dimensions.height} width={dimensions.width} ref={imgRef} style={{ display: 'none' }} />
+      <img
+        src={imgSrc}
+        alt={"uploaded"}
+        height={dimensions.height}
+        width={dimensions.width}
+        ref={imgRef}
+        style={{ display: "none" }}
+      />
     </div>
   );
-}
+};
 
 export const PenCanvas = ({ canvasRef }: PenProps) => {
   const [isDrawing, setIsDrawing] = useState(false);

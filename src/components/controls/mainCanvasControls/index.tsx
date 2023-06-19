@@ -1,23 +1,23 @@
 import React from "react";
 import {
-  ScreenShot,
-  Tornado
+  Tornado,
+  ScreenShot
 } from "../../../assets/icons";
 import { mainCanvasControlProps } from "../../../types";
 
 interface props {
-  clearFunction: (e: any) => void
-  showHideFunction: any
-  screenShotFunction: (e: any) => void
-  iconTag: any
+  id: number;
+  name: string;
+  type: string;
+  icon: any;
 }
 
-export default function MainCanvasControls({
+export const MainCanvasControls = ({
   clearFunction,
   showHideFunction,
   screenShotFunction,
   iconTag
-}: mainCanvasControlProps) {
+}: mainCanvasControlProps) => {
   const controls = [
     { id: 1, name: "Clear", type: "clear", icon: <Tornado /> },
     { id: 2, name: "ShowHideTags", type: "show-hide-tags", icon: iconTag },
@@ -37,7 +37,7 @@ export default function MainCanvasControls({
       }}
     >
       {controls.map(
-        (item: { id: number; name: string; type: string; icon: any }) => {
+        (item: props) => {
           return (
             <div key={item.id}>
               <button

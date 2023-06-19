@@ -13,9 +13,9 @@ const TextInputPrompt = ({ position }: props) => {
                 left: position.x - 10,
                 position: "absolute",
                 zIndex: 9,
-                border: ' 2px dashed red',
-                width: 'fit-content',
-                height: 'fit-content'
+                border: "2px dashed red",
+                width: "fit-content",
+                height: "fit-content"
             }}
         >
         </div>

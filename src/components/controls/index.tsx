@@ -1,10 +1,7 @@
 import React, {
   useState,
   useEffect,
-  useRef,
-  FormEvent,
-  createContext,
-  useMemo
+  useRef, FormEvent
 } from "react";
 import {
   handleCanvasClick,
@@ -31,16 +28,14 @@ import {
   TagControls,
   TextOnImageControl
 } from "./allControls";
-import MainCanvasControls from "./mainCanvasControls";
+import { MainCanvasControls } from "./mainCanvasControls";
 import { customAlphabet } from "nanoid";
 import {
   controlsType,
   annotationProps,
   controlsProps,
   filterOptionsProps,
-  Cropped,
-  TextObjectProps,
-  textFormProps
+  Cropped, textFormProps
 } from "../../types";
 import ShowTagOnHover from "../prompts/showTagOnHover";
 import { DeleteTag } from "../prompts/deleteTag";
@@ -59,25 +54,19 @@ import {
   PenCanvas,
   TagCanvas,
   MoreFilterCanvas,
-  Crop,
-  TextOnImages
+  TextOnImageCanvas,
+  CropCanvas
 } from "../canvases";
 import "./sliders/index.css";
 import {
   saveDrawing,
   clearDrawing
 } from "../draw";
-import TextOnImageForm from "../forms/TextOnImageForm"
-import { submitHandler, textOnChangeHandler1 } from "./textOnImage";
-import TextInputPrompt from "../prompts/TextInputPrompt";
-
-export const TextContext = createContext({
-  text: "",
-  setText: () => { }
-})
+import {submitHandler, textOnChangeHandler1} from "./textOnImage";
 
 export default function Controls({
-  imgSrc
+  imgSrc,
+  setImgSrc
 }: controlsProps): JSX.Element {
   const [annotations, setAnnotations] = useState<annotationProps[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -101,6 +90,32 @@ export default function Controls({
   const [flipHorizontal, setFlipHorizontal] = useState<boolean>(false);
   const [flipVertical, setFlipVertical] = useState<boolean>(false);
   const [drawing, setDrawing] = useState("");
+  const [currentCropped, setCurrentCropped] = useState<Cropped>({
+    startingX: 0,
+    startingY: 0,
+    height: 0,
+    width: 0,
+  })
+  const [allTextTags, setAllTextTags] = useState([])
+  const [tempPrompt, setTempPrompt] = useState(false)
+  const [currentClicked, setCurrentClicked] = useState({
+    x: 0,
+    y: 0,
+  })
+  // const [name, setName] = useState("Mks");
+  const [isEditing, setIsEditing] = useState(false)
+  const [
+    // TextForm
+    , setTextForm] = useState({
+    text: "",
+    color: "",
+    size: 0
+  })
+  const [formData, setFormData] = useState({ text: '', size: 32, color: '#ffffff' })
+  const [croppedImage,
+  //  setCroppedImage
+  ] = useState<string>("")
+  const [selectCanvas, setSelectCanvas] = useState(false)
 
   const lineWidth = 4;
   const lineColor = "#000";
@@ -125,6 +140,16 @@ export default function Controls({
       setBrightness(Number(e.target.value));
     }
   };
+
+  const demo = (textForm: textFormProps) => {
+    textOnChangeHandler1(
+      textForm,
+      canvasRef,
+      currentClicked,
+      imgSrc,
+      isEditing,
+    )
+  }
 
   // return range slider value
   const inputValue = (name: string) => {
@@ -293,6 +318,10 @@ export default function Controls({
     };
   }, [currentControl, blur, zoom, brightness]);
 
+  const select = () => {
+    setSelectCanvas(!selectCanvas)
+  }
+
   return (
     <div className={"controls-out"}>
       {/* filter options */}
@@ -350,9 +379,31 @@ export default function Controls({
           {currentControl === "tag-annotation" ? (
             <TagControls annotations={annotations}/>
           ) : currentControl === "text-on-image" ? (
-            <TextOnImageControl />
+            <TextOnImageControl
+              tempPrompt={tempPrompt}
+              textOnChangeHandler={demo}
+              onSubmit={(event: FormEvent<HTMLFormElement>) => submitHandler(
+                event,
+                allTextTags,
+                setAllTextTags,
+                currentClicked,
+                setTempPrompt,
+                tempPrompt,
+                setFormData
+              )}
+              setTempPrompt={setTempPrompt}
+              formData={formData}
+              setFormData={setFormData}
+            />
           ) : currentControl === "crop" ? (
-            <CropControl />
+            <CropControl
+              img={croppedImage}
+              select={select}
+              setImgSrc={setImgSrc}
+              canvasRef={canvasRef}
+              currentCropped={currentCropped}
+              selectCanvas={selectCanvas}
+            />
           ) : currentControl === "flip" ? (
             <FlipControl
               flipHorizontally={() => flipHorizontally(canvasRef, imgSrc, annotations, flipHorizontal, setFlipHorizontal, drawing, showAllTags, setShowAllTags)}
@@ -428,10 +479,9 @@ export default function Controls({
         ) : currentControl === "pen" ? (
           <PenCanvas canvasRef={canvasRef} />
         ) : currentControl === "text-on-image" ? (
-          <TextOnImages
+          <TextOnImageCanvas
             allTextTags={allTextTags}
             setAllTextTags={setAllTextTags}
-            tempPrompt={tempPrompt}
             setTempPrompt={setTempPrompt}
             canvasRef={canvasRef}
             currentClicked={currentClicked}
@@ -444,12 +494,11 @@ export default function Controls({
             setFormData={setFormData}
           />
           ) : currentControl === 'crop' ? (
-          <Crop
+          <CropCanvas
             canvasRef={canvasRef}
             currentCropped={currentCropped}
             setCurrentCropped={setCurrentCropped}
             dimensions={dimensions}
-            setDimensions={setDimensions}
             imgSrc={imgSrc}
           />
         ) : currentControl === "more" ? (
