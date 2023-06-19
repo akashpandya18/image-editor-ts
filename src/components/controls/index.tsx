@@ -1,7 +1,10 @@
 import React, {
   useState,
   useEffect,
-  useRef
+  useRef,
+  FormEvent,
+  createContext,
+  useMemo
 } from "react";
 import {
   handleCanvasClick,
@@ -34,7 +37,10 @@ import {
   controlsType,
   annotationProps,
   controlsProps,
-  filterOptionsProps
+  filterOptionsProps,
+  Cropped,
+  TextObjectProps,
+  textFormProps
 } from "../../types";
 import ShowTagOnHover from "../prompts/showTagOnHover";
 import { DeleteTag } from "../prompts/deleteTag";
@@ -52,13 +58,23 @@ import {
   RegularCanvas,
   PenCanvas,
   TagCanvas,
-  MoreFilterCanvas
+  MoreFilterCanvas,
+  Crop,
+  TextOnImages
 } from "../canvases";
 import "./sliders/index.css";
 import {
   saveDrawing,
   clearDrawing
 } from "../draw";
+import TextOnImageForm from "../forms/TextOnImageForm"
+import { submitHandler, textOnChangeHandler1 } from "./textOnImage";
+import TextInputPrompt from "../prompts/TextInputPrompt";
+
+export const TextContext = createContext({
+  text: "",
+  setText: () => { }
+})
 
 export default function Controls({
   imgSrc
@@ -153,6 +169,12 @@ export default function Controls({
     setTag("");
     setDeleteTag(false);
     setDeletePos({ xN: 0, yN: 0 });
+    setCurrentCropped({
+      height: 0,
+      startingX: 0,
+      startingY: 0,
+      width: 0
+    });
     setDeleteTagId("");
     setShowAllTags(false);
     setShowH(false);
@@ -392,7 +414,7 @@ export default function Controls({
                 setDeletePos
               )
             }
-            handleTagMouseMove={(event: any) =>
+            handleTagMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) =>
               handleCanvasMouseMove(
                 event,
                 canvasRef,
@@ -405,6 +427,31 @@ export default function Controls({
           />
         ) : currentControl === "pen" ? (
           <PenCanvas canvasRef={canvasRef} />
+        ) : currentControl === "text-on-image" ? (
+          <TextOnImages
+            allTextTags={allTextTags}
+            setAllTextTags={setAllTextTags}
+            tempPrompt={tempPrompt}
+            setTempPrompt={setTempPrompt}
+            canvasRef={canvasRef}
+            currentClicked={currentClicked}
+            setCurrentClicked={setCurrentClicked}
+            setTextForm={setTextForm}
+            imgSrc={imgSrc}
+            dimensions={dimensions}
+            isEditing={isEditing}
+            setIsEditing={setIsEditing}
+            setFormData={setFormData}
+          />
+          ) : currentControl === 'crop' ? (
+          <Crop
+            canvasRef={canvasRef}
+            currentCropped={currentCropped}
+            setCurrentCropped={setCurrentCropped}
+            dimensions={dimensions}
+            setDimensions={setDimensions}
+            imgSrc={imgSrc}
+          />
         ) : currentControl === "more" ? (
           <MoreFilterCanvas
             canvasRef={canvasRef}

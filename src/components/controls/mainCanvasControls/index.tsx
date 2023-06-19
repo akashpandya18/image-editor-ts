@@ -5,6 +5,13 @@ import {
 } from "../../../assets/icons";
 import { mainCanvasControlProps } from "../../../types";
 
+interface props {
+  clearFunction: (e: any) => void
+  showHideFunction: any
+  screenShotFunction: (e: any) => void
+  iconTag: any
+}
+
 export default function MainCanvasControls({
   clearFunction,
   showHideFunction,

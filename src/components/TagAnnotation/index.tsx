@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FormEvent } from "react";
 import { annotationProps } from "../../types";
 
 export const handleCanvasMouseMove = (
@@ -90,7 +90,7 @@ export const handleInputChange = (
 };
 
 export const handleSubmitTag = (
-  e: any,
+  e: FormEvent<HTMLFormElement>,
   currentAnnotation: { x: number; y: number },
   canvasRef: React.RefObject<HTMLCanvasElement>,
   imageSrcMain: string,
@@ -132,7 +132,11 @@ export const handleSubmitTag = (
       context!.clearRect(0, 0, canvas!.width, canvas!.height);
       setTimeout(() => {
         context!.drawImage(image, 0, 0, image.width, image.height);
-        tempAnnot.forEach((annotationData: any) => {
+        tempAnnot.forEach((annotationData: {
+          x: number
+          y: number
+          tag: string
+        }) => {
           const { x, y, tag } = annotationData;
           //tag
           context!.font = "1.5rem Arial";

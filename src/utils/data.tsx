@@ -1,5 +1,4 @@
-import React from "react";
-import { SetStateAction } from "react";
+import React, { SetStateAction } from "react";
 import {
   Tag,
   TextOnImage,
