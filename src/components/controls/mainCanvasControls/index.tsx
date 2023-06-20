@@ -3,21 +3,17 @@ import {
   Tornado,
   ScreenShot
 } from "../../../assets/icons";
-import { mainCanvasControlProps } from "../../../types";
-
-interface props {
-  id: number;
-  name: string;
-  type: string;
-  icon: any;
-}
+import {
+  MainCanvasControlProps,
+  ControlsMapProps
+} from "../../../types";
 
 export const MainCanvasControls = ({
   clearFunction,
   showHideFunction,
   screenShotFunction,
   iconTag
-}: mainCanvasControlProps) => {
+}: MainCanvasControlProps) => {
   const controls = [
     { id: 1, name: "Clear", type: "clear", icon: <Tornado /> },
     { id: 2, name: "ShowHideTags", type: "show-hide-tags", icon: iconTag },
@@ -37,7 +33,7 @@ export const MainCanvasControls = ({
       }}
     >
       {controls.map(
-        (item: props) => {
+        (item: ControlsMapProps) => {
           return (
             <div key={item.id}>
               <button
@@ -50,7 +46,7 @@ export const MainCanvasControls = ({
                   backgroundColor: "#2a2a2a",
                   boxShadow: "0 0.25rem 0.25rem 0 rgba(0, 0, 0, 0.2)"
                 }}
-                onClick={(e: any) => {
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   switch (item.type) {
                     case "clear":
                       clearFunction(e);

@@ -3,13 +3,13 @@ import {
   Check,
   Close
 } from "../../assets/icons";
-import { deleteTagProps } from "../../types";
+import { DeleteTagProps } from "../../types";
 
 export const DeleteTag = ({
   position,
   setPromptOff,
-  deleteTagSubmit,
-}: deleteTagProps) => {
+  deleteTagSubmit
+}: DeleteTagProps) => {
   return (
     <div
       style={{

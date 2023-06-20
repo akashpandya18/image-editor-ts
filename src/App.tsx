@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import FileUpload from "./utils/FileUpload";
-import Controls from "./components/controls";
+import { Controls } from "./components/controls";
 import "./App.css";
-import { onSelectFileProps } from "./types";
+import { OnSelectFileProps } from "./types";
 
 function App() {
   const [imgSrc, setImgSrc] = useState("")
 
-  const onSelectFile = (e: onSelectFileProps) => {
+  const onSelectFile = (e: OnSelectFileProps) => {
     if (e.target.files && e.target.files.length > 0) {
       const reader = new FileReader();
       reader.addEventListener("load", () =>

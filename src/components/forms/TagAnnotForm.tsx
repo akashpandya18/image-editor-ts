@@ -1,24 +1,16 @@
 import React from "react";
 import "../styles/index.css";
 import { Close } from "../../assets/icons";
+import { TagAnnotationFormProps } from "../../types";
 
-interface TagAnnotationFormProps {
-  tags: string;
-  handleInputChange: (e: any) => void;
-  onSubmit: (e: any) => void;
-  position: { x: number; y: number };
-  refer: any;
-  handleCloseInput: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-function TagAnnotationForm({
+export const TagAnnotationForm = ({
   tags,
   handleInputChange,
   onSubmit,
   position,
   refer,
   handleCloseInput
-}: TagAnnotationFormProps) {
+}: TagAnnotationFormProps) => {
   return (
     <div
       ref={refer}
@@ -43,9 +35,7 @@ function TagAnnotationForm({
           name={"tag"}
           maxLength={20}
           value={tags}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            handleInputChange(e)
-          }
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange(e)}
           autoFocus
           autoComplete={"off"}
         />
@@ -71,5 +61,3 @@ function TagAnnotationForm({
     </div>
   );
 }
-
-export default TagAnnotationForm;

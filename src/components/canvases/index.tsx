@@ -16,16 +16,15 @@ import {
   mouseUP
 } from "../crop";
 import {
-  moreFilterProps,
-  PenProps,
+  CanvasRefProps,
   TagProps,
+  TextOnImageProps,
   CropProps,
-  TextOnImageProps
+  PenProps,
+  MoreFilterProps
 } from "../../types";
 
-export const RegularCanvas = ({ canvasRef }: {
-  canvasRef: React.RefObject<HTMLCanvasElement>;
-}) => {
+export const RegularCanvas = ({ canvasRef }: CanvasRefProps) => {
   return (
     <canvas
       ref={canvasRef}
@@ -60,12 +59,10 @@ export const TextOnImageCanvas = ({
   setTempPrompt,
   currentClicked,
   setCurrentClicked,
-  setTextForm,
   imgSrc,
   allTextTags,
   dimensions,
   setAllTextTags,
-  isEditing,
   setIsEditing,
   setFormData
 }: TextOnImageProps) => {
@@ -80,67 +77,51 @@ export const TextOnImageCanvas = ({
           borderRadius: "0.438rem",
           boxShadow: "0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.2)"
         }}
-        onClick={(event) => {
-          clickHandler(
+        onClick={(event: React.MouseEvent<HTMLCanvasElement>) => {
+          clickHandler({
             event,
             canvasRef,
-            currentClicked,
             setTempPrompt,
             setCurrentClicked,
             imgSrc,
             allTextTags,
-            isDraggingText,
-            setIsDraggingText,
-            draggingText,
-            setDraggingText,
-            isEditing,
             setIsEditing,
             setFormData
-          )
-          setTextForm({
-            text: "",
-            color: "",
-            size: 0
-          })
+          });
         }}
-        onMouseMove={(event) => {
-          handleMouseMove(
+        onMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) => {
+          handleMouseMove({
             event,
             isDraggingText,
-            setIsDraggingText,
             draggingText,
-            setDraggingText,
             canvasRef,
             allTextTags,
             dimensions,
             imgSrc,
             currentClicked
-          )
+          })
         }}
-        onMouseDown={(event) => {
-          handleMouseDown(
+        onMouseDown={(event: React.MouseEvent<HTMLCanvasElement>) => {
+          handleMouseDown({
             event,
-            isDraggingText,
             setIsDraggingText,
-            draggingText,
             setDraggingText,
             canvasRef,
             allTextTags,
             setCurrentClicked
-          )
+          })
         }}
-        onMouseUp={(event) => {
-          handleMouseUp(
+        onMouseUp={(event: React.MouseEvent<HTMLCanvasElement>) => {
+          handleMouseUp({
             event,
             isDraggingText,
             setIsDraggingText,
             draggingText,
             setDraggingText,
-            canvasRef,
             allTextTags,
             setAllTextTags,
             currentClicked
-          )
+          })
         }}
       />
     </div>
@@ -187,15 +168,15 @@ export const CropCanvas = ({
           boxShadow: "0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.2)"
         }}
         ref={canvasRef}
-        onMouseDown={(event) => mouseDown(
+        onMouseDown={(event: React.MouseEvent<HTMLCanvasElement>) => mouseDown({
           event,
           currentCropped,
           setCroppingNode,
           setIsResize,
           setIsDragging,
           setStartingNode
-        )}
-        onMouseMove={(event) => mouseMove(
+        })}
+        onMouseMove={(event) => mouseMove({
           event,
           setDifference,
           currentCropped,
@@ -207,8 +188,8 @@ export const CropCanvas = ({
           dimensions,
           imgRef,
           imgSrc
-        )}
-        onMouseUp={(event) => mouseUP(
+        })}
+        onMouseUp={(event) => mouseUP({
           event,
           difference,
           setDifference,
@@ -219,16 +200,14 @@ export const CropCanvas = ({
           setIsResize,
           isDragging,
           setIsDragging,
-          startingNode,
-          canvasRef,
-          imgRef
-        )}
-        onMouseLeave={(event: any) => mouseLeave(
+          startingNode
+        })}
+        onMouseLeave={(event: React.MouseEvent<HTMLCanvasElement>) => mouseLeave({
           event,
           setIsDragging,
           setIsResize,
           mouseUp //mouseUp = mouseUp
-        )}
+        })}
       />
       <img
         src={imgSrc}
@@ -312,7 +291,7 @@ export const MoreFilterCanvas = ({
   brightness,
   imgSrc,
   drawing
-}: moreFilterProps) => {
+}: MoreFilterProps) => {
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");

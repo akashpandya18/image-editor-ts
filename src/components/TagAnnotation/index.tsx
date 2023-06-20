@@ -1,14 +1,24 @@
-import React, { FormEvent } from "react";
-import { annotationProps } from "../../types";
+import React  from "react";
+import {
+  HandleCanvasMouseMoveProps,
+  AnnotationProps,
+  HandleCanvasClickProps,
+  HandleInputChangeProps,
+  HandleSubmitTagProps,
+  HandleClearSingleTagProps,
+  HideTagsProps,
+  ShowTagsProps,
+  CanvasRefProps
+} from "../../types";
 
-export const handleCanvasMouseMove = (
-  event: React.MouseEvent<HTMLCanvasElement>,
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  annotations: annotationProps[],
-  setHoverTag: React.Dispatch<React.SetStateAction<string>>,
-  setHoverPos: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>,
-  setShowH: React.Dispatch<React.SetStateAction<boolean>>
-): void => {
+export const handleCanvasMouseMove = ({
+  event,
+  canvasRef,
+  annotations,
+  setHoverTag,
+  setHoverPos,
+  setShowH
+}: HandleCanvasMouseMoveProps) => {
   event.preventDefault();
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -16,7 +26,7 @@ export const handleCanvasMouseMove = (
   const y = event.nativeEvent.offsetY;
 
   // Check if the mouse is hovering over the white dot
-  const hoveredDot = annotations.find((annotation: any) => {
+  const hoveredDot = annotations.find((annotation: AnnotationProps) => {
     context?.beginPath();
     context?.arc(annotation.x, annotation.y, 10, 0, 2 * Math.PI);
     return context?.isPointInPath(x, y);
@@ -36,18 +46,18 @@ export const handleCanvasMouseMove = (
   }
 };
 
-export const handleCanvasClick = (
-  event: React.MouseEvent<HTMLCanvasElement>,
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  annotations: annotationProps[],
-  setTempRedPrompt: React.Dispatch<React.SetStateAction<boolean>>,
-  setDeleteTag: React.Dispatch<React.SetStateAction<boolean>>,
-  setShowH: React.Dispatch<React.SetStateAction<boolean>>,
-  setDeleteTagId: React.Dispatch<React.SetStateAction<string>>,
-  setCurrentAnnotation: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>,
-  setTag: React.Dispatch<React.SetStateAction<string>>,
-  setDeletePos: React.Dispatch<React.SetStateAction<{ xN: number; yN: number }>>
-): void => {
+export const handleCanvasClick = ({
+  event,
+  canvasRef,
+  annotations,
+  setTempRedPrompt,
+  setDeleteTag,
+  setShowH,
+  setDeleteTagId,
+  setCurrentAnnotation,
+  setTag,
+  setDeletePos
+}: HandleCanvasClickProps) => {
   setTempRedPrompt(true);
   setDeleteTag(false);
   setDeleteTagId("");
@@ -63,7 +73,7 @@ export const handleCanvasClick = (
   const yFind = event.nativeEvent.offsetY;
 
   // Check if the mouse click is on any of the tags
-  const clickedDot = annotations.find((annotation: annotationProps) => {
+  const clickedDot = annotations.find((annotation: AnnotationProps) => {
     context?.beginPath();
     context?.arc(annotation.x, annotation.y, 10, 0, 2 * Math.PI);
     return context?.isPointInPath(xFind, yFind);
@@ -82,29 +92,27 @@ export const handleCanvasClick = (
   }
 };
 
-export const handleInputChange = (
-  event: any,
-  setTag: React.Dispatch<React.SetStateAction<string>>
-): void => {
+export const handleInputChange = ({
+  event,
+  setTag
+}: HandleInputChangeProps) => {
   setTag(event.target.value);
 };
 
-export const handleSubmitTag = (
-  e: FormEvent<HTMLFormElement>,
-  currentAnnotation: { x: number; y: number },
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  imageSrcMain: string,
-  tag: string,
-  annotations: annotationProps[],
-  id: string,
-  setAnnotations: React.Dispatch<React.SetStateAction<annotationProps[]>>,
-  setTag: React.Dispatch<React.SetStateAction<string>>,
-  setCurrentAnnotation: React.Dispatch<
-    React.SetStateAction<{ x: number; y: number }>
-  >,
-  setTempRedPrompt: React.Dispatch<React.SetStateAction<boolean>>,
-  showAllTags: boolean
-): void => {
+export const handleSubmitTag = ({
+  e,
+  currentAnnotation,
+  canvasRef,
+  imgSrc,
+  tag,
+  annotations,
+  id,
+  setAnnotations,
+  setTag,
+  setCurrentAnnotation,
+  setTempRedPrompt,
+  showAllTags
+}: HandleSubmitTagProps) => {
   e.preventDefault();
   const x = currentAnnotation.x;
   const y = currentAnnotation.y;
@@ -112,7 +120,7 @@ export const handleSubmitTag = (
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = imageSrcMain;
+  image.src = imgSrc;
   image.width = canvas!.width;
   image.height = canvas!.height;
 
@@ -133,9 +141,9 @@ export const handleSubmitTag = (
       setTimeout(() => {
         context!.drawImage(image, 0, 0, image.width, image.height);
         tempAnnot.forEach((annotationData: {
-          x: number
-          y: number
-          tag: string
+          x: number;
+          y: number;
+          tag: string;
         }) => {
           const { x, y, tag } = annotationData;
           //tag
@@ -179,31 +187,27 @@ export const handleSubmitTag = (
   setTempRedPrompt(false);
 };
 
-export const handleClearSingleTag = (
-  e: any,
-  setDeleteTagId: React.Dispatch<React.SetStateAction<string>>,
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  imageSrcMain: string,
-  setDeleteTag: React.Dispatch<React.SetStateAction<boolean>>,
-  annotations: annotationProps[],
-  deleteTagId: string,
-  setAnnotations: React.Dispatch<React.SetStateAction<annotationProps[]>>,
-  setTag: React.Dispatch<React.SetStateAction<string>>,
-  setCurrentAnnotation: React.Dispatch<
-    React.SetStateAction<{ x: number; y: number }>
-  >,
-  setTempRedPrompt: React.Dispatch<React.SetStateAction<boolean>>,
-  setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>
-): void => {
+export const handleClearSingleTag = ({
+  e,
+  setDeleteTagId,
+  canvasRef,
+  imgSrc,
+  setDeleteTag,
+  annotations,
+  deleteTagId,
+  setAnnotations,
+  setTag,
+  setCurrentAnnotation,
+  setTempRedPrompt,
+  setShowAllTags
+}: HandleClearSingleTagProps) => {
   e.preventDefault();
   setShowAllTags(false);
 
-  const filteredArray = annotations.filter(
-    (item: any) => item.id !== deleteTagId
-  );
+  const filteredArray = annotations.filter((item: AnnotationProps) => item.id !== deleteTagId);
 
   const image = new Image();
-  image.src = imageSrcMain;
+  image.src = imgSrc;
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
 
@@ -216,7 +220,7 @@ export const handleClearSingleTag = (
     context!.drawImage(image, 0, 0, image.width, image.height);
     if (deleteTagId !== "") {
       // populate dots again
-      filteredArray.forEach((annotationData: any) => {
+      filteredArray.forEach((annotationData: AnnotationProps) => {
         context!.beginPath();
         context!.fillStyle = "yellow";
         context!.arc(annotationData.x, annotationData.y, 10, 0, 2 * Math.PI);
@@ -232,19 +236,19 @@ export const handleClearSingleTag = (
   }, 10);
 };
 
-export const hideTags = (
-  setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>,
-  imageSrcMain: string,
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  annotations: annotationProps[],
-  drawing: string
-): void => {
+export const hideTags = ({
+  setShowAllTags,
+  imgSrc,
+  canvasRef,
+  annotations,
+  drawing
+}: HideTagsProps) => {
   setShowAllTags(false);
   const image = new Image();
   if (drawing !== "") {
     image.src = drawing;
   } else {
-    image.src = imageSrcMain;
+    image.src = imgSrc;
   }
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -255,7 +259,7 @@ export const hideTags = (
   context!.clearRect(0, 0, canvas!.width, canvas!.height);
   setTimeout(() => {
     context!.drawImage(image, 0, 0, image.width, image.height);
-    annotations.forEach((annotationData: any) => {
+    annotations.forEach((annotationData: AnnotationProps) => {
       context!.beginPath();
       context!.fillStyle = "yellow";
       context!.arc(annotationData.x, annotationData.y, 10, 0, 2 * Math.PI);
@@ -264,19 +268,19 @@ export const hideTags = (
   }, 10);
 };
 
-export const showTags = (
-  setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>,
-  imageSrcMain: string,
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  annotations: annotationProps[],
-  drawing: string
-): void => {
+export const showTags = ({
+  setShowAllTags,
+  imgSrc,
+  canvasRef,
+  annotations,
+  drawing
+}: ShowTagsProps) => {
   setShowAllTags(true);
   const image = new Image();
   if (drawing !== "") {
     image.src = drawing;
   } else {
-    image.src = imageSrcMain;
+    image.src = imgSrc;
   }
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -287,7 +291,7 @@ export const showTags = (
   context!.clearRect(0, 0, canvas!.width, canvas!.height);
   setTimeout(() => {
     context!.drawImage(image, 0, 0, image.width, image.height);
-    annotations.forEach((annotationData: any) => {
+    annotations.forEach((annotationData: AnnotationProps) => {
       const { x, y, tag } = annotationData;
       //tag
       context!.font = "1.5rem Arial";
@@ -330,9 +334,7 @@ export const showTags = (
   }, 10);
 };
 
-export const handleScreenShot = (
-  canvasRef: React.RefObject<HTMLCanvasElement>
-): void => {
+export const handleScreenShot = ({ canvasRef }: CanvasRefProps) => {
   const canvas = canvasRef.current;
   const image = canvas!.toDataURL("image/png");
 

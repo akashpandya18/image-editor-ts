@@ -1,7 +1,7 @@
 import React from "react";
-import { tagOnHoverProps } from "../../types";
+import { TagOnHoverProps } from "../../types";
 
-export default function ShowTagOnHover({ position, tag }: tagOnHoverProps) {
+export default function ShowTagOnHover({ position, tag }: TagOnHoverProps) {
   return (
     <div
       style={{

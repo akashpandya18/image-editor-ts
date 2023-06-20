@@ -1,13 +1,10 @@
 import React, { useRef } from "react";
 import { FileUploadSvg } from "../assets/icons";
 import "./FileUpload.css";
-
-interface FileUploadProps {
-  onSelectFile: (e: any) => void;
-}
+import { FileUploadProps } from "../types";
 
 const FileUpload = ({ onSelectFile }: FileUploadProps) => {
-  const fileInputRef = useRef<any>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <div>

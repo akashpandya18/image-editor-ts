@@ -1,7 +1,7 @@
 import React from "react";
-import { submitTagsProps } from "../../types";
+import { SubmitTagsProps } from "../../types";
 
-export default function TempRedTag({ position }: submitTagsProps) {
+export default function TempRedTag({ position }: SubmitTagsProps) {
   return (
     <div
       style={{

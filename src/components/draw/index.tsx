@@ -1,33 +1,28 @@
 import React from "react";
-import { annotationProps } from "../../types";
 import { showTags } from "../TagAnnotation";
+import {
+  SaveDrawingProps,
+  ClearDrawingProps,
+  AnnotationProps
+} from "../../types";
 
-export const saveDrawing = (
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  setDrawing: any
-) => {
+export const saveDrawing = ({
+  canvasRef,
+  setDrawing
+}: SaveDrawingProps) => {
   const canvas = canvasRef.current;
-  // if (!canvas) return;
-  // const context = canvas!.getContext("2d");
-  // if (!context) return;
-
-  // const image = new Image();
-  // image.src = canvas!.toDataURL();
-  // blur = blur / 16;
-  // context!.filter = `blur(${blur}rem) brightness(${brightness})`;
-  // context!.drawImage(image, 0, 0, canvas.width, canvas.height);
-  // console.log("save", canvas.toDataURL());
-  setDrawing(canvas?.toDataURL());
+  setDrawing(canvas!.toDataURL());
 };
 
-export const clearDrawing = (
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  imgSrc: string,
-  annotations: annotationProps[],
-  setDrawing: any,
-  showAllTags: boolean,
-  setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>
-) => {
+export const clearDrawing = ({
+ canvasRef,
+ imgSrc,
+ annotations,
+ setDrawing,
+ showAllTags,
+ setShowAllTags,
+  drawing
+}: ClearDrawingProps) => {
   const canvas = canvasRef.current;
   const context = canvas?.getContext("2d");
 
@@ -38,11 +33,11 @@ export const clearDrawing = (
   if (m) {
     setDrawing("");
     if (showAllTags) {
-      showTags(setShowAllTags, imgSrc, canvasRef, annotations, "");
+      showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing});
     }
     context!.clearRect(0, 0, canvas!.width, canvas!.height);
     context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
-    annotations.forEach((annotationData: annotationProps) => {
+    annotations.forEach((annotationData: AnnotationProps) => {
       const { x, y } = annotationData;
       context!.beginPath();
       context!.fillStyle = "yellow";

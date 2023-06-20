@@ -1,8 +1,7 @@
 import React from "react";
+import { ButtonProps } from "../../../types";
 
-export const Button = (props: any) => {
-  const { isActive, onClick, className } = props;
-
+export const Button = ({ children, isActive, onClick, className }: ButtonProps) => {
   const boxShadow = isActive
     ? "inset 0 0.063rem 0.063rem 0.063rem rgba(0, 0, 0, 0.1)" // use inset shadow for active button
     : "0 0.125rem 0.5rem 0 rgba(0, 0, 0, 0.35)"; // use normal shadow for inactive buttons
@@ -15,7 +14,7 @@ export const Button = (props: any) => {
       style={{ boxShadow, backgroundColor, color }}
       onClick={onClick}
     >
-      {props.children}
+      {children}
     </button>
   );
 };

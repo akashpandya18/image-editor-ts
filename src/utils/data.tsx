@@ -1,4 +1,4 @@
-import React, { SetStateAction } from "react";
+import React  from "react";
 import {
   Tag,
   TextOnImage,
@@ -12,11 +12,12 @@ import {
   Brightness
 } from "../assets/icons";
 import {
-  controlsType,
-  filterOptionsProps
+  FilterOptionsProps,
+  ControlsType,
+  HandleToolClickProps
 } from "../types";
 
-export const filterOptions: filterOptionsProps[] = [
+export const filterOptions: FilterOptionsProps[] = [
   { id: 1, name: "Tag/Annotation", checked: true },
   { id: 2, name: "Text on Image", checked: true },
   { id: 3, name: "Crop", checked: false },
@@ -25,14 +26,14 @@ export const filterOptions: filterOptionsProps[] = [
   { id: 6, name: "More", checked: true }
 ];
 
-export const controls: controlsType[] = [
+export const controls: ControlsType[] = [
   { id: 1, name: "Blur", type: "blur", icon: <Blur /> },
   { id: 2, name: "Zoom", type: "zoom", icon: <Zoom /> },
   { id: 3, name: "Rotate", type: "rotate", icon: <Rotate /> },
   { id: 4, name: "Brightness", type: "brightness", icon: <Brightness /> }
 ];
 
-export const tools: controlsType[] = [
+export const tools: ControlsType[] = [
   { id: 1, name: "Tag/Annot", type: "tag-annotation", icon: <Tag /> },
   { id: 2, name: "Text on Image", type: "text-on-image", icon: <TextOnImage /> },
   { id: 3, name: "Crop", type: "crop", icon: <Crop /> },
@@ -41,18 +42,12 @@ export const tools: controlsType[] = [
   { id: 6, name: "More", type: "more", icon: <More /> }
 ];
 
-export function handleToolClick(
-  key: string,
-  index: number,
-  setActiveIndex: {
-    (value: SetStateAction<number>): void;
-    (arg0: number): void;
-  },
-  setCurrentControl: {
-    (value: SetStateAction<string>): void;
-    (arg0: string): void;
-  }
-): void {
+export function handleToolClick({
+  key,
+  index,
+  setActiveIndex,
+  setCurrentControl
+}: HandleToolClickProps) {
   setActiveIndex(index);
   switch (key) {
     case "tag-annotation":
