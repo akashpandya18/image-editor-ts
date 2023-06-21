@@ -1,4 +1,7 @@
-import React, {FormEvent, SetStateAction} from "react";
+import React, {
+  FormEvent,
+  SetStateAction
+} from "react";
 
 export interface OnSelectFileProps {
   target: { files: string | any[]; };
@@ -163,8 +166,10 @@ export interface TextOnImageControlProps {
   textOnChangeHandler: (textForm: TextFormProps) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   setTempPrompt: React.Dispatch<React.SetStateAction<boolean>>;
-  formData: { text: string; size: number; color: string; };
-  setFormData: React.Dispatch<React.SetStateAction<{ text: string; size: number; color: string; }>>;
+  formData: { text: string; size: number; color: string; id: string; };
+  setFormData: React.Dispatch<React.SetStateAction<{ text: string; size: number; color: string; id: string; }>>;
+  error: string;
+  setError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export interface TextOnChangeHandlerProps {
@@ -173,6 +178,7 @@ export interface TextOnChangeHandlerProps {
   currentClicked: { x: number; y: number; };
   imgSrc: string;
   isEditing: boolean;
+  setError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export interface TextOnImageClickHandlerProps {
@@ -181,9 +187,10 @@ export interface TextOnImageClickHandlerProps {
   setTempPrompt: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentClicked:  React.Dispatch<React.SetStateAction<{ x: number; y: number; }>>;
   imgSrc: string;
-  allTextTags: TextObjectProps[];
+  allTextTags: TextTag[];
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
-  setFormData: React.Dispatch<React.SetStateAction<{ text: string; size: number; color: string; }>>;
+  setFormData: React.Dispatch<React.SetStateAction<{ text: string; size: number; color: string; id: string; }>>;
+  setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface TextFormProps {
@@ -192,7 +199,7 @@ export interface TextFormProps {
   size: number;
 }
 
-interface TextTag {
+export interface TextTag {
   x: number;
   y: number;
   text: string;
@@ -211,7 +218,8 @@ export interface TextOnImageProps {
   dimensions: { height: number; width: number; };
   setAllTextTags: React.Dispatch<React.SetStateAction<never[]>>;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
-  setFormData: React.Dispatch<React.SetStateAction<{ text: string; size: number; color: string; }>>;
+  setFormData: React.Dispatch<React.SetStateAction<{ text: string; size: number; color: string; id: string; }>>;
+  setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface TextObjectProps {
@@ -220,7 +228,7 @@ export interface TextObjectProps {
   text: string;
   color: string;
   size: number;
-  id: number;
+  id: string;
 }
 
 export interface SubmitHandlerProps {
@@ -228,7 +236,7 @@ export interface SubmitHandlerProps {
   setAllTextTags:  React.Dispatch<React.SetStateAction<any>>;
   currentClicked: { x: number; y: number; };
   setTempPrompt: React.Dispatch<React.SetStateAction<boolean>>;
-  setFormData: React.Dispatch<React.SetStateAction<{ text: string; size: number; color: string; }>>;
+  setError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export interface HandleMouseMoveProps {
@@ -236,7 +244,7 @@ export interface HandleMouseMoveProps {
   isDraggingText: boolean;
   draggingText: string;
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  allTextTags: TextObjectProps[];
+  allTextTags: TextTag[];
   dimensions: { height: number; width: number; };
   imgSrc: string;
   currentClicked: { x: number; y: number; };
@@ -247,7 +255,7 @@ export interface HandleMouseDownProps {
   setIsDraggingText: React.Dispatch<React.SetStateAction<boolean>>;
   setDraggingText: React.Dispatch<React.SetStateAction<string>>;
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  allTextTags: TextObjectProps[];
+  allTextTags: TextTag[];
   setCurrentClicked: React.Dispatch<React.SetStateAction<{ x: number; y: number; }>>;
 }
 
@@ -257,9 +265,23 @@ export interface HandleMouseUpProps {
   setIsDraggingText: React.Dispatch<React.SetStateAction<boolean>>;
   draggingText: string;
   setDraggingText: React.Dispatch<React.SetStateAction<string>>;
-  allTextTags: TextObjectProps[];
+  allTextTags: TextTag[];
   setAllTextTags: React.Dispatch<React.SetStateAction<any>>;
   currentClicked: { x: number; y: number; };
+}
+
+export interface HandleDeleteProps {
+  allTextTags: TextObjectProps[];
+  setAllTextTags: React.Dispatch<React.SetStateAction<any>>;
+  formData: { text: string; size: number; color: string; id: string; };
+  setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
+  setTempPrompt: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface DeleteTextProps {
+  position: { x: number; y: number; };
+  handleDelete: () => void;
+  setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface CropControlProps {

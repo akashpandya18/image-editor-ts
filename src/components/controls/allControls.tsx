@@ -45,12 +45,15 @@ export const TextOnImageControl = ({
   onSubmit,
   setTempPrompt,
   formData,
-  setFormData
+  setFormData,
+  error,
+  setError
 }: TextOnImageControlProps): JSX.Element => {
   let data = {
     text: "",
     color: "",
-    size: 0
+    size: 0,
+    id: ""
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
@@ -64,7 +67,8 @@ export const TextOnImageControl = ({
   };
 
   return (
-    <>
+    <div>
+      <h3 style={{ margin: 0 }}> Text On Image </h3>
       {tempPrompt && (
         <div>
           <form onSubmit={onSubmit}>
@@ -72,31 +76,46 @@ export const TextOnImageControl = ({
               style={{
                 display: "flex",
                 columnGap: "0.625rem",
-                alignItems: "center"
+                alignItems: "flex-start",
+                margin: "0.938rem 0"
               }}
             >
-              <input
-                autoFocus
-                value={formData.text}
+              <div
                 style={{
-                  height: "1.875rem",
-                  paddingInline: "0.625rem",
-                  width: "100%",
-                  fontSize: "1rem"
+                  display: "flex",
+                  flex: 1,
+                  flexDirection: "column"
                 }}
-                required
-                name={"text"}
-                placeholder={"Enter text"}
-                type={"text"}
-                onChange={handleInputChange}
-              />
+              >
+                <input
+                  autoFocus
+                  value={formData.text}
+                  style={{
+                    height: "1.875rem",
+                    paddingInline: "0.625rem",
+                    fontSize: "1rem"
+                  }}
+                  name={"text"}
+                  placeholder={"Enter text"}
+                  type={"text"}
+                  onChange={handleInputChange}
+                />
+                {error !== "" &&
+                  <span
+                    style={{
+                      textAlign: "left",
+                      margin: "0 0.125rem",
+                      fontSize: "1rem",
+                      color: "red"
+                    }}
+                  > {error} </span>
+                }
+              </div>
               <div
                 style={{
                   display: "flex",
                   flexDirection: "row",
-                  alignContent: "center",
-                  columnGap: "0.625rem",
-                  width: "40%"
+                  columnGap: "0.625rem"
                 }}
               >
                 <button
@@ -124,7 +143,10 @@ export const TextOnImageControl = ({
                     boxShadow: "0 0.125rem 0.125rem 0 rgba(0, 0, 0, 0.2)"
                   }}
                   type={"button"}
-                  onClick={() => setTempPrompt(false)}
+                  onClick={() => {
+                    setTempPrompt(false);
+                    setError("");
+                  }}
                 >
                   <Close/>
                 </button>
@@ -134,7 +156,6 @@ export const TextOnImageControl = ({
             <div
               style={{
                 display: "flex",
-                marginTop: "0.938rem",
                 columnGap: "0.938rem"
               }}
             >
@@ -175,7 +196,7 @@ export const TextOnImageControl = ({
           </form>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

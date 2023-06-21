@@ -6,7 +6,8 @@ import {
   SubmitHandlerProps,
   HandleMouseMoveProps,
   HandleMouseDownProps,
-  HandleMouseUpProps
+  HandleMouseUpProps,
+  HandleDeleteProps, TextTag
 } from "../../../types";
 
 export const clickHandler = ({
@@ -17,14 +18,15 @@ export const clickHandler = ({
   imgSrc,
   allTextTags,
   setIsEditing,
-  setFormData
+  setFormData,
+  setDeleteTextTag
 }: TextOnImageClickHandlerProps) => {
   const x = event.nativeEvent.offsetX;
   const y = event.nativeEvent.offsetY;
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
 
-  const clickRect = allTextTags.find((tags: TextObjectProps) => {
+  const clickRect = allTextTags.find((tags: TextTag) => {
     context!.font = tags.size + "px monospace";
     let textWidth = context!.measureText(tags.text).width;
     const textHeight = parseInt(context!.font, 10);
@@ -49,18 +51,6 @@ export const clickHandler = ({
     image.width = canvas!.width;
     image.height = canvas!.height;
 
-    if (image) {
-      if (image.complete) {
-        context!.clearRect(0, 0, canvas!.width, canvas!.height);
-        context!.drawImage(image, 0, 0, image.width, image.height);
-      } else {
-        image.onload = () => {
-          context!.clearRect(0, 0, canvas!.width, canvas!.height);
-          context!.drawImage(image, 0, 0, image.width, image.height);
-        }
-      }
-    }
-
     const clicked = { x, y };
     setTempPrompt(true);
     setIsEditing(false);
@@ -68,15 +58,18 @@ export const clickHandler = ({
     setFormData({
       text: "",
       color: "#ffffff",
-      size: 32
+      size: 32,
+      id: ""
     });
   } else {
     // @ts-ignore
-    const { x, y, text, color, size } = allTextTags.find((obj: TextObjectProps) => obj.id === clickRect.id);
+    const { x, y, text, color, size, id } = allTextTags.find((obj: TextObjectProps) => obj.id === clickRect.id);
+    setDeleteTextTag(true);
     setFormData({
       text: text,
       color: color,
-      size: size
+      size: size,
+      id: id
     });
 
     const clicked = { x, y };
@@ -91,12 +84,12 @@ export const textOnChangeHandler = ({
   canvasRef,
   currentClicked,
   imgSrc,
-  isEditing
+  isEditing,
+  setError
 }: TextOnChangeHandlerProps) => {
   const { text, color, size } = textForm;
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
-  context!.strokeStyle = "yellow";
   context!.setLineDash([10, 10]);
   context!.lineWidth = 2;
 
@@ -106,7 +99,7 @@ export const textOnChangeHandler = ({
   image.height = canvas!.height;
 
   context!.fillStyle = color;
-  context!.strokeStyle = "gray";
+  context!.strokeStyle = "transparent";
   context!.font = `${size || 22}px monospace`;
 
   const textWidth: number = context!.measureText(text).width;
@@ -118,17 +111,18 @@ export const textOnChangeHandler = ({
 
   if (image) {
     if (image.complete) {
-      if (isEditing) {
-      } else {
-        context!.clearRect(0, 0, canvas!.width, canvas!.height);
-        context!.drawImage(image, 0, 0, image.width, image.height);
-        text.length > 0 &&
-          context!.strokeRect(
-            currentClicked.x,
-            currentClicked.y - rectHeight / 2,
-            rectWidth,
-            rectHeight,
-          );
+      if (!isEditing) {
+        // onChange validation for text input
+        if (text.length > 0 && text.length <= 10) {
+          setError("");
+        }
+
+        context!.strokeRect(
+          currentClicked.x,
+          currentClicked.y - rectHeight / 2,
+          rectWidth,
+          rectHeight
+        );
         context!.textBaseline = "middle";
         context!.fillText(text, currentClicked.x + padding, currentClicked.y);
       }
@@ -141,7 +135,7 @@ export const textOnChangeHandler = ({
             currentClicked.x,
             currentClicked.y - rectHeight / 2,
             rectWidth,
-            rectHeight,
+            rectHeight
           );
         context!.textBaseline = "middle";
         context!.fillText(text, currentClicked.x + padding, currentClicked.y);
@@ -155,23 +149,27 @@ export const submitHandler = ({
   setAllTextTags,
   currentClicked,
   setTempPrompt,
-  setFormData
+  setError
 }: SubmitHandlerProps) => {
   event.preventDefault();
-  setAllTextTags((prev: any) => [...prev, {
-    id: nanoid(5),
-    x: currentClicked?.x,
-    y: currentClicked?.y,
-    text: event.target?.text.value,
-    size: event.target?.size.value,
-    color: event.target?.color.value
-  }]);
-  setFormData({
-    text: "",
-    size: 32,
-    color: "#ffffff"
-  });
-  setTempPrompt(false);
+  // submit validation for text input
+  if (event.target.text.value.length === 0) {
+    setError("Please enter text");
+    setTempPrompt(true);
+  } else if (event.target.text.value.length > 10) {
+    setError("You can enter maximum 10 words");
+    setTempPrompt(true);
+  } else {
+    setAllTextTags((prev: any) => [...prev, {
+      id: nanoid(5),
+      x: currentClicked?.x,
+      y: currentClicked?.y,
+      text: event.target?.text.value,
+      size: event.target?.size.value,
+      color: event.target?.color.value
+    }]);
+    setTempPrompt(false);
+  }
 };
 
 export const handleMouseMove = ({
@@ -215,13 +213,13 @@ export const handleMouseMove = ({
       context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
 
       allTextTags.forEach((texts: any) => {
-      const { x, y, text, color, size, id: currentId } = texts;
-      context!.fillStyle = color;
-      context!.font = `${size || 22}px monospace`;
-      context!.beginPath();
-      if (currentId !== id) {
-      context!.fillText(text, x + 10, y + (textHeight / 4));
-      }
+        const { x, y, text, color, size, id: currentId } = texts;
+        context!.fillStyle = color;
+        context!.font = `${size || 22}px monospace`;
+        context!.beginPath();
+        if (currentId !== id) {
+          context!.fillText(text, x + 10, y + (textHeight / 4));
+        }
       });
 
       context!.textBaseline = "middle";
@@ -320,7 +318,7 @@ export const handleMouseUp = ({
   const mouseX = event.nativeEvent.offsetX;
   const mouseY = event.nativeEvent.offsetY;
   // @ts-ignore
-  const { x, y } = allTextTags.length > 0 && allTextTags?.find((obj: any) => obj.id === draggingText);
+  const { x, y } = allTextTags.length > 0 && draggingText && allTextTags?.find((obj: any) => obj.id === draggingText);
   let movedArea = {
     xMoved: x + (mouseX - currentClicked.x),
     yMoved: y + (mouseY - currentClicked.y)
@@ -338,4 +336,17 @@ export const handleMouseUp = ({
     setIsDraggingText(false);
     setDraggingText("");
   }
+};
+
+export const handleDelete = ({
+  allTextTags,
+  setAllTextTags,
+  formData,
+  setDeleteTextTag,
+  setTempPrompt
+}: HandleDeleteProps) => {
+  const value = allTextTags.filter((obj: TextObjectProps) => obj.id !== formData.id);
+  setAllTextTags(value);
+  setDeleteTextTag(false);
+  setTempPrompt(false);
 };

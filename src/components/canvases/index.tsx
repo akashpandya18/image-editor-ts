@@ -64,7 +64,8 @@ export const TextOnImageCanvas = ({
   dimensions,
   setAllTextTags,
   setIsEditing,
-  setFormData
+  setFormData,
+  setDeleteTextTag
 }: TextOnImageProps) => {
   const [isDraggingText, setIsDraggingText] = useState<boolean>(false);
   const [draggingText, setDraggingText] = useState<string>("");
@@ -86,7 +87,8 @@ export const TextOnImageCanvas = ({
             imgSrc,
             allTextTags,
             setIsEditing,
-            setFormData
+            setFormData,
+            setDeleteTextTag
           });
         }}
         onMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) => {
@@ -279,6 +281,7 @@ export const PenCanvas = ({ canvasRef }: PenProps) => {
         borderRadius: "0.438rem",
         boxShadow: "0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.2)"
       }}
+      className={"pen-canvas"}
     />
   );
 };

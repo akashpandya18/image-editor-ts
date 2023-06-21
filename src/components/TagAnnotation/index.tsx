@@ -306,25 +306,21 @@ export const showTags = ({
 
       // setting tags position
       if (x - image.width > -200 && y - image.height < -100) {
-        // console.log("x - image.width > -200 && y - image.height < -100", 1111);
         context!.fillStyle = "#2A2A2A";
         context!.fillRect(x - textWidth - 20, y, textWidth + 20, 35);
         context!.fillStyle = "#fff";
         context!.fillText(tag, x - textWidth - 10, y + 25);
       } else if (x - image.width < -200 && y - image.height > -100) {
-        // console.log("x - image.width < -200 && y - image.height > -100", 2222);
         context!.fillStyle = "#2A2A2A";
         context!.fillRect(x, y - 40, textWidth + 20, 35);
         context!.fillStyle = "#fff";
         context!.fillText(tag, x + 10, y - 15);
       } else if (x - image.width > -200 && y - image.height > -100) {
-        // console.log("x - image.width > -200 && y - image.height > -100", 3333);
         context!.fillStyle = "#2A2A2A";
         context!.fillRect(x - textWidth - 20, y - 40, textWidth + 20, 35);
         context!.fillStyle = "#fff";
         context!.fillText(tag, x - textWidth - 10, y - 15);
       } else {
-        // console.log("else");
         context!.fillStyle = "#2A2A2A";
         context!.fillRect(x, y, textWidth + 20, 35);
         context!.fillStyle = "#fff";

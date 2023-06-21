@@ -32,6 +32,7 @@ import { MainCanvasControls } from "./mainCanvasControls";
 import { customAlphabet } from "nanoid";
 import ShowTagOnHover from "../prompts/showTagOnHover";
 import { DeleteTag } from "../prompts/deleteTag";
+import { DeleteText } from "../prompts/deleteText";
 import { TagAnnotationForm } from "../forms/TagAnnotForm";
 import TempRedTag from "../prompts/ConfirmSubmitTag";
 import {
@@ -56,6 +57,7 @@ import {
   clearDrawing
 } from "../draw";
 import {
+  handleDelete,
   submitHandler,
   textOnChangeHandler
 } from "./textOnImage";
@@ -108,9 +110,11 @@ export const Controls = ({
     y: 0
   });
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({ text: "", size: 32, color: "#ffffff" });
+  const [formData, setFormData] = useState({ text: "", size: 32, color: "#ffffff", id: "" });
   const [croppedImage, setCroppedImage] = useState<string>("");
   const [selectCanvas, setSelectCanvas] = useState(false);
+  const [error, setError] = useState("");
+  const [deleteTextTag, setDeleteTextTag] = useState(false);
 
   const lineWidth = 4;
   const lineColor = "#000";
@@ -126,6 +130,7 @@ export const Controls = ({
       currentClicked,
       imgSrc,
       isEditing,
+      setError
     });
   };
 
@@ -198,7 +203,8 @@ export const Controls = ({
     setFormData({
       text: "",
       size: 32,
-      color: "#ffffff"
+      color: "#ffffff",
+      id: ""
     });
     setAllTextTags([]);
     setIsEditing(false);
@@ -214,6 +220,9 @@ export const Controls = ({
     setFlipVertical(false);
     setFlipHorizontal(false);
     setDrawing("");
+    setTempPrompt(false);
+    setError("");
+    setDeleteTextTag(false);
 
     const canvas: HTMLCanvasElement | null = canvasRef.current;
     const { width, height } = dimensions;
@@ -564,11 +573,13 @@ export const Controls = ({
                 setAllTextTags,
                 currentClicked,
                 setTempPrompt,
-                setFormData
+                setError
               })}
               setTempPrompt={setTempPrompt}
               formData={formData}
               setFormData={setFormData}
+              error={error}
+              setError={setError}
             />
           ) : currentControl === "crop" ? (
             <CropControl
@@ -681,6 +692,7 @@ export const Controls = ({
             dimensions={dimensions}
             setIsEditing={setIsEditing}
             setFormData={setFormData}
+            setDeleteTextTag={setDeleteTextTag}
           />
         ) : currentControl === "crop" ? (
           <CropCanvas
@@ -755,6 +767,20 @@ export const Controls = ({
                 setShowAllTags
               })
             }
+          />
+        )}
+
+        {deleteTextTag && (
+          <DeleteText
+            position={currentClicked}
+            handleDelete={() => handleDelete({
+              allTextTags,
+              setAllTextTags,
+              formData,
+              setDeleteTextTag,
+              setTempPrompt
+            })}
+            setDeleteTextTag={setDeleteTextTag}
           />
         )}
 
