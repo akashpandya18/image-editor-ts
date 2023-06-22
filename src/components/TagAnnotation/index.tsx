@@ -21,18 +21,20 @@ export const handleCanvasMouseMove = ({
 }: HandleCanvasMouseMoveProps) => {
   event.preventDefault();
   const canvas = canvasRef.current;
-  const context = canvas!.getContext("2d");
+  if (!canvas) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
   const x = event.nativeEvent.offsetX;
   const y = event.nativeEvent.offsetY;
 
   // Check if the mouse is hovering over the white dot
   const hoveredDot = annotations.find((annotation: AnnotationProps) => {
-    context?.beginPath();
-    context?.arc(annotation.x, annotation.y, 10, 0, 2 * Math.PI);
-    return context?.isPointInPath(x, y);
+    context.beginPath();
+    context.arc(annotation.x, annotation.y, 10, 0, 2 * Math.PI);
+    return context.isPointInPath(x, y);
   });
   if (hoveredDot) {
-    canvas!.style.cursor = "pointer";
+    canvas.style.cursor = "pointer";
     let x = hoveredDot.x;
     let y = hoveredDot.y;
     let pos = { x, y };
@@ -40,7 +42,7 @@ export const handleCanvasMouseMove = ({
     setHoverPos(pos);
     setShowH(true);
   } else {
-    canvas!.style.cursor = "default";
+    canvas.style.cursor = "default";
     setHoverTag("");
     setShowH(false);
   }
@@ -62,8 +64,11 @@ export const handleCanvasClick = ({
   setDeleteTag(false);
   setDeleteTagId("");
   const canvas = canvasRef.current;
-  const context = canvas!.getContext("2d");
-  const rect = canvas!.getBoundingClientRect();
+  if (!canvas) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
+
+  const rect = canvas.getBoundingClientRect();
   const x = event.clientX - rect!.left;
   const y = event.clientY - rect!.top;
   const annotation = { x, y };
@@ -74,9 +79,9 @@ export const handleCanvasClick = ({
 
   // Check if the mouse click is on any of the tags
   const clickedDot = annotations.find((annotation: AnnotationProps) => {
-    context?.beginPath();
-    context?.arc(annotation.x, annotation.y, 10, 0, 2 * Math.PI);
-    return context?.isPointInPath(xFind, yFind);
+    context.beginPath();
+    context.arc(annotation.x, annotation.y, 10, 0, 2 * Math.PI);
+    return context.isPointInPath(xFind, yFind);
   });
 
   // Check if the click was within the bounds of the tags
@@ -118,64 +123,66 @@ export const handleSubmitTag = ({
   const y = currentAnnotation.y;
 
   const canvas = canvasRef.current;
-  const context = canvas!.getContext("2d");
+  if (!canvas) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
   const image = new Image();
   image.src = imgSrc;
-  image.width = canvas!.width;
-  image.height = canvas!.height;
+  image.width = canvas.width;
+  image.height = canvas.height;
 
   if (tag !== "") {
     //dot
-    context!.beginPath();
-    context!.fillStyle = "yellow";
-    context!.arc(x, y, 10, 0, 2 * Math.PI);
-    context!.fill();
-    const tempAnnot = [...annotations, { id, x, y, tag }];
-    setAnnotations(tempAnnot);
+    context.beginPath();
+    context.fillStyle = "yellow";
+    context.arc(x, y, 10, 0, 2 * Math.PI);
+    context.fill();
+    const tempAnnotation = [...annotations, { id, x, y, tag }];
+    setAnnotations(tempAnnotation);
     setTag("");
     setCurrentAnnotation({ x: 0, y: 0 });
     setTempRedPrompt(false);
 
     if (showAllTags) {
-      context!.clearRect(0, 0, canvas!.width, canvas!.height);
+      context.clearRect(0, 0, canvas.width, canvas.height);
       setTimeout(() => {
-        context!.drawImage(image, 0, 0, image.width, image.height);
-        tempAnnot.forEach((annotationData: {
+        context.drawImage(image, 0, 0, image.width, image.height);
+        tempAnnotation.forEach((annotationData: {
           x: number;
           y: number;
           tag: string;
         }) => {
           const { x, y, tag } = annotationData;
           //tag
-          context!.font = "1.5rem Arial";
+          context.font = "1.5rem Arial";
           // Draw the background color rectangle
-          let textWidth = context!.measureText(tag).width;
+          let textWidth = context.measureText(tag).width;
           //tags
-          context!.beginPath();
-          context!.fillStyle = "yellow";
-          context!.arc(x, y, 10, 0, 2 * Math.PI);
-          context!.fill();
+          context.beginPath();
+          context.fillStyle = "yellow";
+          context.arc(x, y, 10, 0, 2 * Math.PI);
+          context.fill();
 
           if (x - image.width > -200 && y - image.height < -100) {
-            context!.fillStyle = "#2A2A2A";
-            context!.fillRect(x - textWidth - 20, y, textWidth + 20, 40);
-            context!.fillStyle = "#fff";
-            context!.fillText(tag, x - textWidth - 10, y + 25);
+            context.fillStyle = "#2A2A2A";
+            context.fillRect(x - textWidth - 20, y, textWidth + 20, 40);
+            context.fillStyle = "#fff";
+            context.fillText(tag, x - textWidth - 10, y + 25);
           } else if (x - image.width < -200 && y - image.height > -100) {
-            context!.fillStyle = "#2A2A2A";
-            context!.fillRect(x, y - 40, textWidth + 20, 40);
-            context!.fillStyle = "#fff";
-            context!.fillText(tag, x + 10, y - 15);
+            context.fillStyle = "#2A2A2A";
+            context.fillRect(x, y - 40, textWidth + 20, 40);
+            context.fillStyle = "#fff";
+            context.fillText(tag, x + 10, y - 15);
           } else if (x - image.width > -200 && y - image.height > -100) {
-            context!.fillStyle = "#2A2A2A";
-            context!.fillRect(x - textWidth - 20, y - 40, textWidth + 20, 40);
-            context!.fillStyle = "#fff";
-            context!.fillText(tag, x - textWidth - 10, y - 15);
+            context.fillStyle = "#2A2A2A";
+            context.fillRect(x - textWidth - 20, y - 40, textWidth + 20, 40);
+            context.fillStyle = "#fff";
+            context.fillText(tag, x - textWidth - 10, y - 15);
           } else {
-            context!.fillStyle = "#2A2A2A";
-            context!.fillRect(x, y, textWidth + 20, 40);
-            context!.fillStyle = "#fff";
-            context!.fillText(tag, x + 10, y + 25);
+            context.fillStyle = "#2A2A2A";
+            context.fillRect(x, y, textWidth + 20, 40);
+            context.fillStyle = "#fff";
+            context.fillText(tag, x + 10, y + 25);
           }
         });
       }, 10);
@@ -209,22 +216,24 @@ export const handleClearSingleTag = ({
   const image = new Image();
   image.src = imgSrc;
   const canvas = canvasRef.current;
-  const context = canvas!.getContext("2d");
+  if (!canvas) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
 
-  image.width = canvas!.width;
-  image.height = canvas!.height;
+  image.width = canvas.width;
+  image.height = canvas.height;
 
-  context!.clearRect(0, 0, canvas!.width, canvas!.height);
+  context.clearRect(0, 0, canvas.width, canvas.height);
 
   setTimeout(() => {
-    context!.drawImage(image, 0, 0, image.width, image.height);
+    context.drawImage(image, 0, 0, image.width, image.height);
     if (deleteTagId !== "") {
       // populate dots again
       filteredArray.forEach((annotationData: AnnotationProps) => {
-        context!.beginPath();
-        context!.fillStyle = "yellow";
-        context!.arc(annotationData.x, annotationData.y, 10, 0, 2 * Math.PI);
-        context!.fill();
+        context.beginPath();
+        context.fillStyle = "yellow";
+        context.arc(annotationData.x, annotationData.y, 10, 0, 2 * Math.PI);
+        context.fill();
       });
       setAnnotations(filteredArray);
       setDeleteTag(false);
@@ -251,19 +260,21 @@ export const hideTags = ({
     image.src = imgSrc;
   }
   const canvas = canvasRef.current;
-  const context = canvas!.getContext("2d");
+  if (!canvas) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
 
-  image.width = canvas!.width;
-  image.height = canvas!.height;
+  image.width = canvas.width;
+  image.height = canvas.height;
 
-  context!.clearRect(0, 0, canvas!.width, canvas!.height);
+  context.clearRect(0, 0, canvas.width, canvas.height);
   setTimeout(() => {
-    context!.drawImage(image, 0, 0, image.width, image.height);
+    context.drawImage(image, 0, 0, image.width, image.height);
     annotations.forEach((annotationData: AnnotationProps) => {
-      context!.beginPath();
-      context!.fillStyle = "yellow";
-      context!.arc(annotationData.x, annotationData.y, 10, 0, 2 * Math.PI);
-      context!.fill();
+      context.beginPath();
+      context.fillStyle = "yellow";
+      context.arc(annotationData.x, annotationData.y, 10, 0, 2 * Math.PI);
+      context.fill();
     });
   }, 10);
 };
@@ -283,48 +294,50 @@ export const showTags = ({
     image.src = imgSrc;
   }
   const canvas = canvasRef.current;
-  const context = canvas!.getContext("2d");
+  if (!canvas) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
 
-  image.width = canvas!.width;
-  image.height = canvas!.height;
+  image.width = canvas.width;
+  image.height = canvas.height;
 
-  context!.clearRect(0, 0, canvas!.width, canvas!.height);
+  context.clearRect(0, 0, canvas.width, canvas.height);
   setTimeout(() => {
-    context!.drawImage(image, 0, 0, image.width, image.height);
+    context.drawImage(image, 0, 0, image.width, image.height);
     annotations.forEach((annotationData: AnnotationProps) => {
       const { x, y, tag } = annotationData;
       //tag
-      context!.font = "1.5rem Arial";
+      context.font = "1.5rem Arial";
       // Draw the background color rectangle
-      let textWidth = context!.measureText(tag).width;
+      let textWidth = context.measureText(tag).width;
 
       //tags
-      context!.beginPath();
-      context!.fillStyle = "yellow";
-      context!.arc(x, y, 10, 0, 2 * Math.PI);
-      context!.fill();
+      context.beginPath();
+      context.fillStyle = "yellow";
+      context.arc(x, y, 10, 0, 2 * Math.PI);
+      context.fill();
 
       // setting tags position
       if (x - image.width > -200 && y - image.height < -100) {
-        context!.fillStyle = "#2A2A2A";
-        context!.fillRect(x - textWidth - 20, y, textWidth + 20, 35);
-        context!.fillStyle = "#fff";
-        context!.fillText(tag, x - textWidth - 10, y + 25);
+        context.fillStyle = "#2A2A2A";
+        context.fillRect(x - textWidth - 20, y, textWidth + 20, 35);
+        context.fillStyle = "#fff";
+        context.fillText(tag, x - textWidth - 10, y + 25);
       } else if (x - image.width < -200 && y - image.height > -100) {
-        context!.fillStyle = "#2A2A2A";
-        context!.fillRect(x, y - 40, textWidth + 20, 35);
-        context!.fillStyle = "#fff";
-        context!.fillText(tag, x + 10, y - 15);
+        context.fillStyle = "#2A2A2A";
+        context.fillRect(x, y - 40, textWidth + 20, 35);
+        context.fillStyle = "#fff";
+        context.fillText(tag, x + 10, y - 15);
       } else if (x - image.width > -200 && y - image.height > -100) {
-        context!.fillStyle = "#2A2A2A";
-        context!.fillRect(x - textWidth - 20, y - 40, textWidth + 20, 35);
-        context!.fillStyle = "#fff";
-        context!.fillText(tag, x - textWidth - 10, y - 15);
+        context.fillStyle = "#2A2A2A";
+        context.fillRect(x - textWidth - 20, y - 40, textWidth + 20, 35);
+        context.fillStyle = "#fff";
+        context.fillText(tag, x - textWidth - 10, y - 15);
       } else {
-        context!.fillStyle = "#2A2A2A";
-        context!.fillRect(x, y, textWidth + 20, 35);
-        context!.fillStyle = "#fff";
-        context!.fillText(tag, x + 10, y + 25);
+        context.fillStyle = "#2A2A2A";
+        context.fillRect(x, y, textWidth + 20, 35);
+        context.fillStyle = "#fff";
+        context.fillText(tag, x + 10, y + 25);
       }
     });
   }, 10);
@@ -332,7 +345,8 @@ export const showTags = ({
 
 export const handleScreenShot = ({ canvasRef }: CanvasRefProps) => {
   const canvas = canvasRef.current;
-  const image = canvas!.toDataURL("image/png");
+  if (!canvas) return;
+  const image = canvas.toDataURL("image/png");
 
   // To download the image, you can create a link element and simulate a click
   const link = document.createElement("a");

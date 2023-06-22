@@ -57,6 +57,7 @@ import {
   clearDrawing
 } from "../draw";
 import {
+  handleCross,
   handleDelete,
   submitHandler,
   textOnChangeHandler
@@ -130,7 +131,9 @@ export const Controls = ({
       currentClicked,
       imgSrc,
       isEditing,
-      setError
+      setError,
+      allTextTags,
+      annotations
     });
   };
 
@@ -169,10 +172,10 @@ export const Controls = ({
 
   // set height and width of image on canvas
   useEffect(() => {
-    const img = new Image();
-    img.src = imgSrc;
-    img.onload = () => {
-      const { width, height } = img;
+    const image = new Image();
+    image.src = imgSrc;
+    image.onload = () => {
+      const { width, height } = image;
       if (width > 1000) {
         const ratio = width / height;
         const newHeight = 1000 / ratio;
@@ -225,20 +228,25 @@ export const Controls = ({
     setDeleteTextTag(false);
 
     const canvas: HTMLCanvasElement | null = canvasRef.current;
+    if (!canvas) return;
     const { width, height } = dimensions;
-    canvas!.width = width;
-    canvas!.height = height;
-    const context = canvas!.getContext("2d");
+
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext("2d");
+    if (!context) return;
     const image = new Image();
     image.src = imgSrc;
+
     image.onload = () => {
-      context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
+      context.drawImage(image, 0, 0, dimensions.width, dimensions.height);
     };
   }, [dimensions, imgSrc, clear]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
+    if (!canvas) return;
+    const context = canvas.getContext("2d");
 
     if (context) {
       context.lineWidth = lineWidth;
@@ -248,20 +256,23 @@ export const Controls = ({
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const context = canvas!.getContext("2d");
+    if (!canvas) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
     const { width, height } = dimensions;
-    canvas!.width = width;
-    canvas!.height = height;
+    canvas.width = width;
+    canvas.height = height;
     const image = new Image();
     image.src = imgSrc;
+
     image.onload = () => {
-      context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
+      context.drawImage(image, 0, 0, dimensions.width, dimensions.height);
       annotations.forEach((annotationData: AnnotationProps) => {
         const { x, y } = annotationData;
-        context!.beginPath();
-        context!.fillStyle = "yellow";
-        context!.arc(x, y, 10, 0, 2 * Math.PI);
-        context!.fill();
+        context.beginPath();
+        context.fillStyle = "yellow";
+        context.arc(x, y, 10, 0, 2 * Math.PI);
+        context.fill();
       });
       setTag("");
       setCurrentAnnotation({ x: 0, y: 0 });
@@ -270,22 +281,25 @@ export const Controls = ({
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const context = canvas!.getContext("2d");
+    if (!canvas) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
     const { width, height } = dimensions;
-    canvas!.width = width;
-    canvas!.height = height;
+    canvas.width = width;
+    canvas.height = height;
     const image = new Image();
     image.src = imgSrc;
-    context!.fillStyle = "white";
-    const textHeight = parseInt(context!.font, 10);
+
+    context.fillStyle = "white";
+    const textHeight = parseInt(context.font, 10);
     image.onload = () => {
-      context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
+      context.drawImage(image, 0, 0, dimensions.width, dimensions.height);
       allTextTags.forEach((texts: TextObjectProps) => {
         const { x, y, text, color, size } = texts;
-        context!.fillStyle = color;
-        context!.font = `${size || 22}px monospace`;
-        context!.beginPath();
-        context!.fillText(text, x + 10, y + (textHeight / 4));
+        context.fillStyle = color;
+        context.font = `${size || 22}px monospace`;
+        context.beginPath();
+        context.fillText(text, x + 10, y + (textHeight / 4));
       });
     };
   }, [allTextTags]);
@@ -372,13 +386,12 @@ export const Controls = ({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
-    const context = canvas!.getContext("2d");
+    const context = canvas.getContext("2d");
     if (!context) return;
 
     const { width, height } = dimensions;
-    canvas!.width = width;
-    canvas!.height = height;
+    canvas.width = width;
+    canvas.height = height;
 
     const image = new Image();
     if (drawing !== "") {
@@ -387,19 +400,19 @@ export const Controls = ({
       image.src = imgSrc;
     }
 
-    image.width = canvas!.width;
-    image.height = canvas!.height;
+    image.width = canvas.width;
+    image.height = canvas.height;
 
     image.onload = () => {
       // setting tag/annotation on canvas
       setTimeout(() => {
-        // context!.drawImage(image, 0, 0, canvas.width, canvas.height);
+        // context.drawImage(image, 0, 0, canvas.width, canvas.height);
         annotations.forEach((annotationData: AnnotationProps) => {
           const { x, y } = annotationData;
-          context!.beginPath();
-          context!.fillStyle = "yellow";
-          context!.arc(x, y, 10, 0, 2 * Math.PI);
-          context!.fill();
+          context.beginPath();
+          context.fillStyle = "yellow";
+          context.arc(x, y, 10, 0, 2 * Math.PI);
+          context.fill();
         });
       }, 10);
 
@@ -407,23 +420,23 @@ export const Controls = ({
       flipValue(canvas, context);
 
       // setting blur and brightness value on canvas
-      context!.clearRect(0, 0, canvas!.width, canvas!.height);
+      context.clearRect(0, 0, canvas.width, canvas.height);
       blur = blur / 16;
-      context!.filter = `blur(${blur}rem) brightness(${brightness})`;
+      context.filter = `blur(${blur}rem) brightness(${brightness})`;
       setTimeout(() => {
-        context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
       });
 
       // setting zoom value on canvas
       if (canvas) {
         // Clear canvas and scale it
-        const centerX = canvas!.width / 2;
-        const centerY = canvas!.height / 2;
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
 
-        context!.translate(centerX, centerY);
-        context!.scale(zoom, zoom);
-        context!.translate(-centerX, -centerY)
-        context!.clearRect(0, 0, width, height);
+        context.translate(centerX, centerY);
+        context.scale(zoom, zoom);
+        context.translate(-centerX, -centerY)
+        context.clearRect(0, 0, width, height);
       }
 
       // if show all tag is true
@@ -440,61 +453,63 @@ export const Controls = ({
   useEffect(() => {
     if (selectCanvas) {
       const canvas = canvasRef.current;
-      const context = canvas!.getContext("2d");
+      if (!canvas) return;
+      const context = canvas.getContext("2d");
+      if (!context) return;
 
-      context!.strokeStyle = "white";
-      context!.setLineDash([5, 5]);
-      const imgX = Math.floor(dimensions.width / 4);
-      const imgY = Math.floor(dimensions.height / 4);
-      context!.lineWidth = 2;
-      context!.strokeRect(imgX, imgY, imgX, imgY);
+      context.strokeStyle = "white";
+      context.setLineDash([5, 5]);
+      const imageX = Math.floor(dimensions.width / 4);
+      const imageY = Math.floor(dimensions.height / 4);
+      context.lineWidth = 2;
+      context.strokeRect(imageX, imageY, imageX, imageY);
       setCurrentCropped({
-        startingX: imgX,
-        startingY: imgY,
-        width: imgX,
-        height: imgY
+        startingX: imageX,
+        startingY: imageY,
+        width: imageX,
+        height: imageY
       });
-      context!.setLineDash([0, 0]);
-      context!.beginPath();
-      context!.lineWidth = 3;
-      context!.lineJoin = "round";
-      context!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 10, 0);
-      context!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 0, 10);
-      context!.fillStyle = "white";
-      context!.fill();
-      context!.stroke();
-      context!.beginPath();
-      context!.lineWidth = 3;
-      context!.lineJoin = "round";
-      context!.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, -10, 0);
-      context!.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, 0, 10);
-      context!.fillStyle = "white";
-      context!.fill();
-      context!.stroke();
-      context!.beginPath();
-      context!.lineWidth = 3;
-      context!.lineJoin = "round";
-      context!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0);
-      context!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10);
-      context!.fillStyle = "white";
-      context!.fill();
-      context!.stroke();
-      context!.beginPath();
-      context!.lineWidth = 3;
-      context!.lineJoin = "round";
-      context!.strokeRect((dimensions.width / 4) - 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0);
-      context!.strokeRect((dimensions.width / 4) + 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10);
-      context!.fillStyle = "white";
-      context!.fill();
-      context!.stroke();
+      context.setLineDash([0, 0]);
+      context.beginPath();
+      context.lineWidth = 3;
+      context.lineJoin = "round";
+      context.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 10, 0);
+      context.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 0, 10);
+      context.fillStyle = "white";
+      context.fill();
+      context.stroke();
+      context.beginPath();
+      context.lineWidth = 3;
+      context.lineJoin = "round";
+      context.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, -10, 0);
+      context.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, 0, 10);
+      context.fillStyle = "white";
+      context.fill();
+      context.stroke();
+      context.beginPath();
+      context.lineWidth = 3;
+      context.lineJoin = "round";
+      context.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0);
+      context.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10);
+      context.fillStyle = "white";
+      context.fill();
+      context.stroke();
+      context.beginPath();
+      context.lineWidth = 3;
+      context.lineJoin = "round";
+      context.strokeRect((dimensions.width / 4) - 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0);
+      context.strokeRect((dimensions.width / 4) + 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10);
+      context.fillStyle = "white";
+      context.fill();
+      context.stroke();
 
       const canvas1 = canvasRef.current;
       const context1 = canvas1?.getContext("2d");
       let newCanvas = document.createElement("canvas");
       let newCtx = newCanvas.getContext("2d");
 
-      newCanvas.height = imgY;
-      newCanvas.width = imgX;
+      newCanvas.height = imageY;
+      newCanvas.width = imageX;
 
       const imageData = context1!.getImageData(dimensions.width / 4 + 2, dimensions.height / 4 + 2, dimensions.width / 4 - 3, dimensions.height / 4 - 3);
       newCtx!.putImageData(imageData, 0, 0);
@@ -513,21 +528,23 @@ export const Controls = ({
       <div className={"options-div"}>
         <div>
           <h3> Tabs </h3>
-          {filterOptions.map((filterOptionsValue: FilterOptionsProps) => {
-            return (
-              <div className={"filter-options-div"} key={filterOptionsValue.id}>
-                <input
-                  type={"checkbox"}
-                  name={filterOptionsValue.name}
-                  value={filterOptionsValue.name}
-                  className={"checkbox"}
-                  // onChange={() => filterOptionsValue.checked = !filterOptionsValue.checked}
-                  // checked={filterOptionsValue.checked}
-                />
-                <label> {filterOptionsValue.name} </label>
-              </div>
-            );
-          })}
+          <div style={{ marginTop: "1rem" }}>
+            {filterOptions.map((filterOptionsValue: FilterOptionsProps) => {
+              return (
+                <div className={"filter-options-div"} key={filterOptionsValue.id}>
+                  <input
+                    type={"checkbox"}
+                    name={filterOptionsValue.name}
+                    value={filterOptionsValue.name}
+                    className={"checkbox"}
+                    // onChange={() => filterOptionsValue.checked = !filterOptionsValue.checked}
+                    // checked={filterOptionsValue.checked}
+                  />
+                  <label> {filterOptionsValue.name} </label>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -573,17 +590,28 @@ export const Controls = ({
                 setAllTextTags,
                 currentClicked,
                 setTempPrompt,
-                setError
+                setError,
+                canvasRef,
+                imgSrc
               })}
-              setTempPrompt={setTempPrompt}
               formData={formData}
               setFormData={setFormData}
               error={error}
-              setError={setError}
+              canvasRef={canvasRef}
+              imgSrc={imgSrc}
+              annotations={annotations}
+              allTextTags={allTextTags}
+              handleCross={() => handleCross({
+                setTempPrompt,
+                setError,
+                canvasRef,
+                allTextTags,
+                imgSrc
+              })}
             />
           ) : currentControl === "crop" ? (
             <CropControl
-              img={croppedImage}
+              image={croppedImage}
               select={select}
               setImgSrc={setImgSrc}
               canvasRef={canvasRef}
@@ -693,6 +721,7 @@ export const Controls = ({
             setIsEditing={setIsEditing}
             setFormData={setFormData}
             setDeleteTextTag={setDeleteTextTag}
+            annotations={annotations}
           />
         ) : currentControl === "crop" ? (
           <CropCanvas

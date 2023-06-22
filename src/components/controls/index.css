@@ -16,6 +16,7 @@
 .filter-options-div {
   display: flex;
   align-items: center;
+  margin: 0.25rem 0;
 }
 
 .checkbox {
@@ -93,6 +94,7 @@ span {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
   gap: 0.5rem;
+  margin-top: 1rem;
 }
 
 .controlsMap-div {
@@ -122,7 +124,7 @@ span {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-top: 0.625rem;
+  margin-top: 1rem;
 }
 
 .button-div {
@@ -153,11 +155,12 @@ span {
 }
 
 .tag-main {
-  max-height: 18.75rem;
+  max-height: 16.5rem;
   overflow-y: scroll;
   scroll-behavior: smooth;
   background-color: #f1f1f1;
   border-radius: 0.625rem;
+  margin-top: 1rem;
 }
 
 .tag-main::-webkit-scrollbar {

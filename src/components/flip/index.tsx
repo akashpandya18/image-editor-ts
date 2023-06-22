@@ -66,10 +66,10 @@ export const LoadImageFlip = ({
   annotations,
   drawing
 }: LoadImageFlipProps) => {
-  const img = new Image();
-  img.onload = () => {
+  const image = new Image();
+  image.onload = () => {
     context.drawImage(
-      img,
+      image,
       0,
       0,
       canvasRef.current!.width,
@@ -77,15 +77,15 @@ export const LoadImageFlip = ({
     );
     annotations.forEach((annotationData: AnnotationProps) => {
       const { x, y } = annotationData;
-      context!.beginPath();
-      context!.fillStyle = "yellow";
-      context!.arc(x, y, 10, 0, 2 * Math.PI);
-      context!.fill();
+      context.beginPath();
+      context.fillStyle = "yellow";
+      context.arc(x, y, 10, 0, 2 * Math.PI);
+      context.fill();
     });
   };
   if (drawing !== "") {
-    img.src = drawing;
+    image.src = drawing;
   } else {
-    img.src = imgSrc;
+    image.src = imgSrc;
   }
 };

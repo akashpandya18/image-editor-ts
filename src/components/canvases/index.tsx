@@ -65,68 +65,68 @@ export const TextOnImageCanvas = ({
   setAllTextTags,
   setIsEditing,
   setFormData,
-  setDeleteTextTag
+  setDeleteTextTag,
+  annotations
 }: TextOnImageProps) => {
   const [isDraggingText, setIsDraggingText] = useState<boolean>(false);
   const [draggingText, setDraggingText] = useState<string>("");
 
   return (
-    <div>
-      <canvas
-        ref={canvasRef}
-        style={{
-          borderRadius: "0.438rem",
-          boxShadow: "0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.2)"
-        }}
-        onClick={(event: React.MouseEvent<HTMLCanvasElement>) => {
-          clickHandler({
-            event,
-            canvasRef,
-            setTempPrompt,
-            setCurrentClicked,
-            imgSrc,
-            allTextTags,
-            setIsEditing,
-            setFormData,
-            setDeleteTextTag
-          });
-        }}
-        onMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) => {
-          handleMouseMove({
-            event,
-            isDraggingText,
-            draggingText,
-            canvasRef,
-            allTextTags,
-            dimensions,
-            imgSrc,
-            currentClicked
-          })
-        }}
-        onMouseDown={(event: React.MouseEvent<HTMLCanvasElement>) => {
-          handleMouseDown({
-            event,
-            setIsDraggingText,
-            setDraggingText,
-            canvasRef,
-            allTextTags,
-            setCurrentClicked
-          })
-        }}
-        onMouseUp={(event: React.MouseEvent<HTMLCanvasElement>) => {
-          handleMouseUp({
-            event,
-            isDraggingText,
-            setIsDraggingText,
-            draggingText,
-            setDraggingText,
-            allTextTags,
-            setAllTextTags,
-            currentClicked
-          })
-        }}
-      />
-    </div>
+    <canvas
+      ref={canvasRef}
+      style={{
+        borderRadius: "0.438rem",
+        boxShadow: "0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.2)"
+      }}
+      onClick={(event: React.MouseEvent<HTMLCanvasElement>) => {
+        clickHandler({
+          event,
+          canvasRef,
+          setTempPrompt,
+          setCurrentClicked,
+          imgSrc,
+          allTextTags,
+          setIsEditing,
+          setFormData,
+          setDeleteTextTag
+        });
+      }}
+      onMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) => {
+        handleMouseMove({
+          event,
+          isDraggingText,
+          draggingText,
+          canvasRef,
+          allTextTags,
+          dimensions,
+          imgSrc,
+          currentClicked,
+          annotations
+        })
+      }}
+      onMouseDown={(event: React.MouseEvent<HTMLCanvasElement>) => {
+        handleMouseDown({
+          event,
+          setIsDraggingText,
+          setDraggingText,
+          canvasRef,
+          allTextTags,
+          setCurrentClicked
+        })
+      }}
+      onMouseUp={(event: React.MouseEvent<HTMLCanvasElement>) => {
+        handleMouseUp({
+          event,
+          isDraggingText,
+          setIsDraggingText,
+          draggingText,
+          setDraggingText,
+          allTextTags,
+          setAllTextTags,
+          currentClicked
+        })
+      }}
+    />
   );
 };
 
@@ -163,7 +163,7 @@ export const CropCanvas = ({
   };
 
   return (
-    <div>
+    <>
       <canvas
         style={{
           borderRadius: "0.438rem",
@@ -219,7 +219,7 @@ export const CropCanvas = ({
         ref={imgRef}
         style={{ display: "none" }}
       />
-    </div>
+    </>
   );
 };
 
@@ -228,7 +228,8 @@ export const PenCanvas = ({ canvasRef }: PenProps) => {
 
   const startDrawing = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
+    if (!canvas) return;
+    const context = canvas.getContext("2d");
 
     if (context) {
       context.beginPath();
@@ -239,7 +240,8 @@ export const PenCanvas = ({ canvasRef }: PenProps) => {
 
   const draw = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
+    if (!canvas) return;
+    const context = canvas.getContext("2d");
     if (!isDrawing) return;
 
     if (context) {
@@ -254,18 +256,21 @@ export const PenCanvas = ({ canvasRef }: PenProps) => {
 
   const clickDot = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
+    if (!canvas) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
+
     if (context) {
-      context!.beginPath();
-      context!.fillStyle = "#000";
-      context!.arc(
+      context.beginPath();
+      context.fillStyle = "#000";
+      context.arc(
         event.nativeEvent.offsetX,
         event.nativeEvent.offsetY,
         1,
         0,
         2 * Math.PI
       );
-      context!.fill();
+      context.fill();
     }
   };
 
@@ -297,40 +302,42 @@ export const MoreFilterCanvas = ({
 }: MoreFilterProps) => {
   useEffect(() => {
     const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
+    if (!canvas) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
 
-    context!.clearRect(0, 0, canvas!.width, canvas!.height);
+    context.clearRect(0, 0, canvas.width, canvas.height);
 
     const image = new Image();
     image.src = imgSrc;
 
-    image.width = canvas!.width;
-    image.height = canvas!.height;
+    image.width = canvas.width;
+    image.height = canvas.height;
 
     if (canvas) {
       const { width, height } = canvas;
 
       // Set canvas dimensions
-      canvas!.width = width;
-      canvas!.height = height;
+      canvas.width = width;
+      canvas.height = height;
 
       // Clear canvas and scale it
-      const centerX = canvas!.width / 2;
-      const centerY = canvas!.height / 2;
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
 
-      context!.translate(centerX, centerY);
-      context!.scale(zoom, zoom);
-      context!.translate(-centerX, -centerY);
-      context!.clearRect(0, 0, width, height);
+      context.translate(centerX, centerY);
+      context.scale(zoom, zoom);
+      context.translate(-centerX, -centerY);
+      context.clearRect(0, 0, width, height);
     }
 
-    context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
   }, [zoom, rotate]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const context = canvas?.getContext("2d");
+    const context = canvas.getContext("2d");
     if (!context) return;
 
     const image = new Image();
@@ -347,7 +354,7 @@ export const MoreFilterCanvas = ({
 
     image.onload = () => {
       blur = blur / 16;
-      context!.filter = `blur(${blur}rem) brightness(${brightness})`;
+      context.filter = `blur(${blur}rem) brightness(${brightness})`;
 
       context.clearRect(0, 0, canvas.width, canvas.height);
       context.save();

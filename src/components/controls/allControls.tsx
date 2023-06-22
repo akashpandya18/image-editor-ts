@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Clear,
   Check,
@@ -11,6 +11,7 @@ import {
   PropsTag,
   AnnotationProps,
   TextOnImageControlProps,
+  TextObjectProps,
   CropControlProps,
   PropsFlip,
   PenControlProps
@@ -22,8 +23,8 @@ export const TagControls = ({ annotations }: PropsTag) => {
   return (
     <div>
       <h3 className={"tag-head"}> Tags </h3>
-      <div className={"tag-main"}>
-        {annotations.length > 0 && (
+      {annotations.length > 0 && (
+        <div className={"tag-main"}>
           <ol className={"tag-ol"}>
             {annotations.map((data: AnnotationProps) => {
               return (
@@ -33,8 +34,8 @@ export const TagControls = ({ annotations }: PropsTag) => {
               );
             })}
           </ol>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -43,11 +44,14 @@ export const TextOnImageControl = ({
   tempPrompt,
   textOnChangeHandler,
   onSubmit,
-  setTempPrompt,
   formData,
   setFormData,
   error,
-  setError
+  canvasRef,
+  imgSrc,
+  annotations,
+  allTextTags,
+  handleCross
 }: TextOnImageControlProps): JSX.Element => {
   let data = {
     text: "",
@@ -66,9 +70,35 @@ export const TextOnImageControl = ({
     textOnChangeHandler(data);
   };
 
+  useEffect(() => {
+    setTimeout(() => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const context = canvas.getContext("2d");
+      if (!context) return;
+      const image = new Image();
+      image.src = imgSrc;if (!canvas) return;
+
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      annotations.forEach((annotationData: AnnotationProps) => {
+        const { x, y } = annotationData;
+        context.beginPath();
+        context.fillStyle = "yellow";
+        context.arc(x, y, 10, 0, 2 * Math.PI);
+        context.fill();
+      });
+      allTextTags.forEach((textTags: TextObjectProps) => {
+        context.textBaseline = "middle";
+        context.font = `${textTags.size || 22}px monospace`;
+        context.fillStyle = textTags.color;
+        context.fillText(textTags.text, textTags.x + 10, textTags.y);
+      });
+    }, 10);
+  },[annotations, allTextTags]);
+
   return (
     <div>
-      <h3 style={{ margin: 0 }}> Text On Image </h3>
+      <h3> Text On Image </h3>
       {tempPrompt && (
         <div>
           <form onSubmit={onSubmit}>
@@ -143,10 +173,7 @@ export const TextOnImageControl = ({
                     boxShadow: "0 0.125rem 0.125rem 0 rgba(0, 0, 0, 0.2)"
                   }}
                   type={"button"}
-                  onClick={() => {
-                    setTempPrompt(false);
-                    setError("");
-                  }}
+                  onClick={handleCross}
                 >
                   <Close/>
                 </button>
@@ -202,7 +229,7 @@ export const TextOnImageControl = ({
 
 export const CropControl = ({
   select,
-  img,
+  image,
   setImgSrc,
   canvasRef,
   currentCropped,
@@ -214,7 +241,8 @@ export const CropControl = ({
       <div
         style={{
           display: "flex",
-          flexDirection: "column"
+          flexDirection: "column",
+          marginTop: "1rem"
         }}
       >
         <div
@@ -247,9 +275,9 @@ export const CropControl = ({
           </button>
         </div>
 
-        {img !== "data:," &&
+        {image !== "data:," &&
           <img
-            src={img}
+            src={image}
             alt={""}
             style={{
               maxWidth: "25rem",
@@ -293,7 +321,8 @@ export const PenControl = ({ saveDrawing, clearDrawing }: PenControlProps) => {
           cursor: "pointer",
           backgroundColor: "#2a2a2a",
           boxShadow: "0 0.25rem 0.25rem 0 rgba(0, 0, 0, 0.2)",
-          padding: "0.7rem"
+          padding: "0.7rem",
+          marginTop: "1rem"
         }}
         onClick={saveDrawing}
       >

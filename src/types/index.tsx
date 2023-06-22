@@ -165,11 +165,14 @@ export interface TextOnImageControlProps {
   tempPrompt: boolean;
   textOnChangeHandler: (textForm: TextFormProps) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
-  setTempPrompt: React.Dispatch<React.SetStateAction<boolean>>;
   formData: { text: string; size: number; color: string; id: string; };
   setFormData: React.Dispatch<React.SetStateAction<{ text: string; size: number; color: string; id: string; }>>;
   error: string;
-  setError: React.Dispatch<React.SetStateAction<string>>;
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+  imgSrc: string;
+  annotations: AnnotationProps[];
+  allTextTags: TextObjectProps[];
+  handleCross: () => void;
 }
 
 export interface TextOnChangeHandlerProps {
@@ -179,6 +182,8 @@ export interface TextOnChangeHandlerProps {
   imgSrc: string;
   isEditing: boolean;
   setError: React.Dispatch<React.SetStateAction<string>>;
+  allTextTags: TextObjectProps[];
+  annotations: AnnotationProps[];
 }
 
 export interface TextOnImageClickHandlerProps {
@@ -220,6 +225,7 @@ export interface TextOnImageProps {
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   setFormData: React.Dispatch<React.SetStateAction<{ text: string; size: number; color: string; id: string; }>>;
   setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
+  annotations: AnnotationProps[];
 }
 
 export interface TextObjectProps {
@@ -237,6 +243,8 @@ export interface SubmitHandlerProps {
   currentClicked: { x: number; y: number; };
   setTempPrompt: React.Dispatch<React.SetStateAction<boolean>>;
   setError: React.Dispatch<React.SetStateAction<string>>;
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+  imgSrc: string;
 }
 
 export interface HandleMouseMoveProps {
@@ -248,6 +256,7 @@ export interface HandleMouseMoveProps {
   dimensions: { height: number; width: number; };
   imgSrc: string;
   currentClicked: { x: number; y: number; };
+  annotations: AnnotationProps[];
 }
 
 export interface HandleMouseDownProps {
@@ -278,6 +287,14 @@ export interface HandleDeleteProps {
   setTempPrompt: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+export interface HandleCrossProps {
+  setTempPrompt: React.Dispatch<React.SetStateAction<boolean>>;
+  setError: React.Dispatch<React.SetStateAction<string>>;
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+  allTextTags: TextObjectProps[];
+  imgSrc: string;
+}
+
 export interface DeleteTextProps {
   position: { x: number; y: number; };
   handleDelete: () => void;
@@ -286,7 +303,7 @@ export interface DeleteTextProps {
 
 export interface CropControlProps {
   select: () => void;
-  img: string;
+  image: string;
   setImgSrc: React.Dispatch<React.SetStateAction<string>>;
   canvasRef: React.RefObject<HTMLCanvasElement>;
   currentCropped: Cropped;
