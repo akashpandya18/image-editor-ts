@@ -15,9 +15,9 @@ export const MainCanvasControls = ({
   iconTag
 }: MainCanvasControlProps) => {
   const controls = [
-    { id: 1, name: "Clear", type: "clear", icon: <Tornado /> },
-    { id: 2, name: "ShowHideTags", type: "show-hide-tags", icon: iconTag },
-    { id: 3, name: "ScreenShot", type: "screenshot", icon: <ScreenShot /> }
+    { id: 1, name: "Clear", type: "clear", title: "Clear the canvas", icon: <Tornado /> },
+    { id: 2, name: "ShowHideTags", type: "show-hide-tags", title: "show-hide-tags", icon: iconTag },
+    { id: 3, name: "ScreenShot", type: "screenshot", title: "Screen Shot", icon: <ScreenShot /> }
   ];
 
   return (
@@ -46,6 +46,7 @@ export const MainCanvasControls = ({
                   backgroundColor: "#2a2a2a",
                   boxShadow: "0 0.25rem 0.25rem 0 rgba(0, 0, 0, 0.2)"
                 }}
+                title={item.title}
                 onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   switch (item.type) {
                     case "clear":

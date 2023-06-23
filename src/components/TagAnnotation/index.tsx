@@ -8,7 +8,7 @@ import {
   HandleClearSingleTagProps,
   HideTagsProps,
   ShowTagsProps,
-  CanvasRefProps
+  CanvasRefProps, TextObjectProps
 } from "../../types";
 
 export const handleCanvasMouseMove = ({
@@ -24,6 +24,7 @@ export const handleCanvasMouseMove = ({
   if (!canvas) return;
   const context = canvas.getContext("2d");
   if (!context) return;
+
   const x = event.nativeEvent.offsetX;
   const y = event.nativeEvent.offsetY;
 
@@ -132,7 +133,7 @@ export const handleSubmitTag = ({
   image.height = canvas.height;
 
   if (tag !== "") {
-    //dot
+    // dot
     context.beginPath();
     context.fillStyle = "yellow";
     context.arc(x, y, 10, 0, 2 * Math.PI);
@@ -153,11 +154,11 @@ export const handleSubmitTag = ({
           tag: string;
         }) => {
           const { x, y, tag } = annotationData;
-          //tag
+          // tag
           context.font = "1.5rem Arial";
           // Draw the background color rectangle
           let textWidth = context.measureText(tag).width;
-          //tags
+          // tags
           context.beginPath();
           context.fillStyle = "yellow";
           context.arc(x, y, 10, 0, 2 * Math.PI);
@@ -250,7 +251,8 @@ export const hideTags = ({
   imgSrc,
   canvasRef,
   annotations,
-  drawing
+  drawing,
+  allTextTags
 }: HideTagsProps) => {
   setShowAllTags(false);
   const image = new Image();
@@ -276,6 +278,13 @@ export const hideTags = ({
       context.arc(annotationData.x, annotationData.y, 10, 0, 2 * Math.PI);
       context.fill();
     });
+
+    allTextTags.forEach((textTags: TextObjectProps) => {
+      context.textBaseline = "middle";
+      context.font = `${textTags.size || 22}px monospace`;
+      context.fillStyle = textTags.color;
+      context.fillText(textTags.text, textTags.x + 10, textTags.y);
+    });
   }, 10);
 };
 
@@ -284,7 +293,8 @@ export const showTags = ({
   imgSrc,
   canvasRef,
   annotations,
-  drawing
+  drawing,
+  allTextTags
 }: ShowTagsProps) => {
   setShowAllTags(true);
   const image = new Image();
@@ -304,14 +314,15 @@ export const showTags = ({
   context.clearRect(0, 0, canvas.width, canvas.height);
   setTimeout(() => {
     context.drawImage(image, 0, 0, image.width, image.height);
+
     annotations.forEach((annotationData: AnnotationProps) => {
       const { x, y, tag } = annotationData;
-      //tag
+      // tag
       context.font = "1.5rem Arial";
       // Draw the background color rectangle
       let textWidth = context.measureText(tag).width;
 
-      //tags
+      // tags
       context.beginPath();
       context.fillStyle = "yellow";
       context.arc(x, y, 10, 0, 2 * Math.PI);
@@ -319,26 +330,36 @@ export const showTags = ({
 
       // setting tags position
       if (x - image.width > -200 && y - image.height < -100) {
+        context.textBaseline = "alphabetic";
         context.fillStyle = "#2A2A2A";
         context.fillRect(x - textWidth - 20, y, textWidth + 20, 35);
         context.fillStyle = "#fff";
         context.fillText(tag, x - textWidth - 10, y + 25);
       } else if (x - image.width < -200 && y - image.height > -100) {
+        context.textBaseline = "alphabetic";
         context.fillStyle = "#2A2A2A";
         context.fillRect(x, y - 40, textWidth + 20, 35);
         context.fillStyle = "#fff";
         context.fillText(tag, x + 10, y - 15);
       } else if (x - image.width > -200 && y - image.height > -100) {
+        context.textBaseline = "alphabetic";
         context.fillStyle = "#2A2A2A";
         context.fillRect(x - textWidth - 20, y - 40, textWidth + 20, 35);
         context.fillStyle = "#fff";
         context.fillText(tag, x - textWidth - 10, y - 15);
       } else {
+        context.textBaseline = "alphabetic";
         context.fillStyle = "#2A2A2A";
         context.fillRect(x, y, textWidth + 20, 35);
         context.fillStyle = "#fff";
         context.fillText(tag, x + 10, y + 25);
       }
+    });
+    allTextTags.forEach((textTags: TextObjectProps) => {
+      context.textBaseline = "middle";
+      context.font = `${textTags.size || 22}px monospace`;
+      context.fillStyle = textTags.color;
+      context.fillText(textTags.text, textTags.x + 10, textTags.y);
     });
   }, 10);
 };

@@ -15,3 +15,29 @@ h3 {
 .pen-canvas {
   cursor: url("./assets/icons/pencil-cursor.png"), auto;
 }
+
+button[title] {
+  position: relative;
+}
+
+button[title]::before {
+  content: attr(title);
+  position: absolute;
+  top: -2rem; /* Adjust the vertical position as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.313rem;
+  background-color: #333;
+  color: #fff;
+  font-size: 0.875rem;
+  border-radius: 0.25rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  width: max-content;
+}
+
+button[title]:hover::before {
+  opacity: 1;
+  visibility: visible;
+}

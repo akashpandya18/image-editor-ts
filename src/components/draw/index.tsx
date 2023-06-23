@@ -12,17 +12,19 @@ export const saveDrawing = ({
 }: SaveDrawingProps) => {
   const canvas = canvasRef.current;
   if (!canvas) return;
+  console.log("===>>>", canvas.toDataURL());
   setDrawing(canvas.toDataURL());
 };
 
 export const clearDrawing = ({
- canvasRef,
- imgSrc,
- annotations,
- setDrawing,
- showAllTags,
- setShowAllTags,
-  drawing
+  canvasRef,
+  imgSrc,
+  annotations,
+  setDrawing,
+  showAllTags,
+  setShowAllTags,
+  drawing,
+  allTextTags
 }: ClearDrawingProps) => {
   const canvas = canvasRef.current;
   if (!canvas) return;
@@ -35,7 +37,7 @@ export const clearDrawing = ({
   if (m) {
     setDrawing("");
     if (showAllTags) {
-      showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing});
+      showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
     }
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(image, 0, 0, canvas.width, canvas.height);

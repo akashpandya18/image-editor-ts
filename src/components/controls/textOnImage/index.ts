@@ -12,6 +12,7 @@ import {
   HandleDeleteProps,
   HandleCrossProps
 } from "../../../types";
+import {showTags} from "../../TagAnnotation";
 
 export const clickHandler = ({
   event,
@@ -21,8 +22,7 @@ export const clickHandler = ({
   imgSrc,
   allTextTags,
   setIsEditing,
-  setFormData,
-  setDeleteTextTag
+  setFormData
 }: TextOnImageClickHandlerProps) => {
   const x = event.nativeEvent.offsetX;
   const y = event.nativeEvent.offsetY;
@@ -49,7 +49,6 @@ export const clickHandler = ({
   });
 
   if (!clickRect) {
-    // context.strokeStyle = "yellow";
     context.setLineDash([10, 10]);
     context.lineWidth = 2;
 
@@ -71,7 +70,7 @@ export const clickHandler = ({
   } else {
     // @ts-ignore
     const { x, y, text, color, size, id } = allTextTags.find((obj: TextObjectProps) => obj.id === clickRect.id);
-    setDeleteTextTag(true);
+    // setDeleteTextTag(true);
     setFormData({
       text: text,
       color: color,
@@ -94,7 +93,10 @@ export const textOnChangeHandler = ({
   isEditing,
   setError,
   allTextTags,
-  annotations
+  annotations,
+  showAllTags,
+  setShowAllTags,
+  drawing
 }: TextOnChangeHandlerProps) => {
   const { text, color, size } = textForm;
   const canvas = canvasRef.current;
@@ -124,9 +126,16 @@ export const textOnChangeHandler = ({
 
   context.font = `${Number(size)}px monospace`;
 
+  if (showAllTags) {
+    showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
+  }
+
   if (image) {
     if (image.complete) {
       if (!isEditing) {
+        // if (showAllTags) {
+        //   showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
+        // }
         // onChange validation for text input
         if (text.length > 0 && text.length <= 10) {
           setError("");
@@ -156,6 +165,7 @@ export const textOnChangeHandler = ({
           context.arc(x, y, 10, 0, 2 * Math.PI);
           context.fill();
         });
+
       }
     } else {
       image.onload = () => {
@@ -186,6 +196,10 @@ export const textOnChangeHandler = ({
           context.arc(x, y, 10, 0, 2 * Math.PI);
           context.fill();
         });
+
+        if (showAllTags) {
+          showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
+        }
       }
     }
   }
@@ -198,7 +212,12 @@ export const submitHandler = ({
   setTempPrompt,
   setError,
   canvasRef,
-  imgSrc
+  imgSrc,
+  showAllTags,
+  setShowAllTags,
+  drawing,
+  annotations,
+  allTextTags
 }: SubmitHandlerProps) => {
   event.preventDefault();
 
@@ -225,6 +244,9 @@ export const submitHandler = ({
       size: event.target?.size.value,
       color: event.target?.color.value
     }]);
+    if (showAllTags) {
+      showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
+    }
     setTempPrompt(false);
   }
 };
@@ -238,25 +260,28 @@ export const handleMouseMove = ({
   dimensions,
   imgSrc,
   currentClicked,
-  annotations
+  annotations,
+  handleTagMouseMove
 }: HandleMouseMoveProps) => {
   const mouseX = event.nativeEvent.offsetX;
   const mouseY = event.nativeEvent.offsetY;
+  const canvas = canvasRef.current;
+  if (!canvas) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
+  const image = new Image();
+  image.src = imgSrc;
+  const { width, height } = dimensions;
+
+  handleTagMouseMove(event);
 
   if (isDraggingText) {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d");
-    if (!context) return;
-    const image = new Image();
-    image.src = imgSrc;
-    const { width, height } = dimensions;
-
     canvas.width = width;
     canvas.height = height;
     context.strokeStyle = "gray";
     context.setLineDash([10, 10]);
     context.lineWidth = 2;
+
     // @ts-ignore
     const { text, id, x, y } = allTextTags.find((obj: any) => obj.id === draggingText);
     const dragObject = allTextTags.find((obj: any) => obj.id === id);
@@ -378,23 +403,50 @@ export const handleMouseDown = ({
 
 export const handleMouseUp = ({
   event,
+  canvasRef,
   isDraggingText,
   setIsDraggingText,
   draggingText,
   setDraggingText,
   allTextTags,
   setAllTextTags,
-  currentClicked
+  currentClicked,
+  setDeleteTextTag
 }: HandleMouseUpProps) => {
+  const mouseX = event.nativeEvent.offsetX;
+  const mouseY = event.nativeEvent.offsetY;
+  const canvas = canvasRef.current;
+  if (!canvas) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
+
+  // @ts-ignore
+  const { x, y } = allTextTags.length > 0 && draggingText && allTextTags?.find((obj: any) => obj.id === draggingText);
+
+  const clickRect = allTextTags.length > 0 && allTextTags.find((tags: TextTag) => {
+    context.font = tags.size + "px monospace";
+    let textWidth = context.measureText(tags.text).width;
+    const textHeight = parseInt(context.font, 10);
+    const padding = 5;
+    const rectHeight = textHeight + padding * 2;
+
+    return (
+      mouseX > tags.x + 10 &&
+      mouseX < tags.x + 10 + textWidth &&
+      mouseY > tags.y - rectHeight / 2 &&
+      mouseY < tags.y - rectHeight / 2 + rectHeight
+    );
+  });
+
+  if (clickRect && clickRect!.id === draggingText) {
+    setDeleteTextTag(true);
+  }
+
   if (isDraggingText) {
     setDraggingText("");
     setIsDraggingText(false);
   }
 
-  const mouseX = event.nativeEvent.offsetX;
-  const mouseY = event.nativeEvent.offsetY;
-  // @ts-ignore
-  const { x, y } = allTextTags.length > 0 && draggingText && allTextTags?.find((obj: any) => obj.id === draggingText);
   let movedArea = {
     xMoved: x + (mouseX - currentClicked.x),
     yMoved: y + (mouseY - currentClicked.y)
@@ -432,7 +484,11 @@ export const handleCross = ({
   setError,
   canvasRef,
   allTextTags,
-  imgSrc
+  imgSrc,
+  annotations,
+  showAllTags,
+  setShowAllTags,
+  drawing
 }: HandleCrossProps) => {
   const canvas = canvasRef.current;
   if (!canvas) return;
@@ -453,4 +509,15 @@ export const handleCross = ({
     context.fillStyle = textTags.color;
     context.fillText(textTags.text, textTags.x + 10, textTags.y);
   });
+  annotations.forEach((annotationData: AnnotationProps) => {
+    const { x, y } = annotationData;
+    context.beginPath();
+    context.fillStyle = "yellow";
+    context.arc(x, y, 10, 0, 2 * Math.PI);
+    context.fill();
+  });
+
+  if (showAllTags) {
+    showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
+  }
 };

@@ -15,7 +15,8 @@ export const flipHorizontally = ({
   setFlipHorizontal,
   drawing,
   showAllTags,
-  setShowAllTags
+  setShowAllTags,
+  allTextTags
 }: FlipHorizontallyProps) => {
   const canvas = canvasRef.current;
   if (!canvas) return;
@@ -23,7 +24,7 @@ export const flipHorizontally = ({
   if (!context) return;
 
   if (showAllTags) {
-    showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing});
+    showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
   }
 
   context.clearRect(0, 0, canvas.width, canvas.height);
@@ -41,7 +42,8 @@ export const flipVertically = ({
   setFlipVertical,
   drawing,
   showAllTags,
-  setShowAllTags
+  setShowAllTags,
+  allTextTags
 }: FlipVerticallyProps) => {
   const canvas = canvasRef.current;
   if (!canvas) return;
@@ -49,7 +51,7 @@ export const flipVertically = ({
   if (!context) return;
 
   if (showAllTags) {
-    showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing});
+    showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
   }
 
   context.clearRect(0, 0, canvas.width, canvas.height);

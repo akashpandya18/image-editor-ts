@@ -49,7 +49,7 @@ import {
   TagCanvas,
   MoreFilterCanvas,
   TextOnImageCanvas,
-  CropCanvas
+  CropCanvas, FlipCanvas
 } from "../canvases";
 import "./sliders/index.css";
 import {
@@ -81,7 +81,7 @@ export const Controls = ({
   const [currentControl, setCurrentControl] = useState<string>("tag-annotation");
   let [blur, setBlur] = useState<number>(0);
   const [zoom, setZoom] = useState<number>(1);
-  const [rotate, setRotate] = useState<number>(0);
+  let [rotate, setRotate] = useState<number>(0);
   const [brightness, setBrightness] = useState<number>(1);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [clear, setClear] = useState<boolean>(false);
@@ -133,7 +133,10 @@ export const Controls = ({
       isEditing,
       setError,
       allTextTags,
-      annotations
+      annotations,
+      showAllTags,
+      setShowAllTags,
+      drawing
     });
   };
 
@@ -406,7 +409,6 @@ export const Controls = ({
     image.onload = () => {
       // setting tag/annotation on canvas
       setTimeout(() => {
-        // context.drawImage(image, 0, 0, canvas.width, canvas.height);
         annotations.forEach((annotationData: AnnotationProps) => {
           const { x, y } = annotationData;
           context.beginPath();
@@ -435,13 +437,13 @@ export const Controls = ({
 
         context.translate(centerX, centerY);
         context.scale(zoom, zoom);
-        context.translate(-centerX, -centerY)
+        context.translate(-centerX, -centerY);
         context.clearRect(0, 0, width, height);
       }
 
       // if show all tag is true
       if (showAllTags) {
-        showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing});
+        showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
       }
 
       setTag("");
@@ -449,6 +451,45 @@ export const Controls = ({
       setTempRedPrompt(false);
     };
   }, [currentControl, blur, zoom, brightness]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
+
+    const { width, height } = dimensions;
+    canvas.width = width;
+    canvas.height = height;
+
+    const image = new Image();
+    if (drawing !== "") {
+      image.src = drawing;
+    } else {
+      image.src = imgSrc;
+    }
+
+    image.width = canvas.width;
+    image.height = canvas.height;
+
+    const deg = Math.PI / 180;
+    const degToRad = (rotate: number) => rotate * deg;
+
+    setTimeout(() => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.save();
+      context.translate(canvas.width / 2, canvas.height / 2);
+      context.rotate(degToRad(rotate++ % 360));
+      context.drawImage(
+        image,
+        image.width / -2,
+        image.height / -2,
+        image.width,
+        image.height
+      );
+      context.restore();
+    },10);
+  },[currentControl, blur, zoom, rotate, brightness]);
 
   useEffect(() => {
     if (selectCanvas) {
@@ -592,7 +633,12 @@ export const Controls = ({
                 setTempPrompt,
                 setError,
                 canvasRef,
-                imgSrc
+                imgSrc,
+                showAllTags,
+                setShowAllTags,
+                drawing,
+                annotations,
+                allTextTags
               })}
               formData={formData}
               setFormData={setFormData}
@@ -606,7 +652,11 @@ export const Controls = ({
                 setError,
                 canvasRef,
                 allTextTags,
-                imgSrc
+                imgSrc,
+                annotations,
+                showAllTags,
+                setShowAllTags,
+                drawing
               })}
             />
           ) : currentControl === "crop" ? (
@@ -628,7 +678,8 @@ export const Controls = ({
                 setFlipHorizontal,
                 drawing,
                 showAllTags,
-                setShowAllTags
+                setShowAllTags,
+                allTextTags
               })}
               flipVertically={() => flipVertically({
                 canvasRef,
@@ -638,13 +689,14 @@ export const Controls = ({
                 setFlipVertical,
                 drawing,
                 showAllTags,
-                setShowAllTags
+                setShowAllTags,
+                allTextTags
               })}
             />
           ) : currentControl === "pen" ? (
             <PenControl
               saveDrawing={() => saveDrawing({ canvasRef, setDrawing })}
-              clearDrawing={() => clearDrawing({ canvasRef, imgSrc, annotations, setDrawing, showAllTags, setShowAllTags, drawing })}
+              clearDrawing={() => clearDrawing({ canvasRef, imgSrc, annotations, setDrawing, showAllTags, setShowAllTags, drawing, allTextTags })}
             />
           ) : currentControl === "more" && (
             <div>
@@ -683,30 +735,26 @@ export const Controls = ({
         {currentControl === "tag-annotation" ? (
           <TagCanvas
             canvasRef={canvasRef}
-            handleTagClick={(event: React.MouseEvent<HTMLCanvasElement>) =>
-              handleCanvasClick({
-                event,
-                canvasRef,
-                annotations,
-                setTempRedPrompt,
-                setDeleteTag,
-                setShowH,
-                setDeleteTagId,
-                setCurrentAnnotation,
-                setTag,
-                setDeletePos
-              })
-            }
-            handleTagMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) =>
-              handleCanvasMouseMove({
-                event,
-                canvasRef,
-                annotations,
-                setHoverTag,
-                setHoverPos,
-                setShowH
-              })
-            }
+            handleTagClick={(event: React.MouseEvent<HTMLCanvasElement>) => handleCanvasClick({
+              event,
+              canvasRef,
+              annotations,
+              setTempRedPrompt,
+              setDeleteTag,
+              setShowH,
+              setDeleteTagId,
+              setCurrentAnnotation,
+              setTag,
+              setDeletePos
+            })}
+            handleTagMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) => handleCanvasMouseMove({
+              event,
+              canvasRef,
+              annotations,
+              setHoverTag,
+              setHoverPos,
+              setShowH
+            })}
           />
         ) : currentControl === "text-on-image" ? (
           <TextOnImageCanvas
@@ -722,6 +770,14 @@ export const Controls = ({
             setFormData={setFormData}
             setDeleteTextTag={setDeleteTextTag}
             annotations={annotations}
+            handleTagMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) => handleCanvasMouseMove({
+              event,
+              canvasRef,
+              annotations,
+              setHoverTag,
+              setHoverPos,
+              setShowH
+            })}
           />
         ) : currentControl === "crop" ? (
           <CropCanvas
@@ -730,9 +786,39 @@ export const Controls = ({
             setCurrentCropped={setCurrentCropped}
             dimensions={dimensions}
             imgSrc={imgSrc}
+            handleTagMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) => handleCanvasMouseMove({
+              event,
+              canvasRef,
+              annotations,
+              setHoverTag,
+              setHoverPos,
+              setShowH
+            })}
+          />
+        ) : currentControl === "flip" ? (
+          <FlipCanvas
+            canvasRef={canvasRef}
+            handleTagMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) => handleCanvasMouseMove({
+              event,
+              canvasRef,
+              annotations,
+              setHoverTag,
+              setHoverPos,
+              setShowH
+            })}
           />
         ) : currentControl === "pen" ? (
-          <PenCanvas canvasRef={canvasRef} />
+          <PenCanvas
+            canvasRef={canvasRef}
+            handleTagMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) => handleCanvasMouseMove({
+              event,
+              canvasRef,
+              annotations,
+              setHoverTag,
+              setHoverPos,
+              setShowH
+            })}
+          />
         ) : currentControl === "more" ? (
           <MoreFilterCanvas
             canvasRef={canvasRef}
@@ -742,6 +828,14 @@ export const Controls = ({
             brightness={brightness}
             imgSrc={imgSrc}
             drawing={drawing}
+            handleTagMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) => handleCanvasMouseMove({
+              event,
+              canvasRef,
+              annotations,
+              setHoverTag,
+              setHoverPos,
+              setShowH
+            })}
           />
         ) : (
           <RegularCanvas canvasRef={canvasRef} />
@@ -780,22 +874,20 @@ export const Controls = ({
           <DeleteTag
             position={deletePos}
             setPromptOff={() => setDeleteTag(false)}
-            deleteTagSubmit={(e: React.MouseEvent<HTMLButtonElement>) =>
-              handleClearSingleTag({
-                e,
-                setDeleteTagId,
-                canvasRef,
-                imgSrc,
-                setDeleteTag,
-                annotations,
-                deleteTagId,
-                setAnnotations,
-                setTag,
-                setCurrentAnnotation,
-                setTempRedPrompt,
-                setShowAllTags
-              })
-            }
+            deleteTagSubmit={(e: React.MouseEvent<HTMLButtonElement>) => handleClearSingleTag({
+              e,
+              setDeleteTagId,
+              canvasRef,
+              imgSrc,
+              setDeleteTag,
+              annotations,
+              deleteTagId,
+              setAnnotations,
+              setTag,
+              setCurrentAnnotation,
+              setTempRedPrompt,
+              setShowAllTags
+            })}
           />
         )}
 
@@ -819,8 +911,8 @@ export const Controls = ({
           clearFunction={() => setClear(!clear)}
           showHideFunction={() =>
             showAllTags
-              ? hideTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing})
-              : showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing})
+              ? hideTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags})
+              : showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags})
           }
           screenShotFunction={() => handleScreenShot({canvasRef})}
           iconTag={showAllTags ? <HideTags /> : <ShowTags />}

@@ -47,6 +47,7 @@ export const DeleteText = ({
           cursor: "pointer",
           boxShadow: "0 0.125rem 0.125rem 0 rgba(0, 0, 0, 0.2)"
         }}
+        title={"Delete Text"}
       >
         <Check />
       </button>
@@ -61,6 +62,7 @@ export const DeleteText = ({
           cursor: "pointer",
           boxShadow: "0 0.125rem 0.125rem 0 rgba(0, 0, 0, 0.2)"
         }}
+        title={"Close"}
       >
         <Close />
       </button>

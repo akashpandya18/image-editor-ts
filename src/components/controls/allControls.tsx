@@ -159,8 +159,9 @@ export const TextOnImageControl = ({
                     boxShadow: "0 0.125rem 0.125rem 0 rgba(0, 0, 0, 0.2)"
                   }}
                   type={"submit"}
+                  title={"Submit Text"}
                 >
-                  <Check/>
+                  <Check />
                 </button>
                 <button
                   style={{
@@ -174,8 +175,9 @@ export const TextOnImageControl = ({
                   }}
                   type={"button"}
                   onClick={handleCross}
+                  title={"Close"}
                 >
-                  <Close/>
+                  <Close />
                 </button>
               </div>
             </div>
@@ -270,6 +272,7 @@ export const CropControl = ({
             disabled={currentCropped.width <= 0 && currentCropped.height <= 0}
             type={"button"}
             onClick={() => saveImage({setImgSrc, canvasRef, currentCropped})}
+            title={"Submit"}
           >
             <Check />
           </button>
@@ -297,10 +300,10 @@ export const FlipControl = ({ flipHorizontally, flipVertically }: PropsFlip) => 
       <h3> Flip </h3>
       <div className={"button-div-main"}>
         <div className={"button-div"}>
-          <button className={"flip-button"} onClick={flipHorizontally}>
+          <button className={"flip-button"} onClick={flipHorizontally} title={"Flip Horizontal"}>
             <FlipHorizontal />
           </button>
-          <button className={"flip-button"} onClick={flipVertically}>
+          <button className={"flip-button"} onClick={flipVertically} title={"Flip Vertical"}>
             <FlipVertical />
           </button>
         </div>
@@ -325,6 +328,7 @@ export const PenControl = ({ saveDrawing, clearDrawing }: PenControlProps) => {
           marginTop: "1rem"
         }}
         onClick={saveDrawing}
+        title={"Save"}
       >
         <Save />
       </button>
@@ -341,6 +345,7 @@ export const PenControl = ({ saveDrawing, clearDrawing }: PenControlProps) => {
           marginLeft: "0.313rem"
         }}
         onClick={clearDrawing}
+        title={"Clear Draw"}
       >
         <Clear />
       </button>

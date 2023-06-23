@@ -53,6 +53,7 @@ export const TagAnnotationForm = ({
           <button
             className={"TagSubmitClose"}
             onClick={() => handleCloseInput(false)}
+            title={"Close"}
           >
             <Close />
           </button>

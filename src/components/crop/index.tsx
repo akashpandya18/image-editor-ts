@@ -143,10 +143,12 @@ export const mouseMove = ({
   canvasRef,
   dimensions,
   imgRef,
-  imgSrc
+  imgSrc,
+  handleTagMouseMove
 }: MouseMoveProps) => {
   const x = event.nativeEvent.offsetX;
   const y = event.nativeEvent.offsetY;
+  handleTagMouseMove(event);
 
   if (
     x > currentCropped.startingX - 5 &&
@@ -438,10 +440,6 @@ export const mouseUP = ({
         width: difference.width,
         height: difference.height
       });
-      // startingX = x;
-      // startingY = y;
-      // (totalWidth = difference.width);
-      // (totalHeight = difference.height);
     } else if (croppingNode == 2) {
       setCurrentCropped({
         startingX: currentCropped.startingX,
@@ -449,10 +447,6 @@ export const mouseUP = ({
         width: difference.width,
         height: difference.height
       });
-      // (startingX = currentCropped.startingX);
-      // (startingY = difference.y);
-      // (totalWidth = difference.width);
-      // (totalHeight = difference.height);
     } else if (croppingNode == 3) {
       setCurrentCropped({
         startingX: difference.x,
@@ -460,10 +454,6 @@ export const mouseUP = ({
         width: difference.width,
         height: difference.height
       });
-      // (startingX = difference.x);
-      // (startingY = currentCropped.startingY);
-      // (totalWidth = difference.width);
-      // (totalHeight = difference.height);
     } else if (croppingNode == 4) {
       setCurrentCropped({
         startingX: currentCropped.startingX,
@@ -471,10 +461,6 @@ export const mouseUP = ({
         width: difference.width,
         height: difference.height
       });
-      // (startingX = currentCropped.startingX);
-      // (startingY = currentCropped.startingY);
-      // (totalWidth = difference.width);
-      // (totalHeight = difference.height);
     } else if (croppingNode == 5) {
       setCurrentCropped({
         startingX: currentCropped.startingX,
@@ -482,10 +468,6 @@ export const mouseUP = ({
         width: currentCropped.width,
         height: difference.height
       });
-      // (startingX = currentCropped.startingX);
-      // (startingY = difference.y);
-      // (totalWidth = currentCropped.width);
-      // (totalHeight = difference.height);
     } else if (croppingNode == 6) {
       setCurrentCropped({
         startingX: difference.x,
@@ -493,10 +475,6 @@ export const mouseUP = ({
         width: difference.width,
         height: currentCropped.height
       });
-      // (startingX = difference.x);
-      // (startingY = currentCropped.startingY);
-      // (totalWidth = difference.width);
-      // (totalHeight = currentCropped.height);
     } else if (croppingNode == 7) {
       setCurrentCropped({
         startingX: currentCropped.startingX,
@@ -504,10 +482,6 @@ export const mouseUP = ({
         width: currentCropped.width,
         height: difference.height
       });
-      // (startingX = currentCropped.startingX);
-      // (startingY = currentCropped.startingY);
-      // (totalWidth = currentCropped.width);
-      // (totalHeight = difference.height);
     } else if (croppingNode == 8) {
       setCurrentCropped({
         startingX: currentCropped.startingX,
@@ -515,10 +489,6 @@ export const mouseUP = ({
         width: difference.width,
         height: currentCropped.height
       });
-      // (startingX = currentCropped.startingX);
-      // (startingY = currentCropped.startingY);
-      // (totalWidth = difference.width);
-      // (totalHeight = currentCropped.height);
     }
 
     setDifference({
