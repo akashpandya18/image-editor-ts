@@ -3,6 +3,7 @@ import React, {
   useEffect,
   useRef
 } from "react";
+import { customAlphabet } from "nanoid";
 import {
   handleCanvasClick,
   handleCanvasMouseMove,
@@ -13,32 +14,15 @@ import {
   hideTags,
   showTags
 } from "../TagAnnotation";
-import "./index.css";
 import { Button } from "./buttons";
 import {
-  controls,
-  filterOptions,
-  handleToolClick,
-  tools
-} from "../../utils/data";
-import {
-  CropControl,
-  PenControl,
-  FlipControl,
   TagControls,
-  TextOnImageControl
+  TextOnImageControl,
+  CropControl,
+  FlipControl,
+  PenControl
 } from "./allControls";
 import { MainCanvasControls } from "./mainCanvasControls";
-import { customAlphabet } from "nanoid";
-import ShowTagOnHover from "../prompts/showTagOnHover";
-import { DeleteTag } from "../prompts/deleteTag";
-import { DeleteText } from "../prompts/deleteText";
-import { TagAnnotationForm } from "../forms/TagAnnotForm";
-import TempRedTag from "../prompts/ConfirmSubmitTag";
-import {
-  HideTags,
-  ShowTags
-} from "../../assets/icons";
 import {
   flipHorizontally,
   flipVertically
@@ -49,9 +33,9 @@ import {
   TagCanvas,
   MoreFilterCanvas,
   TextOnImageCanvas,
-  CropCanvas, FlipCanvas
+  CropCanvas,
+  FlipCanvas
 } from "../canvases";
-import "./sliders/index.css";
 import {
   saveDrawing,
   clearDrawing
@@ -62,48 +46,55 @@ import {
   submitHandler,
   textOnChangeHandler
 } from "./textOnImage";
+import ShowTagOnHover from "../prompts/showTagOnHover";
+import { DeleteTag } from "../prompts/deleteTag";
+import { DeleteText } from "../prompts/deleteText";
+import { TagAnnotationForm } from "../forms/TagAnnotForm";
+import TempRedTag from "../prompts/ConfirmSubmitTag";
+import {
+  controls,
+  filterOptions,
+  handleToolClick,
+  tools
+} from "../../utils/data";
 import {
   ControlsProps,
   AnnotationProps,
   Cropped,
   TextFormProps,
-  TextObjectProps,
+  TextTag,
   FilterOptionsProps,
   ControlsType
 } from "../../types";
+import {
+  HideTags,
+  ShowTags
+} from "../../assets/icons";
+import "./sliders/index.css";
+import "./index.css";
 
 export const Controls = ({
   imgSrc,
   setImgSrc
 }: ControlsProps): JSX.Element => {
-  const [annotations, setAnnotations] = useState<AnnotationProps[]>([]);
+  // Canvas and selected/active tab
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [currentControl, setCurrentControl] = useState<string>("tag-annotation");
-  let [blur, setBlur] = useState<number>(0);
-  const [zoom, setZoom] = useState<number>(1);
-  let [rotate, setRotate] = useState<number>(0);
-  const [brightness, setBrightness] = useState<number>(1);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [clear, setClear] = useState<boolean>(false);
+  // Tag/Annotation Canvas
+  const [annotations, setAnnotations] = useState<AnnotationProps[]>([]);
   const [hoverTag, setHoverTag] = useState("");
   const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 });
   const [showH, setShowH] = useState(false);
   const [tempRedPrompt, setTempRedPrompt] = useState(false);
   const [deleteTag, setDeleteTag] = useState(false);
+  const [deleteTagId, setDeleteTagId] = useState("");
   const [deletePos, setDeletePos] = useState({ xN: 0, yN: 0 });
   const [showAllTags, setShowAllTags] = useState(false);
-  const [deleteTagId, setDeleteTagId] = useState("");
   const [currentAnnotation, setCurrentAnnotation] = useState({ x: 0, y: 0 });
   const [tag, setTag] = useState("");
-  const [flipHorizontal, setFlipHorizontal] = useState<boolean>(false);
-  const [flipVertical, setFlipVertical] = useState<boolean>(false);
-  const [drawing, setDrawing] = useState("");
-  const [currentCropped, setCurrentCropped] = useState<Cropped>({
-    startingX: 0,
-    startingY: 0,
-    height: 0,
-    width: 0
-  });
+  // Text on Image Canvas
   const [allTextTags, setAllTextTags] = useState([]);
   const [tempPrompt, setTempPrompt] = useState(false);
   const [currentClicked, setCurrentClicked] = useState({
@@ -112,18 +103,314 @@ export const Controls = ({
   });
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ text: "", size: 32, color: "#ffffff", id: "" });
-  const [croppedImage, setCroppedImage] = useState<string>("");
-  const [selectCanvas, setSelectCanvas] = useState(false);
   const [error, setError] = useState("");
   const [deleteTextTag, setDeleteTextTag] = useState(false);
+  // Crop Canvas
+  const [currentCropped, setCurrentCropped] = useState<Cropped>({
+    startingX: 0,
+    startingY: 0,
+    height: 0,
+    width: 0
+  });
+  const [croppedImage, setCroppedImage] = useState<string>("");
+  const [selectCanvas, setSelectCanvas] = useState(false);
+  // Flip Canvas
+  const [flipHorizontal, setFlipHorizontal] = useState<boolean>(false);
+  const [flipVertical, setFlipVertical] = useState<boolean>(false);
+  // Pen Canvas
+  const [drawing, setDrawing] = useState("");
+  // More filter Canvas
+  let [blur, setBlur] = useState<number>(0);
+  const [zoom, setZoom] = useState<number>(1);
+  let [rotate, setRotate] = useState<number>(0);
+  const [brightness, setBrightness] = useState<number>(1);
 
-  const lineWidth = 4;
-  const lineColor = "#000";
   const ref = useRef(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const nanoid = customAlphabet("1234567890abcdef", 10);
   const id = nanoid(5);
 
+  // set height and width of image on canvas
+  useEffect(() => {
+    const image = new Image();
+    image.src = imgSrc;
+    image.onload = () => {
+      const { width, height } = image;
+      if (width > 1000) {
+        const ratio = width / height;
+        const newHeight = 1000 / ratio;
+        const newWidth = 563 * ratio;
+        setDimensions({ width: newWidth, height: newHeight });
+        // } else if (width < 500) {
+        //   setDimensions({ width: 500, height: 490 });
+      } else {
+        setDimensions({ width, height });
+      }
+    };
+  }, [imgSrc]);
+
+  // setting flip value for sync in other tabs
+  const flipValue = (canvas: HTMLCanvasElement | null, context: CanvasRenderingContext2D | null) => {
+    if (flipHorizontal && !flipVertical) {
+      context!.translate(canvas!.width, 0);
+      context!.scale(-1, 1);
+    } else if (flipVertical && !flipHorizontal) {
+      context!.translate(0, canvas!.height);
+      context!.scale(1, -1);
+    } else if (flipVertical && flipHorizontal) {
+      context!.translate(canvas!.width, 0);
+      context!.scale(-1, 1);
+      context!.translate(0, canvas!.height);
+      context!.scale(1, -1);
+    }
+  };
+
+  // values are sync with all tabs
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas!.getContext("2d");
+
+    const { width, height } = dimensions;
+    canvas!.width = width;
+    canvas!.height = height;
+
+    const image = new Image();
+    if (drawing !== "") {
+      image.src = drawing;
+    } else {
+      image.src = imgSrc;
+    }
+
+    image.width = canvas!.width;
+    image.height = canvas!.height;
+
+    image.onload = () => {
+      // setting tag/annotation on canvas
+      setTimeout(() => {
+        annotations.forEach((annotationData: AnnotationProps) => {
+          const { x, y } = annotationData;
+          context!.beginPath();
+          context!.fillStyle = "yellow";
+          context!.arc(x, y, 10, 0, 2 * Math.PI);
+          context!.fill();
+        });
+        allTextTags.forEach((texts: TextTag) => {
+          context!.textBaseline = "alphabetic";
+          context!.font = `${texts.size || 22}px monospace`;
+          context!.fillStyle = texts.color;
+          context!.fillText(texts.text, texts.x + 10, texts.y);
+        });
+      }, 10);
+
+      // setting flip on canvas
+      flipValue(canvas, context);
+
+      // setting blur and brightness value on canvas
+      context!.clearRect(0, 0, canvas!.width, canvas!.height);
+      blur = blur / 16;
+      context!.filter = `blur(${blur}rem) brightness(${brightness})`;
+      setTimeout(() => {
+        context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
+      });
+
+      // setting zoom value on canvas
+      if (canvas) {
+        // Clear canvas and scale it
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        context!.translate(centerX, centerY);
+        context!.scale(zoom, zoom);
+        context!.translate(-centerX, -centerY);
+        context!.clearRect(0, 0, width, height);
+      }
+
+      // if show all tag is true
+      if (showAllTags) {
+        showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
+      }
+
+      setTag("");
+      setCurrentAnnotation({ x: 0, y: 0 });
+      setTempRedPrompt(false);
+    };
+  }, [currentControl, blur, zoom, brightness, allTextTags]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas!.getContext("2d");
+
+    const { width, height } = dimensions;
+    canvas!.width = width;
+    canvas!.height = height;
+
+    const image = new Image();
+    if (drawing !== "") {
+      image.src = drawing;
+    } else {
+      image.src = imgSrc;
+    }
+
+    image.width = canvas!.width;
+    image.height = canvas!.height;
+
+    const deg = Math.PI / 180;
+    const degToRad = (rotate: number) => rotate * deg;
+
+    setTimeout(() => {
+      context!.clearRect(0, 0, canvas!.width, canvas!.height);
+      context!.save();
+      context!.translate(canvas!.width / 2, canvas!.height / 2);
+      context!.rotate(degToRad(rotate++ % 360));
+      context!.drawImage(
+        image,
+        image.width / -2,
+        image.height / -2,
+        image.width,
+        image.height
+      );
+      context!.restore();
+    },10);
+  },[currentControl, blur, zoom, rotate, brightness]);
+
+  // setting crop rectangle in crop tab canvas
+  useEffect(() => {
+    if (currentCropped.startingX < 0) {
+      setCurrentCropped((prevState) => ({
+        ...prevState,
+        startingX: 0
+      }));
+    }
+    if (currentCropped.startingY < 0) {
+      setCurrentCropped((prevState) => ({
+        ...prevState,
+        startingY: 0
+      }));
+    }
+    if (currentCropped.startingX - 1 > Math.floor(dimensions.width) - currentCropped.width) {
+      setCurrentCropped((prevState) => ({
+        ...prevState,
+        startingX: dimensions.width - currentCropped.width
+      }));
+    }
+    if (currentCropped.startingY - 1 >= dimensions.height - currentCropped.height) {
+      setCurrentCropped((prevState) => ({
+        ...prevState,
+        startingY: dimensions.height - currentCropped.height
+      }));
+    }
+    if (currentCropped.width < 0) {
+      setCurrentCropped((precState) => ({
+        ...precState,
+        startingX: precState.startingX - Math.abs(precState.width),
+        width: Math.abs(precState.width)
+      }));
+    }
+    if (currentCropped.height < 0) {
+      setCurrentCropped((precState) => ({
+        ...precState,
+        startingY: precState.startingY - Math.abs(precState.height),
+        height: Math.abs(precState.height)
+      }));
+    }
+
+    if (currentCropped.startingX === 0 && currentCropped.startingY === 0 && currentCropped.height === 0 && currentCropped.width === 0) {
+      setSelectCanvas(false);
+    } else {
+      setSelectCanvas(true);
+    }
+
+    // preview of the cropped image
+    if (selectCanvas) {
+      const canvas1 = canvasRef.current;
+      const context1 = canvas1?.getContext("2d");
+      let newCanvas = document.createElement("canvas");
+      let newCtx = newCanvas.getContext("2d");
+      const { width, height } = currentCropped;
+
+      newCanvas.height = height;
+      newCanvas.width = width;
+
+      const imageData = context1!.getImageData(currentCropped.startingX + 2, currentCropped.startingY + 2, currentCropped.width - 3, currentCropped.height - 3);
+      newCtx!.putImageData(imageData, 0, 0);
+      let crop = newCanvas.toDataURL();
+      setCroppedImage(crop);
+    }
+  }, [currentCropped]);
+
+  // create rectangle for crop canvas in crop tab canvas
+  useEffect(() => {
+    if (selectCanvas) {
+      const canvas = canvasRef.current;
+      const context = canvas!.getContext("2d");
+
+      context!.strokeStyle = "black";
+      context!.setLineDash([5, 5]);
+      const imageX = Math.floor(dimensions.width / 4);
+      const imageY = Math.floor(dimensions.height / 4);
+      context!.lineWidth = 2;
+      context!.strokeRect(imageX, imageY, imageX, imageY);
+
+      setCurrentCropped({
+        startingX: imageX,
+        startingY: imageY,
+        width: imageX,
+        height: imageY
+      });
+
+      context!.setLineDash([5, 5]);
+      context!.beginPath();
+      context!.lineWidth = 3;
+      context!.lineJoin = "round";
+      context!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 10, 0);
+      context!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 0, 10);
+      context!.fillStyle = "white";
+      context!.fill();
+      context!.stroke();
+
+      context!.beginPath();
+      context!.lineWidth = 3;
+      context!.lineJoin = "round";
+      context!.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, -10, 0);
+      context!.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, 0, 10);
+      context!.fillStyle = "white";
+      context!.fill();
+      context!.stroke();
+
+      context!.beginPath();
+      context!.lineWidth = 3;
+      context!.lineJoin = "round";
+      context!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0);
+      context!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10);
+      context!.fillStyle = "white";
+      context!.fill();
+      context!.stroke();
+
+      context!.beginPath();
+      context!.lineWidth = 3;
+      context!.lineJoin = "round";
+      context!.strokeRect((dimensions.width / 4) - 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0);
+      context!.strokeRect((dimensions.width / 4) + 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10);
+      context!.fillStyle = "white";
+      context!.fill();
+      context!.stroke();
+
+      const canvas1 = canvasRef.current;
+      const context1 = canvas1!.getContext("2d");
+      let newCanvas = document.createElement("canvas");
+      let newCtx = newCanvas.getContext("2d");
+
+      newCanvas.height = imageY;
+      newCanvas.width = imageX;
+
+      const imageData = context1!.getImageData(dimensions.width / 4 + 2, dimensions.height / 4 + 2, dimensions.width / 4 - 3, dimensions.height / 4 - 3);
+      newCtx!.putImageData(imageData, 0, 0);
+      let crop = newCanvas.toDataURL();
+      setCroppedImage(crop);
+    }
+  }, [selectCanvas]);
+
+  // input filed handleChange event of text-on-image tab canvas
   const textOnChangeHandlerCall = (textForm: TextFormProps) => {
     textOnChangeHandler({
       textForm,
@@ -140,7 +427,12 @@ export const Controls = ({
     });
   };
 
-  // set range slider values
+  // handle crop rectangle
+  const select = () => {
+    setSelectCanvas(!selectCanvas);
+  };
+
+  // set range slider values in more filter tab canvas
   const handleEffectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     if (e.target.id === "blur") {
@@ -157,7 +449,7 @@ export const Controls = ({
     }
   };
 
-  // return range slider value
+  // return range slider value in more filter tab canvas
   const inputValue = (name: string) => {
     if (name === "blur") {
       return blur;
@@ -172,25 +464,6 @@ export const Controls = ({
       return brightness;
     }
   };
-
-  // set height and width of image on canvas
-  useEffect(() => {
-    const image = new Image();
-    image.src = imgSrc;
-    image.onload = () => {
-      const { width, height } = image;
-      if (width > 1000) {
-        const ratio = width / height;
-        const newHeight = 1000 / ratio;
-        const newWidth = 563 * ratio;
-        setDimensions({ width: newWidth, height: newHeight });
-      // } else if (width < 500) {
-      //   setDimensions({ width: 500, height: 490 });
-      } else {
-        setDimensions({ width, height });
-      }
-    };
-  }, [imgSrc]);
 
   // clear all filters
   useEffect(() => {
@@ -231,337 +504,18 @@ export const Controls = ({
     setDeleteTextTag(false);
 
     const canvas: HTMLCanvasElement | null = canvasRef.current;
-    if (!canvas) return;
     const { width, height } = dimensions;
 
-    canvas.width = width;
-    canvas.height = height;
-    const context = canvas.getContext("2d");
-    if (!context) return;
+    canvas!.width = width;
+    canvas!.height = height;
+    const context = canvas!.getContext("2d");
     const image = new Image();
     image.src = imgSrc;
 
     image.onload = () => {
-      context.drawImage(image, 0, 0, dimensions.width, dimensions.height);
+      context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
     };
   }, [dimensions, imgSrc, clear]);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d");
-
-    if (context) {
-      context.lineWidth = lineWidth;
-      context.strokeStyle = lineColor;
-    }
-  }, [canvasRef, lineWidth, lineColor]);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d");
-    if (!context) return;
-    const { width, height } = dimensions;
-    canvas.width = width;
-    canvas.height = height;
-    const image = new Image();
-    image.src = imgSrc;
-
-    image.onload = () => {
-      context.drawImage(image, 0, 0, dimensions.width, dimensions.height);
-      annotations.forEach((annotationData: AnnotationProps) => {
-        const { x, y } = annotationData;
-        context.beginPath();
-        context.fillStyle = "yellow";
-        context.arc(x, y, 10, 0, 2 * Math.PI);
-        context.fill();
-      });
-      setTag("");
-      setCurrentAnnotation({ x: 0, y: 0 });
-    }
-  }, []);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d");
-    if (!context) return;
-    const { width, height } = dimensions;
-    canvas.width = width;
-    canvas.height = height;
-    const image = new Image();
-    image.src = imgSrc;
-
-    context.fillStyle = "white";
-    const textHeight = parseInt(context.font, 10);
-    image.onload = () => {
-      context.drawImage(image, 0, 0, dimensions.width, dimensions.height);
-      allTextTags.forEach((texts: TextObjectProps) => {
-        const { x, y, text, color, size } = texts;
-        context.fillStyle = color;
-        context.font = `${size || 22}px monospace`;
-        context.beginPath();
-        context.fillText(text, x + 10, y + (textHeight / 4));
-      });
-    };
-  }, [allTextTags]);
-
-  useEffect(() => {
-    if (currentCropped.startingX < 0) {
-      setCurrentCropped((prevState) => ({
-        ...prevState,
-        startingX: 0
-      }));
-    }
-    if (currentCropped.startingY < 0) {
-      setCurrentCropped((prevState) => ({
-        ...prevState,
-        startingY: 0
-      }));
-    }
-    if (currentCropped.startingX - 1 > Math.floor(dimensions.width) - currentCropped.width) {
-      setCurrentCropped((prevState) => ({
-        ...prevState,
-        startingX: dimensions.width - currentCropped.width
-      }));
-    }
-    if (currentCropped.startingY - 1 >= dimensions.height - currentCropped.height) {
-      setCurrentCropped((prevState) => ({
-        ...prevState,
-        startingY: dimensions.height - currentCropped.height
-      }));
-    }
-
-    if (currentCropped.width < 0) {
-      setCurrentCropped((precState) => ({
-        ...precState,
-        startingX: precState.startingX - Math.abs(precState.width),
-        width: Math.abs(precState.width)
-      }));
-    }
-    if (currentCropped.height < 0) {
-      setCurrentCropped((precState) => ({
-        ...precState,
-        startingY: precState.startingY - Math.abs(precState.height),
-        height: Math.abs(precState.height)
-      }));
-    }
-
-    if (currentCropped.startingX == 0 && currentCropped.startingY == 0 && currentCropped.height == 0 && currentCropped.width == 0) {
-      setSelectCanvas(false);
-    } else {
-      setSelectCanvas(true);
-    }
-
-    if (selectCanvas) {
-      const canvas1 = canvasRef.current;
-      const context1 = canvas1?.getContext("2d");
-      let newCanvas = document.createElement("canvas");
-      let newCtx = newCanvas.getContext("2d");
-      const { width, height } = currentCropped;
-      newCanvas.height = height;
-      newCanvas.width = width;
-      const imageData = context1!.getImageData(currentCropped.startingX + 2, currentCropped.startingY + 2, currentCropped.width - 3, currentCropped.height - 3);
-      newCtx!.putImageData(imageData, 0, 0);
-      let crop = newCanvas.toDataURL();
-      setCroppedImage(crop);
-    }
-  }, [currentCropped]);
-
-  const flipValue = (canvas: HTMLCanvasElement | null, context: CanvasRenderingContext2D) => {
-    if (!canvas) return;
-
-    if (flipHorizontal && !flipVertical) {
-      context.translate(canvas.width, 0);
-      context.scale(-1, 1);
-    } else if (flipVertical && !flipHorizontal) {
-      context.translate(0, canvas.height);
-      context.scale(1, -1);
-    } else if (flipVertical && flipHorizontal) {
-      context.translate(canvas.width, 0);
-      context.scale(-1, 1);
-      context.translate(0, canvas.height);
-      context.scale(1, -1);
-    }
-  };
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d");
-    if (!context) return;
-
-    const { width, height } = dimensions;
-    canvas.width = width;
-    canvas.height = height;
-
-    const image = new Image();
-    if (drawing !== "") {
-      image.src = drawing;
-    } else {
-      image.src = imgSrc;
-    }
-
-    image.width = canvas.width;
-    image.height = canvas.height;
-
-    image.onload = () => {
-      // setting tag/annotation on canvas
-      setTimeout(() => {
-        annotations.forEach((annotationData: AnnotationProps) => {
-          const { x, y } = annotationData;
-          context.beginPath();
-          context.fillStyle = "yellow";
-          context.arc(x, y, 10, 0, 2 * Math.PI);
-          context.fill();
-        });
-      }, 10);
-
-      // setting flip on canvas
-      flipValue(canvas, context);
-
-      // setting blur and brightness value on canvas
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      blur = blur / 16;
-      context.filter = `blur(${blur}rem) brightness(${brightness})`;
-      setTimeout(() => {
-        context.drawImage(image, 0, 0, canvas.width, canvas.height);
-      });
-
-      // setting zoom value on canvas
-      if (canvas) {
-        // Clear canvas and scale it
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-
-        context.translate(centerX, centerY);
-        context.scale(zoom, zoom);
-        context.translate(-centerX, -centerY);
-        context.clearRect(0, 0, width, height);
-      }
-
-      // if show all tag is true
-      if (showAllTags) {
-        showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
-      }
-
-      setTag("");
-      setCurrentAnnotation({ x: 0, y: 0 });
-      setTempRedPrompt(false);
-    };
-  }, [currentControl, blur, zoom, brightness]);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d");
-    if (!context) return;
-
-    const { width, height } = dimensions;
-    canvas.width = width;
-    canvas.height = height;
-
-    const image = new Image();
-    if (drawing !== "") {
-      image.src = drawing;
-    } else {
-      image.src = imgSrc;
-    }
-
-    image.width = canvas.width;
-    image.height = canvas.height;
-
-    const deg = Math.PI / 180;
-    const degToRad = (rotate: number) => rotate * deg;
-
-    setTimeout(() => {
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      context.save();
-      context.translate(canvas.width / 2, canvas.height / 2);
-      context.rotate(degToRad(rotate++ % 360));
-      context.drawImage(
-        image,
-        image.width / -2,
-        image.height / -2,
-        image.width,
-        image.height
-      );
-      context.restore();
-    },10);
-  },[currentControl, blur, zoom, rotate, brightness]);
-
-  useEffect(() => {
-    if (selectCanvas) {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const context = canvas.getContext("2d");
-      if (!context) return;
-
-      context.strokeStyle = "white";
-      context.setLineDash([5, 5]);
-      const imageX = Math.floor(dimensions.width / 4);
-      const imageY = Math.floor(dimensions.height / 4);
-      context.lineWidth = 2;
-      context.strokeRect(imageX, imageY, imageX, imageY);
-      setCurrentCropped({
-        startingX: imageX,
-        startingY: imageY,
-        width: imageX,
-        height: imageY
-      });
-      context.setLineDash([0, 0]);
-      context.beginPath();
-      context.lineWidth = 3;
-      context.lineJoin = "round";
-      context.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 10, 0);
-      context.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 0, 10);
-      context.fillStyle = "white";
-      context.fill();
-      context.stroke();
-      context.beginPath();
-      context.lineWidth = 3;
-      context.lineJoin = "round";
-      context.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, -10, 0);
-      context.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, 0, 10);
-      context.fillStyle = "white";
-      context.fill();
-      context.stroke();
-      context.beginPath();
-      context.lineWidth = 3;
-      context.lineJoin = "round";
-      context.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0);
-      context.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10);
-      context.fillStyle = "white";
-      context.fill();
-      context.stroke();
-      context.beginPath();
-      context.lineWidth = 3;
-      context.lineJoin = "round";
-      context.strokeRect((dimensions.width / 4) - 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0);
-      context.strokeRect((dimensions.width / 4) + 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10);
-      context.fillStyle = "white";
-      context.fill();
-      context.stroke();
-
-      const canvas1 = canvasRef.current;
-      const context1 = canvas1?.getContext("2d");
-      let newCanvas = document.createElement("canvas");
-      let newCtx = newCanvas.getContext("2d");
-
-      newCanvas.height = imageY;
-      newCanvas.width = imageX;
-
-      const imageData = context1!.getImageData(dimensions.width / 4 + 2, dimensions.height / 4 + 2, dimensions.width / 4 - 3, dimensions.height / 4 - 3);
-      newCtx!.putImageData(imageData, 0, 0);
-      let crop = newCanvas.toDataURL();
-      setCroppedImage(crop);
-    }
-  }, [selectCanvas]);
-
-  const select = () => {
-    setSelectCanvas(!selectCanvas);
-  };
 
   return (
     <div className={"controls-out"}>
@@ -633,12 +587,7 @@ export const Controls = ({
                 setTempPrompt,
                 setError,
                 canvasRef,
-                imgSrc,
-                showAllTags,
-                setShowAllTags,
-                drawing,
-                annotations,
-                allTextTags
+                imgSrc
               })}
               formData={formData}
               setFormData={setFormData}
@@ -731,6 +680,7 @@ export const Controls = ({
         </div>
       </div>
 
+      {/* canvases */}
       <div className={"canvas-div"}>
         {currentControl === "tag-annotation" ? (
           <TagCanvas
@@ -778,6 +728,9 @@ export const Controls = ({
               setHoverPos,
               setShowH
             })}
+            showAllTags={showAllTags}
+            setShowAllTags={setShowAllTags}
+            drawing={drawing}
           />
         ) : currentControl === "crop" ? (
           <CropCanvas
@@ -841,6 +794,7 @@ export const Controls = ({
           <RegularCanvas canvasRef={canvasRef} />
         )}
 
+        {/* tag/annotation form */}
         {tempRedPrompt && (
           <>
             <TempRedTag position={currentAnnotation} />
@@ -870,6 +824,7 @@ export const Controls = ({
           </>
         )}
 
+        {/* Delete tag form */}
         {deleteTag && (
           <DeleteTag
             position={deletePos}
@@ -891,6 +846,7 @@ export const Controls = ({
           />
         )}
 
+        {/* delete text form */}
         {deleteTextTag && (
           <DeleteText
             position={currentClicked}
@@ -905,8 +861,10 @@ export const Controls = ({
           />
         )}
 
+        {/* show tag/annotation value on hover of dot */}
         {showH && <ShowTagOnHover position={hoverPos} tag={hoverTag} />}
 
+        {/* clear canvas, show-hide-tags, take screenshot */}
         <MainCanvasControls
           clearFunction={() => setClear(!clear)}
           showHideFunction={() =>

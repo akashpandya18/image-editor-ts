@@ -8,7 +8,8 @@ import {
   HandleClearSingleTagProps,
   HideTagsProps,
   ShowTagsProps,
-  CanvasRefProps, TextObjectProps
+  CanvasRefProps,
+  TextTag
 } from "../../types";
 
 export const handleCanvasMouseMove = ({
@@ -279,8 +280,8 @@ export const hideTags = ({
       context.fill();
     });
 
-    allTextTags.forEach((textTags: TextObjectProps) => {
-      context.textBaseline = "middle";
+    allTextTags.forEach((textTags: TextTag) => {
+      context.textBaseline = "alphabetic";
       context.font = `${textTags.size || 22}px monospace`;
       context.fillStyle = textTags.color;
       context.fillText(textTags.text, textTags.x + 10, textTags.y);
@@ -297,24 +298,21 @@ export const showTags = ({
   allTextTags
 }: ShowTagsProps) => {
   setShowAllTags(true);
+  const canvas = canvasRef.current;
+  if (!canvas) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
   const image = new Image();
   if (drawing !== "") {
     image.src = drawing;
   } else {
     image.src = imgSrc;
   }
-  const canvas = canvasRef.current;
-  if (!canvas) return;
-  const context = canvas.getContext("2d");
-  if (!context) return;
 
   image.width = canvas.width;
   image.height = canvas.height;
 
-  context.clearRect(0, 0, canvas.width, canvas.height);
   setTimeout(() => {
-    context.drawImage(image, 0, 0, image.width, image.height);
-
     annotations.forEach((annotationData: AnnotationProps) => {
       const { x, y, tag } = annotationData;
       // tag
@@ -355,8 +353,8 @@ export const showTags = ({
         context.fillText(tag, x + 10, y + 25);
       }
     });
-    allTextTags.forEach((textTags: TextObjectProps) => {
-      context.textBaseline = "middle";
+    allTextTags.forEach((textTags: TextTag) => {
+      context.textBaseline = "alphabetic";
       context.font = `${textTags.size || 22}px monospace`;
       context.fillStyle = textTags.color;
       context.fillText(textTags.text, textTags.x + 10, textTags.y);

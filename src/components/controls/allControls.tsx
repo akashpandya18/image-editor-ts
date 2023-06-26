@@ -11,7 +11,7 @@ import {
   PropsTag,
   AnnotationProps,
   TextOnImageControlProps,
-  TextObjectProps,
+  TextTag,
   CropControlProps,
   PropsFlip,
   PenControlProps
@@ -87,8 +87,8 @@ export const TextOnImageControl = ({
         context.arc(x, y, 10, 0, 2 * Math.PI);
         context.fill();
       });
-      allTextTags.forEach((textTags: TextObjectProps) => {
-        context.textBaseline = "middle";
+      allTextTags.forEach((textTags: TextTag) => {
+        context.textBaseline = "alphabetic";
         context.font = `${textTags.size || 22}px monospace`;
         context.fillStyle = textTags.color;
         context.fillText(textTags.text, textTags.x + 10, textTags.y);
@@ -243,14 +243,14 @@ export const CropControl = ({
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
-          marginTop: "1rem"
+          flexDirection: "column"
         }}
       >
         <div
           style={{
             display: "flex",
-            columnGap: "0.625rem"
+            columnGap: "0.625rem",
+            marginTop: "1rem"
           }}
         >
           <button
@@ -263,7 +263,7 @@ export const CropControl = ({
               width: "fit-content",
               border: "none"
             }}
-            onClick={() => select()}
+            onClick={select}
           >
             Select rectangle
           </button>
@@ -285,7 +285,8 @@ export const CropControl = ({
             style={{
               maxWidth: "25rem",
               maxHeight: "13.938rem",
-              objectFit: "contain"
+              objectFit: "contain",
+              marginTop: "1rem"
             }}
           />
         }

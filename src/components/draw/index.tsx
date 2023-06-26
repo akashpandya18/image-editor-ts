@@ -12,7 +12,6 @@ export const saveDrawing = ({
 }: SaveDrawingProps) => {
   const canvas = canvasRef.current;
   if (!canvas) return;
-  console.log("===>>>", canvas.toDataURL());
   setDrawing(canvas.toDataURL());
 };
 

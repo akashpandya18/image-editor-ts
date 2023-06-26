@@ -1,7 +1,6 @@
 import { nanoid } from "nanoid";
 import {
   TextOnImageClickHandlerProps,
-  TextObjectProps,
   TextOnChangeHandlerProps,
   SubmitHandlerProps,
   TextTag,
@@ -10,9 +9,10 @@ import {
   HandleMouseDownProps,
   HandleMouseUpProps,
   HandleDeleteProps,
-  HandleCrossProps
+  HandleCrossProps,
+  TextObjectProps
 } from "../../../types";
-import {showTags} from "../../TagAnnotation";
+import { showTags } from "../../TagAnnotation";
 
 export const clickHandler = ({
   event,
@@ -69,8 +69,7 @@ export const clickHandler = ({
     });
   } else {
     // @ts-ignore
-    const { x, y, text, color, size, id } = allTextTags.find((obj: TextObjectProps) => obj.id === clickRect.id);
-    // setDeleteTextTag(true);
+    const { x, y, text, color, size, id } = allTextTags.find((obj: TextTag) => obj.id === clickRect.id);
     setFormData({
       text: text,
       color: color,
@@ -124,7 +123,7 @@ export const textOnChangeHandler = ({
   context.clearRect(currentClicked.x,currentClicked.y - textHeight, textWidth, textHeight);
   context.drawImage(image, 0, 0, image.width, image.height);
 
-  context.font = `${Number(size)}px monospace`;
+  context.font = `${size}px monospace`;
 
   if (showAllTags) {
     showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
@@ -133,27 +132,28 @@ export const textOnChangeHandler = ({
   if (image) {
     if (image.complete) {
       if (!isEditing) {
-        // if (showAllTags) {
-        //   showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
-        // }
         // onChange validation for text input
         if (text.length > 0 && text.length <= 10) {
           setError("");
         }
 
-        context.strokeRect(currentClicked.x, currentClicked.y - rectHeight / 2, rectWidth, rectHeight);
-        context.textBaseline = "middle";
+        context.strokeRect(
+          currentClicked.x,
+          currentClicked.y - rectHeight / 2,
+          rectWidth,
+          rectHeight
+        );
+        context.textBaseline = "alphabetic";
 
         if (text.length === 0) {
           context.clearRect(0, 0, canvas.width, canvas.height);
           context.drawImage(image, 0, 0, image.width, image.height);
-          context.fillText("", currentClicked.x + padding, currentClicked.y);
         } else {
           context.fillText(text, currentClicked.x + padding, currentClicked.y);
         }
 
-        allTextTags.forEach((textTags: TextObjectProps) => {
-          context.textBaseline = "middle";
+        allTextTags.forEach((textTags: TextTag) => {
+          context.textBaseline = "alphabetic";
           context.fillStyle = textTags.color;
           context.font = `${textTags.size}px monospace`;
           context.fillText(textTags.text, textTags.x + padding, textTags.y);
@@ -172,19 +172,23 @@ export const textOnChangeHandler = ({
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(image, 0, 0, image.width, image.height);
 
-        context.strokeRect(currentClicked.x, currentClicked.y - rectHeight / 2, rectWidth, rectHeight);
-        context.textBaseline = "middle";
+        context.strokeRect(
+          currentClicked.x,
+          currentClicked.y - rectHeight / 2,
+          rectWidth,
+          rectHeight
+        );
+        context.textBaseline = "alphabetic";
 
         if (text.length === 0) {
           context.clearRect(0, 0, canvas.width, canvas.height);
           context.drawImage(image, 0, 0, image.width, image.height);
-          context.fillText("", currentClicked.x + padding, currentClicked.y);
         } else {
           context.fillText(text, currentClicked.x + padding, currentClicked.y);
         }
 
-        allTextTags.forEach((textTags: TextObjectProps) => {
-          context.textBaseline = "middle";
+        allTextTags.forEach((textTags: TextTag) => {
+          context.textBaseline = "alphabetic";
           context.fillStyle = textTags.color;
           context.font = `${textTags.size}px monospace`;
           context.fillText(textTags.text, textTags.x + padding, textTags.y);
@@ -212,12 +216,7 @@ export const submitHandler = ({
   setTempPrompt,
   setError,
   canvasRef,
-  imgSrc,
-  showAllTags,
-  setShowAllTags,
-  drawing,
-  annotations,
-  allTextTags
+  imgSrc
 }: SubmitHandlerProps) => {
   event.preventDefault();
 
@@ -236,7 +235,7 @@ export const submitHandler = ({
     setError("You can enter maximum 10 words");
     setTempPrompt(true);
   } else {
-    setAllTextTags((prev: any) => [...prev, {
+    setAllTextTags((prev: TextObjectProps[]) => [...prev, {
       id: nanoid(5),
       x: currentClicked?.x,
       y: currentClicked?.y,
@@ -244,9 +243,6 @@ export const submitHandler = ({
       size: event.target?.size.value,
       color: event.target?.color.value
     }]);
-    if (showAllTags) {
-      showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
-    }
     setTempPrompt(false);
   }
 };
@@ -261,10 +257,14 @@ export const handleMouseMove = ({
   imgSrc,
   currentClicked,
   annotations,
-  handleTagMouseMove
+  handleTagMouseMove,
+  showAllTags,
+  setShowAllTags,
+  drawing
 }: HandleMouseMoveProps) => {
   const mouseX = event.nativeEvent.offsetX;
   const mouseY = event.nativeEvent.offsetY;
+
   const canvas = canvasRef.current;
   if (!canvas) return;
   const context = canvas.getContext("2d");
@@ -275,6 +275,10 @@ export const handleMouseMove = ({
 
   handleTagMouseMove(event);
 
+  if (showAllTags) {
+    showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
+  }
+
   if (isDraggingText) {
     canvas.width = width;
     canvas.height = height;
@@ -283,14 +287,12 @@ export const handleMouseMove = ({
     context.lineWidth = 2;
 
     // @ts-ignore
-    const { text, id, x, y } = allTextTags.find((obj: any) => obj.id === draggingText);
-    const dragObject = allTextTags.find((obj: any) => obj.id === id);
+    const { text, id, x, y } = allTextTags.find((obj: TextTag) => obj.id === draggingText);
+    const dragObject = allTextTags.find((obj: TextTag) => obj.id === id);
 
     const textWidth: number = context.measureText(text).width;
     const textHeight: number = parseInt(context.font, 10);
     const padding: number = 10;
-    const rectWidth: number = textWidth + padding * 2;
-    const rectHeight: number = textHeight + padding * 2;
 
     let movedArea = {
       xMoved: x + (mouseX - currentClicked.x),
@@ -301,7 +303,7 @@ export const handleMouseMove = ({
       context.clearRect(0, 0, canvas.width, canvas.height);
       context.drawImage(image, 0, 0, dimensions.width, dimensions.height);
 
-      allTextTags.forEach((texts: any) => {
+      allTextTags.forEach((texts: TextTag) => {
         const { x, y, text, color, size, id: currentId } = texts;
         context.fillStyle = color;
         context.font = `${size || 22}px monospace`;
@@ -318,21 +320,28 @@ export const handleMouseMove = ({
         context.fill();
       });
 
-      context.strokeRect(
-        movedArea.xMoved,
-        movedArea.yMoved - rectHeight / 2,
-        rectWidth,
-        rectHeight
-      );
       context.fillStyle = dragObject!.color;
 
       context.font = `${dragObject!.size || 22}px monospace`;
-      context.textBaseline = "middle";
+      context.textBaseline = "alphabetic";
       context.fillText(text, movedArea.xMoved + 10, movedArea.yMoved + (textHeight / 4));
+
+      const rectWidth: number = (context.measureText(text).width) + padding * 2;
+      const rectHeight: number = (parseInt(context!.font, 10));
+
+      context.strokeRect(
+        movedArea.xMoved,
+        movedArea.yMoved - rectHeight / 2 - 6,
+        rectWidth,
+        rectHeight
+      );
     } else {
       image.onload = () => {
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(image, 0, 0, dimensions.width, dimensions.height);
+
+        const rectWidth: number = textWidth + padding * 2;
+        const rectHeight: number = textHeight + padding;
 
         allTextTags.forEach((texts: TextTag) => {
           const { x, y, text, color, size, id: currentId } = texts;
@@ -354,7 +363,7 @@ export const handleMouseMove = ({
         context.strokeRect(movedArea.xMoved, movedArea.yMoved - rectHeight / 2, rectWidth, rectHeight);
         context.fillStyle = dragObject!.color;
         context.font = `${dragObject!.size || 22}px monospace`;
-        context.textBaseline = "middle";
+        context.textBaseline = "alphabetic";
         context.fillText(text, movedArea.xMoved + 10, movedArea.yMoved + (textHeight / 4));
       };
     }
@@ -376,7 +385,7 @@ export const handleMouseDown = ({
   const context = canvas.getContext("2d");
   if (!context) return;
 
-  const clickRect = allTextTags.find((tags: any) => {
+  const clickRect = allTextTags.find((tags: TextTag) => {
     context.font = tags.size + "px monospace";
     let textWidth = context.measureText(tags.text).width;
     const textHeight = parseInt(context.font, 10);
@@ -421,7 +430,7 @@ export const handleMouseUp = ({
   if (!context) return;
 
   // @ts-ignore
-  const { x, y } = allTextTags.length > 0 && draggingText && allTextTags?.find((obj: any) => obj.id === draggingText);
+  const { x, y } = allTextTags.length > 0 && draggingText && allTextTags?.find((obj: TextTag) => obj.id === draggingText);
 
   const clickRect = allTextTags.length > 0 && allTextTags.find((tags: TextTag) => {
     context.font = tags.size + "px monospace";
@@ -438,8 +447,12 @@ export const handleMouseUp = ({
     );
   });
 
-  if (clickRect && clickRect!.id === draggingText) {
-    setDeleteTextTag(true);
+  if (clickRect) {
+    if (clickRect!.id === draggingText) {
+      setDeleteTextTag(true);
+    }
+  } else {
+    setDeleteTextTag(false);
   }
 
   if (isDraggingText) {
@@ -453,8 +466,8 @@ export const handleMouseUp = ({
   };
 
   if (isDraggingText) {
-    setAllTextTags((prevTag: any) => {
-      return prevTag.map((tag: any) => {
+    setAllTextTags((prevTag: TextObjectProps[]) => {
+      return prevTag.map((tag: TextTag) => {
         if (tag.id === draggingText) {
           return { ...tag, x: movedArea.xMoved, y: movedArea.yMoved };
         }
@@ -473,7 +486,7 @@ export const handleDelete = ({
   setDeleteTextTag,
   setTempPrompt
 }: HandleDeleteProps) => {
-  const value = allTextTags.filter((obj: TextObjectProps) => obj.id !== formData.id);
+  const value = allTextTags.filter((obj: TextTag) => obj.id !== formData.id);
   setAllTextTags(value);
   setDeleteTextTag(false);
   setTempPrompt(false);
@@ -503,8 +516,8 @@ export const handleCross = ({
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.drawImage(image, 0, 0, image.width, image.height);
 
-  allTextTags.forEach((textTags: TextObjectProps) => {
-    context.textBaseline = "middle";
+  allTextTags.forEach((textTags: TextTag) => {
+    context.textBaseline = "alphabetic";
     context.font = `${textTags.size || 22}px monospace`;
     context.fillStyle = textTags.color;
     context.fillText(textTags.text, textTags.x + 10, textTags.y);

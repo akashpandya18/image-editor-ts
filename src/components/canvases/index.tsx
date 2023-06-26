@@ -68,7 +68,10 @@ export const TextOnImageCanvas = ({
   setFormData,
   setDeleteTextTag,
   annotations,
-  handleTagMouseMove
+  handleTagMouseMove,
+  showAllTags,
+  setShowAllTags,
+  drawing
 }: TextOnImageProps) => {
   const [isDraggingText, setIsDraggingText] = useState<boolean>(false);
   const [draggingText, setDraggingText] = useState<string>("");
@@ -103,7 +106,10 @@ export const TextOnImageCanvas = ({
           imgSrc,
           currentClicked,
           annotations,
-          handleTagMouseMove
+          handleTagMouseMove,
+          showAllTags,
+          setShowAllTags,
+          drawing
         })
       }}
       onMouseDown={(event: React.MouseEvent<HTMLCanvasElement>) => {
@@ -214,7 +220,7 @@ export const CropCanvas = ({
           event,
           setIsDragging,
           setIsResize,
-          mouseUp //mouseUp = mouseUp
+          mouseUp // mouseUp = mouseUp
         })}
       />
       <img

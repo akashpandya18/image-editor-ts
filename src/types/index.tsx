@@ -128,7 +128,7 @@ export interface HideTagsProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   annotations: AnnotationProps[];
   drawing: string;
-  allTextTags: TextObjectProps[];
+  allTextTags: TextTag[];
 }
 
 export interface ShowTagsProps {
@@ -137,7 +137,7 @@ export interface ShowTagsProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   annotations: AnnotationProps[];
   drawing: string;
-  allTextTags: TextObjectProps[];
+  allTextTags: TextTag[];
 }
 
 export interface TagAnnotationFormProps {
@@ -174,7 +174,7 @@ export interface TextOnImageControlProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   imgSrc: string;
   annotations: AnnotationProps[];
-  allTextTags: TextObjectProps[];
+  allTextTags: TextTag[];
   handleCross: () => void;
 }
 
@@ -185,7 +185,7 @@ export interface TextOnChangeHandlerProps {
   imgSrc: string;
   isEditing: boolean;
   setError: React.Dispatch<React.SetStateAction<string>>;
-  allTextTags: TextObjectProps[];
+  allTextTags: TextTag[];
   annotations: AnnotationProps[];
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
@@ -232,6 +232,9 @@ export interface TextOnImageProps {
   setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
   annotations: AnnotationProps[];
   handleTagMouseMove: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  showAllTags: boolean;
+  setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
+  drawing: string;
 }
 
 export interface TextObjectProps {
@@ -241,21 +244,16 @@ export interface TextObjectProps {
   color: string;
   size: number;
   id: string;
-}
+}[]
 
 export interface SubmitHandlerProps {
   event: any;
-  setAllTextTags:  React.Dispatch<React.SetStateAction<any>>;
+  setAllTextTags:  React.Dispatch<React.SetStateAction<TextTag[] | any | never[]>>;
   currentClicked: { x: number; y: number; };
   setTempPrompt: React.Dispatch<React.SetStateAction<boolean>>;
   setError: React.Dispatch<React.SetStateAction<string>>;
   canvasRef: React.RefObject<HTMLCanvasElement>;
   imgSrc: string;
-  showAllTags: boolean;
-  setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
-  drawing: string;
-  annotations: AnnotationProps[];
-  allTextTags: TextObjectProps[];
 }
 
 export interface HandleMouseMoveProps {
@@ -269,6 +267,9 @@ export interface HandleMouseMoveProps {
   currentClicked: { x: number; y: number; };
   annotations: AnnotationProps[];
   handleTagMouseMove: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  showAllTags: boolean;
+  setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
+  drawing: string;
 }
 
 export interface HandleMouseDownProps {
@@ -288,14 +289,14 @@ export interface HandleMouseUpProps {
   draggingText: string;
   setDraggingText: React.Dispatch<React.SetStateAction<string>>;
   allTextTags: TextTag[];
-  setAllTextTags: React.Dispatch<React.SetStateAction<any>>;
+  setAllTextTags: React.Dispatch<React.SetStateAction<TextTag[] | any | never[]>>;
   currentClicked: { x: number; y: number; };
   setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface HandleDeleteProps {
-  allTextTags: TextObjectProps[];
-  setAllTextTags: React.Dispatch<React.SetStateAction<any>>;
+  allTextTags: TextTag[];
+  setAllTextTags: React.Dispatch<React.SetStateAction<TextTag[] | any | never[]>>;
   formData: { text: string; size: number; color: string; id: string; };
   setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
   setTempPrompt: React.Dispatch<React.SetStateAction<boolean>>;
@@ -305,7 +306,7 @@ export interface HandleCrossProps {
   setTempPrompt: React.Dispatch<React.SetStateAction<boolean>>;
   setError: React.Dispatch<React.SetStateAction<string>>;
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  allTextTags: TextObjectProps[];
+  allTextTags: TextTag[];
   imgSrc: string;
   annotations: AnnotationProps[];
   showAllTags: boolean;
@@ -439,7 +440,7 @@ export interface FlipHorizontallyProps {
   drawing: string;
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
-  allTextTags: TextObjectProps[];
+  allTextTags: TextTag[];
 }
 
 export interface FlipVerticallyProps {
@@ -451,7 +452,7 @@ export interface FlipVerticallyProps {
   drawing: string;
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
-  allTextTags: TextObjectProps[];
+  allTextTags: TextTag[];
 }
 
 export interface LoadImageFlipProps {
@@ -485,7 +486,7 @@ export interface ClearDrawingProps {
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
   drawing: string;
-  allTextTags: TextObjectProps[];
+  allTextTags: TextTag[];
 }
 
 export interface ControlsType {
