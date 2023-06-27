@@ -8,7 +8,7 @@ export interface OnSelectFileProps {
 }
 
 export interface FileUploadProps {
-  onSelectFile: (e: any) => void;
+  onSelectFile: (selectFileEvent: any) => void;
 }
 
 export interface ButtonProps {
@@ -30,9 +30,9 @@ export interface ControlsProps {
 }
 
 export interface MainCanvasControlProps {
-  clearFunction: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  clearFunction: (event: React.MouseEvent<HTMLButtonElement>) => void;
   showHideFunction: () => void;
-  screenShotFunction: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  screenShotFunction: (event: React.MouseEvent<HTMLButtonElement>) => void;
   iconTag: JSX.Element;
 }
 
@@ -45,7 +45,7 @@ export interface ControlsMapProps {
 }
 
 export interface PropsTag {
-  annotations: { id: string; x: number; y: number; tag: string; }[];
+  annotations: { id: string; currentAnnotationX: number; currentAnnotationY: number; tag: string; }[];
 }
 
 export interface CanvasRefProps {
@@ -54,47 +54,47 @@ export interface CanvasRefProps {
 
 export interface TagProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  handleTagClick: (e: React.MouseEvent<HTMLCanvasElement>) => void;
-  handleTagMouseMove: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  handleTagClick: (event: React.MouseEvent<HTMLCanvasElement>) => void;
+  handleTagMouseMove: (event: React.MouseEvent<HTMLCanvasElement>) => void;
 }
 
 export interface AnnotationProps {
   id: string;
-  x: number;
-  y: number;
+  currentAnnotationX: number;
+  currentAnnotationY: number;
   tag: string;
 }
 
 export interface HandleCanvasMouseMoveProps {
-  event: React.MouseEvent<HTMLCanvasElement>;
+  tagHoverEvent: React.MouseEvent<HTMLCanvasElement>;
   canvasRef: React.RefObject<HTMLCanvasElement>;
   annotations: AnnotationProps[];
   setHoverTag: React.Dispatch<React.SetStateAction<string>>;
-  setHoverPos: React.Dispatch<React.SetStateAction<{ x: number; y: number; }>>;
+  setHoverPos: React.Dispatch<React.SetStateAction<{ hoveredDotX: number; hoveredDotY: number; }>>;
   setShowH: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface HandleCanvasClickProps {
-  event: React.MouseEvent<HTMLCanvasElement>;
+  tagCanvasClickEvent: React.MouseEvent<HTMLCanvasElement>;
   canvasRef: React.RefObject<HTMLCanvasElement>;
   annotations: AnnotationProps[];
   setTempRedPrompt: React.Dispatch<React.SetStateAction<boolean>>;
   setDeleteTag: React.Dispatch<React.SetStateAction<boolean>>;
   setShowH: React.Dispatch<React.SetStateAction<boolean>>;
   setDeleteTagId: React.Dispatch<React.SetStateAction<string>>;
-  setCurrentAnnotation: React.Dispatch<React.SetStateAction<{ x: number; y: number; }>>;
+  setCurrentAnnotation: React.Dispatch<React.SetStateAction<{ currentAnnotationX: number; currentAnnotationY: number; }>>;
   setTag: React.Dispatch<React.SetStateAction<string>>;
-  setDeletePos: React.Dispatch<React.SetStateAction<{ xN: number; yN: number; }>>;
+  setDeletePos: React.Dispatch<React.SetStateAction<{ deletePositionX: number; deletePositionY: number; }>>
 }
 
 export interface HandleInputChangeProps {
-  event: React.ChangeEvent<HTMLInputElement>;
+  tagInputChangeEvent: React.ChangeEvent<HTMLInputElement>;
   setTag: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export interface HandleSubmitTagProps {
-  e: FormEvent<HTMLFormElement>;
-  currentAnnotation: { x: number; y: number; };
+  tagSubmitEvent: FormEvent<HTMLFormElement>;
+  currentAnnotation: { currentAnnotationX: number; currentAnnotationY: number; }
   canvasRef: React.RefObject<HTMLCanvasElement>;
   imgSrc: string;
   tag: string;
@@ -102,13 +102,13 @@ export interface HandleSubmitTagProps {
   id: string;
   setAnnotations: React.Dispatch<React.SetStateAction<AnnotationProps[]>>;
   setTag: React.Dispatch<React.SetStateAction<string>>;
-  setCurrentAnnotation: React.Dispatch<React.SetStateAction<{ x: number; y: number; }>>;
+  setCurrentAnnotation: React.Dispatch<React.SetStateAction<{ currentAnnotationX: number; currentAnnotationY: number; }>>;
   setTempRedPrompt: React.Dispatch<React.SetStateAction<boolean>>;
   showAllTags: boolean;
 }
 
 export interface HandleClearSingleTagProps {
-  e: React.MouseEvent<HTMLButtonElement>;
+  clearSingleTagEvent: React.MouseEvent<HTMLButtonElement>;
   setDeleteTagId: React.Dispatch<React.SetStateAction<string>>;
   canvasRef: React.RefObject<HTMLCanvasElement>;
   imgSrc: string;
@@ -117,7 +117,7 @@ export interface HandleClearSingleTagProps {
   deleteTagId: string;
   setAnnotations: React.Dispatch<React.SetStateAction<AnnotationProps[]>>;
   setTag: React.Dispatch<React.SetStateAction<string>>;
-  setCurrentAnnotation: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>;
+  setCurrentAnnotation: React.Dispatch<React.SetStateAction<{ currentAnnotationX: number; currentAnnotationY: number; }>>;
   setTempRedPrompt: React.Dispatch<React.SetStateAction<boolean>>;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -129,6 +129,10 @@ export interface HideTagsProps {
   annotations: AnnotationProps[];
   drawing: string;
   allTextTags: TextTag[];
+  rotate: number;
+  dimensions: { height: number; width: number; };
+  currentCropped: Cropped;
+  selectCanvas: boolean;
 }
 
 export interface ShowTagsProps {
@@ -142,26 +146,26 @@ export interface ShowTagsProps {
 
 export interface TagAnnotationFormProps {
   tags: string;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  position: { x: number; y: number };
+  handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  position: { currentAnnotationX: number; currentAnnotationY: number };
   refer: React.MutableRefObject<null>;
   handleCloseInput: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface TagOnHoverProps {
-  position: { x: number; y: number; };
+  position: { hoveredDotX: number; hoveredDotY: number; };
   tag: string;
 }
 
 export interface SubmitTagsProps {
-  position: { x: number; y: number; };
+  position: { currentAnnotationX: number; currentAnnotationY: number; };
 }
 
 export interface DeleteTagProps {
-  position: { xN: number; yN: number; };
-  setPromptOff: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  deleteTagSubmit: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  position: { deletePositionX: number; deletePositionY: number; }
+  setPromptOff: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  deleteTagSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export interface TextOnImageControlProps {
@@ -176,6 +180,12 @@ export interface TextOnImageControlProps {
   annotations: AnnotationProps[];
   allTextTags: TextTag[];
   handleCross: () => void;
+}
+
+export interface FontSizeOptionsProps {
+  id: number;
+  value: string;
+  text: string;
 }
 
 export interface TextOnChangeHandlerProps {
@@ -231,7 +241,7 @@ export interface TextOnImageProps {
   setFormData: React.Dispatch<React.SetStateAction<{ text: string; size: number; color: string; id: string; }>>;
   setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
   annotations: AnnotationProps[];
-  handleTagMouseMove: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  handleTagMouseMove: (event: React.MouseEvent<HTMLCanvasElement>) => void;
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
   drawing: string;
@@ -252,8 +262,6 @@ export interface SubmitHandlerProps {
   currentClicked: { x: number; y: number; };
   setTempPrompt: React.Dispatch<React.SetStateAction<boolean>>;
   setError: React.Dispatch<React.SetStateAction<string>>;
-  canvasRef: React.RefObject<HTMLCanvasElement>;
-  imgSrc: string;
 }
 
 export interface HandleMouseMoveProps {
@@ -266,7 +274,7 @@ export interface HandleMouseMoveProps {
   imgSrc: string;
   currentClicked: { x: number; y: number; };
   annotations: AnnotationProps[];
-  handleTagMouseMove: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  handleTagMouseMove: (event: React.MouseEvent<HTMLCanvasElement>) => void;
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
   drawing: string;
@@ -335,17 +343,19 @@ export interface CropProps {
   setCurrentCropped: React.Dispatch<React.SetStateAction<Cropped>>;
   dimensions: { height: number; width: number; };
   imgSrc: string;
-  handleTagMouseMove: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  annotations: AnnotationProps[];
+  showAllTags: boolean;
+  setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
+  drawing: string;
+  allTextTags: TextTag[];
+  setHoverTag: React.Dispatch<React.SetStateAction<string>>;
+  setHoverPos: React.Dispatch<React.SetStateAction<{ hoveredDotX: number; hoveredDotY: number; }>>;
+  setShowH: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface DifferenceProps {
   width: number;
   height: number;
-  x: number;
-  y: number;
-}
-
-export interface StartingNodeProps {
   x: number;
   y: number;
 }
@@ -358,12 +368,12 @@ export interface Cropped {
 }
 
 export interface MouseDownProps {
-  event: React.MouseEvent<HTMLCanvasElement>;
+  cropMouseDownEvent: React.MouseEvent<HTMLCanvasElement>;
   currentCropped: Cropped;
   setCroppingNode: React.Dispatch<React.SetStateAction<number>>;
   setIsResize: React.Dispatch<React.SetStateAction<boolean>>;
   setIsDragging: React.Dispatch<React.SetStateAction<boolean>>;
-  setStartingNode: React.Dispatch<React.SetStateAction<StartingNodeProps>>;
+  setStartingNode: React.Dispatch<React.SetStateAction<{ startingNodeX: number; startingNodeY: number; }>>;
 }
 
 export interface SaveImageProps {
@@ -379,12 +389,19 @@ export interface MouseMoveProps {
   croppingNode: number;
   isResize: boolean;
   isDragging: boolean;
-  startingNode: StartingNodeProps;
+  startingNode: { startingNodeX: number; startingNodeY: number; };
   canvasRef: React.RefObject<HTMLCanvasElement>;
   dimensions: { height: number; width: number; };
   imgRef: React.RefObject<HTMLImageElement>;
   imgSrc: string;
-  handleTagMouseMove: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  annotations: AnnotationProps[];
+  showAllTags: boolean;
+  setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
+  drawing: string;
+  allTextTags: TextTag[];
+  setHoverTag: React.Dispatch<React.SetStateAction<string>>;
+  setHoverPos: React.Dispatch<React.SetStateAction<{ hoveredDotX: number; hoveredDotY: number; }>>;
+  setShowH: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface MouseUPProps {
@@ -398,7 +415,7 @@ export interface MouseUPProps {
   setIsResize: React.Dispatch<React.SetStateAction<boolean>>;
   isDragging: boolean;
   setIsDragging: React.Dispatch<React.SetStateAction<boolean>>;
-  startingNode: StartingNodeProps;
+  startingNode: { startingNodeX: number; startingNodeY: number; };
 }
 
 interface MouseUpProps {
@@ -409,14 +426,14 @@ interface MouseUpProps {
   croppingNode: number;
   isResize: boolean;
   isDragging: boolean;
-  startingNode: { x: number; y: number; };
+  startingNode: { startingNodeX: number; startingNodeY: number; };
   canvasRef: React.RefObject<HTMLCanvasElement>;
   imgRef: React.RefObject<HTMLImageElement>;
 }
 
 export interface FlipCanvasProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  handleTagMouseMove: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  handleTagMouseMove: (event: React.MouseEvent<HTMLCanvasElement>) => void;
 }
 
 export interface MouseLeaveProps {
@@ -441,6 +458,7 @@ export interface FlipHorizontallyProps {
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
   allTextTags: TextTag[];
+  rotate: number;
 }
 
 export interface FlipVerticallyProps {
@@ -453,19 +471,22 @@ export interface FlipVerticallyProps {
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
   allTextTags: TextTag[];
+  rotate: number;
 }
 
 export interface LoadImageFlipProps {
-  context: CanvasRenderingContext2D;
+  context: CanvasRenderingContext2D | null;
   canvasRef: React.RefObject<HTMLCanvasElement>;
   imgSrc: string;
   annotations: AnnotationProps[];
   drawing: string;
+  allTextTags: TextTag[];
+  rotate: number;
 }
 
 export interface PenProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  handleTagMouseMove: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  handleTagMouseMove: (event: React.MouseEvent<HTMLCanvasElement>) => void;
 }
 
 export interface PenControlProps {
@@ -476,6 +497,7 @@ export interface PenControlProps {
 export interface SaveDrawingProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   setDrawing: React.Dispatch<React.SetStateAction<string>>;
+  imgSrc: string;
 }
 
 export interface ClearDrawingProps {
@@ -504,7 +526,7 @@ export interface MoreFilterProps {
   brightness: number;
   imgSrc: string;
   drawing: string;
-  handleTagMouseMove: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  handleTagMouseMove: (event: React.MouseEvent<HTMLCanvasElement>) => void;
 }
 
 export interface HandleToolClickProps {

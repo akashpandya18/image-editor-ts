@@ -37,11 +37,7 @@ export const RegularCanvas = ({ canvasRef }: CanvasRefProps) => {
   );
 };
 
-export const TagCanvas = ({
-  canvasRef,
-  handleTagClick,
-  handleTagMouseMove
-}: TagProps) => {
+export const TagCanvas = ({ canvasRef, handleTagClick, handleTagMouseMove }: TagProps) => {
   return (
     <canvas
       ref={canvasRef}
@@ -146,18 +142,20 @@ export const CropCanvas = ({
   setCurrentCropped,
   dimensions,
   imgSrc,
-  handleTagMouseMove
+  annotations,
+  showAllTags,
+  setShowAllTags,
+  drawing,
+  allTextTags,
+  setHoverTag,
+  setHoverPos,
+  setShowH
 }: CropProps): JSX.Element => {
-  const [difference, setDifference] = useState({
-    width: 0,
-    height: 0,
-    x: 0,
-    y: 0
-  });
+  const [difference, setDifference] = useState({ width: 0, height: 0, x: 0, y: 0 });
   const [croppingNode, setCroppingNode] = useState<number>(0);
   const [isResize, setIsResize] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [startingNode, setStartingNode] = useState({ x: 0, y: 0 });
+  const [startingNode, setStartingNode] = useState({ startingNodeX: 0, startingNodeY: 0 });
 
   const imgRef = useRef<HTMLImageElement>(null);
   let mouseUp = {
@@ -181,8 +179,8 @@ export const CropCanvas = ({
           boxShadow: "0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.2)"
         }}
         ref={canvasRef}
-        onMouseDown={(event: React.MouseEvent<HTMLCanvasElement>) => mouseDown({
-          event,
+        onMouseDown={(cropMouseDownEvent: React.MouseEvent<HTMLCanvasElement>) => mouseDown({
+          cropMouseDownEvent,
           currentCropped,
           setCroppingNode,
           setIsResize,
@@ -201,7 +199,14 @@ export const CropCanvas = ({
           dimensions,
           imgRef,
           imgSrc,
-          handleTagMouseMove
+          annotations,
+          showAllTags,
+          setShowAllTags,
+          drawing,
+          allTextTags,
+          setHoverTag,
+          setHoverPos,
+          setShowH
         })}
         onMouseUp={(event) => mouseUP({
           event,
@@ -220,7 +225,7 @@ export const CropCanvas = ({
           event,
           setIsDragging,
           setIsResize,
-          mouseUp // mouseUp = mouseUp
+          mouseUp
         })}
       />
       <img
@@ -253,8 +258,7 @@ export const PenCanvas = ({ canvasRef, handleTagMouseMove }: PenProps) => {
 
   const startDrawing = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d");
+    const context = canvas!.getContext("2d");
 
     if (context) {
       context.beginPath();
@@ -265,8 +269,7 @@ export const PenCanvas = ({ canvasRef, handleTagMouseMove }: PenProps) => {
 
   const draw = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d");
+    const context = canvas!.getContext("2d");
     if (!isDrawing) return;
 
     const x = event.nativeEvent.offsetX;
@@ -279,15 +282,11 @@ export const PenCanvas = ({ canvasRef, handleTagMouseMove }: PenProps) => {
     }
   };
 
-  const stopDrawing = () => {
-    setIsDrawing(false);
-  };
+  const stopDrawing = () => { setIsDrawing(false); };
 
   const clickDot = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d");
-    if (!context) return;
+    const context = canvas!.getContext("2d");
 
     if (context) {
       context.beginPath();
@@ -306,8 +305,8 @@ export const PenCanvas = ({ canvasRef, handleTagMouseMove }: PenProps) => {
   return (
     <canvas
       ref={canvasRef}
-      onMouseDown={(e: React.MouseEvent<HTMLCanvasElement>) => startDrawing(e)}
-      onMouseMove={(e: React.MouseEvent<HTMLCanvasElement>) => draw(e)}
+      onMouseDown={(event: React.MouseEvent<HTMLCanvasElement>) => startDrawing(event)}
+      onMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) => draw(event)}
       onMouseUp={stopDrawing}
       onMouseLeave={stopDrawing}
       onClick={(event: React.MouseEvent<HTMLCanvasElement>) => clickDot(event)}
@@ -332,72 +331,57 @@ export const MoreFilterCanvas = ({
 }: MoreFilterProps) => {
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d");
-    if (!context) return;
-
-    context.clearRect(0, 0, canvas.width, canvas.height);
-
+    const context = canvas!.getContext("2d");
     const image = new Image();
     image.src = imgSrc;
 
-    image.width = canvas.width;
-    image.height = canvas.height;
+    context!.clearRect(0, 0, canvas!.width, canvas!.height);
+
+    image.width = canvas!.width;
+    image.height = canvas!.height;
 
     if (canvas) {
       const { width, height } = canvas;
-
       // Set canvas dimensions
       canvas.width = width;
       canvas.height = height;
-
       // Clear canvas and scale it
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
 
-      context.translate(centerX, centerY);
-      context.scale(zoom, zoom);
-      context.translate(-centerX, -centerY);
-      context.clearRect(0, 0, width, height);
+      context!.translate(centerX, centerY);
+      context!.scale(zoom, zoom);
+      context!.translate(-centerX, -centerY);
+      context!.clearRect(0, 0, width, height);
     }
-
-    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
   }, [zoom, rotate]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d");
-    if (!context) return;
-
+    const context = canvas!.getContext("2d");
     const image = new Image();
-    if (drawing !== "") {
-      image.src = drawing;
-    } else {
-      image.src = imgSrc;
-    }
+    drawing !== "" ? image.src = drawing : image.src = imgSrc;
+    const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
-    image.width = canvas.width;
-    image.height = canvas.height;
-    const deg = Math.PI / 180;
-    const degToRad = (rotate: number) => rotate * deg;
+    image.width = canvas!.width;
+    image.height = canvas!.height;
 
     image.onload = () => {
-      blur = blur / 16;
-      context.filter = `blur(${blur}rem) brightness(${brightness})`;
+      context!.filter = `blur(${blur}px) brightness(${brightness})`;
 
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      context.save();
-      context.translate(canvas.width / 2, canvas.height / 2);
-      context.rotate(degToRad(rotate++ % 360));
-      context.drawImage(
+      context!.clearRect(0, 0, canvas!.width, canvas!.height);
+      context!.save();
+      context!.translate(canvas!.width / 2, canvas!.height / 2);
+      context!.rotate(degToRad(rotate++ % 360));
+      context!.drawImage(
         image,
         image.width / -2,
         image.height / -2,
         image.width,
         image.height
       );
-      context.restore();
+      context!.restore();
     };
   },[blur, rotate, brightness]);
 

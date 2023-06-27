@@ -17,8 +17,8 @@ export const TagAnnotationForm = ({
       style={{
         position: "absolute",
         zIndex: 9,
-        top: position.y,
-        left: position.x
+        top: position.currentAnnotationY,
+        left: position.currentAnnotationX
       }}
     >
       <form
@@ -35,7 +35,7 @@ export const TagAnnotationForm = ({
           name={"tag"}
           maxLength={20}
           value={tags}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange(e)}
+          onChange={(tagInputChangeEvent: React.ChangeEvent<HTMLInputElement>) => handleInputChange(tagInputChangeEvent)}
           autoFocus
           autoComplete={"off"}
         />
@@ -47,9 +47,7 @@ export const TagAnnotationForm = ({
             width: "40%"
           }}
         >
-          <button className={"TagSubmit"} type={"submit"}>
-            Submit
-          </button>
+          <button className={"TagSubmit"} type={"submit"}> Submit </button>
           <button
             className={"TagSubmitClose"}
             onClick={() => handleCloseInput(false)}
@@ -61,4 +59,4 @@ export const TagAnnotationForm = ({
       </form>
     </div>
   );
-}
+};

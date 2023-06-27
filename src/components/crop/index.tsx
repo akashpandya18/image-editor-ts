@@ -4,19 +4,22 @@ import {
   SaveImageProps,
   MouseMoveProps,
   MouseUPProps,
-  MouseLeaveProps
+  MouseLeaveProps,
+  AnnotationProps,
+  TextTag
 } from "../../types";
+import { showTags } from "../TagAnnotation";
 
 export const mouseDown = ({
-  event,
+  cropMouseDownEvent,
   currentCropped,
   setCroppingNode,
   setIsResize,
   setIsDragging,
   setStartingNode
 }: MouseDownProps) => {
-  const mouseX = event.nativeEvent.offsetX;
-  const mouseY = event.nativeEvent.offsetY;
+  const mouseX = cropMouseDownEvent.nativeEvent.offsetX;
+  const mouseY = cropMouseDownEvent.nativeEvent.offsetY;
 
   if (
     mouseX > currentCropped.startingX - 5 &&
@@ -94,16 +97,10 @@ export const mouseDown = ({
     setIsResize(false);
   }
 
-  const x = event.nativeEvent.offsetX;
-  const y = event.nativeEvent.offsetY;
-  setStartingNode({ x: x, y: y });
+  setStartingNode({ startingNodeX: mouseX, startingNodeY: mouseY });
 };
 
-export const saveImage = ({
-  setImgSrc,
-  canvasRef,
-  currentCropped
-}: SaveImageProps) => {
+export const saveImage = ({ setImgSrc, canvasRef, currentCropped }: SaveImageProps) => {
   const canvas = canvasRef.current;
   const dummyCanvas = document.createElement("canvas");
   dummyCanvas.width = currentCropped.width;
@@ -142,19 +139,46 @@ export const mouseMove = ({
   dimensions,
   imgRef,
   imgSrc,
-  handleTagMouseMove
+  annotations,
+  showAllTags,
+  setShowAllTags,
+  drawing,
+  allTextTags,
+  setHoverTag,
+  setHoverPos,
+  setShowH
 }: MouseMoveProps) => {
+  const canvas = canvasRef.current;
+  const context = canvas!.getContext("2d");
   const x = event.nativeEvent.offsetX;
   const y = event.nativeEvent.offsetY;
-  handleTagMouseMove(event);
 
+  // Check if the mouse is hovering over the white dot
+  const hoveredDot = annotations.find((annotation: AnnotationProps) => {
+    context!.beginPath();
+    context!.arc(annotation.currentAnnotationX, annotation.currentAnnotationY, 10, 0, 2 * Math.PI);
+    return context!.isPointInPath(x, y);
+  });
+  if (hoveredDot) {
+    let hoveredDotX = hoveredDot.currentAnnotationX;
+    let hoveredDotY = hoveredDot.currentAnnotationY;
+    let pos = { hoveredDotX, hoveredDotY };
+    setHoverTag(hoveredDot.tag);
+    setHoverPos(pos);
+    setShowH(true);
+  } else {
+    setHoverTag("");
+    setShowH(false);
+  }
+
+  // set cursor of crop rectangle
   if (
     x > currentCropped.startingX - 5 &&
     x < currentCropped.startingX + 5 &&
     y > currentCropped.startingY - 5 &&
     y < currentCropped.startingY + 5
   ) {
-    document.body.style.setProperty("cursor", "nw-resize");
+    document.body.style.setProperty("cursor", "nwse-resize");
   } else if (
     x > currentCropped.startingX + currentCropped.width - 5 &&
     x < currentCropped.startingX + currentCropped.width + 5 &&
@@ -175,7 +199,7 @@ export const mouseMove = ({
     y > currentCropped.startingY + currentCropped.height - 5 &&
     y < currentCropped.startingY + currentCropped.height + 5
   ) {
-    document.body.style.setProperty("cursor", "nw-resize");
+    document.body.style.setProperty("cursor", "nwse-resize");
   } else if (
     (x > currentCropped.startingX + 5 &&
       x < currentCropped.startingX + currentCropped.width - 5 &&
@@ -186,7 +210,7 @@ export const mouseMove = ({
       y > currentCropped.startingY + currentCropped.height - 5 &&
       y < currentCropped.startingY + currentCropped.height + 5)
   ) {
-    document.body.style.setProperty("cursor", "n-resize");
+    document.body.style.setProperty("cursor", "ns-resize");
   } else if (
     (x > currentCropped.startingX - 5 &&
       x < currentCropped.startingX + 5 &&
@@ -197,7 +221,7 @@ export const mouseMove = ({
       y > currentCropped.startingY &&
       y < currentCropped.height + currentCropped.startingY)
   ) {
-    document.body.style.setProperty("cursor", "w-resize");
+    document.body.style.setProperty("cursor", "ew-resize");
   } else if (
     (x > currentCropped.startingX &&
       x < currentCropped.width + currentCropped.startingX &&
@@ -219,12 +243,12 @@ export const mouseMove = ({
     image.src = imgSrc;
 
     context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
-    context!.strokeStyle = "black";
+    context!.strokeStyle = "white";
     context!.setLineDash([5, 5]);
     context!.lineWidth = 2;
     let movedArea = {
-      xMoved: currentCropped.startingX + (x - startingNode.x),
-      yMoved: currentCropped.startingY + (y - startingNode.y)
+      xMoved: currentCropped.startingX + (x - startingNode.startingNodeX),
+      yMoved: currentCropped.startingY + (y - startingNode.startingNodeY)
     };
 
     movedArea.xMoved <= 0 ? 10 : movedArea.xMoved;
@@ -243,8 +267,16 @@ export const mouseMove = ({
       movedArea.xMoved = dimensions.width - currentCropped.width - 2;
     }
 
-    context!.strokeRect(movedArea.xMoved, movedArea.yMoved, currentCropped.width, currentCropped.height);
-    context!.setLineDash([5, 5]);
+    console.log("currentCropped isDragging", currentCropped);
+
+    context!.strokeRect(
+      movedArea.xMoved,
+      movedArea.yMoved,
+      currentCropped.width,
+      currentCropped.height
+    );
+    context!.setLineDash([0, 0]);
+    // left top node
     context!.beginPath();
     context!.lineWidth = 3;
     context!.lineJoin = "round";
@@ -253,7 +285,7 @@ export const mouseMove = ({
     context!.fillStyle = "white";
     context!.fill();
     context!.stroke();
-
+    // right top node
     context!.beginPath();
     context!.lineWidth = 3;
     context!.lineJoin = "round";
@@ -262,7 +294,7 @@ export const mouseMove = ({
     context!.fillStyle = "white";
     context!.fill();
     context!.stroke();
-
+    // left bottom node
     context!.beginPath();
     context!.lineWidth = 3;
     context!.lineJoin = "round";
@@ -271,7 +303,7 @@ export const mouseMove = ({
     context!.fillStyle = "white";
     context!.fill();
     context!.stroke();
-
+    // right bottom node
     context!.beginPath();
     context!.lineWidth = 3;
     context!.lineJoin = "round";
@@ -281,6 +313,7 @@ export const mouseMove = ({
     context!.fill();
     context!.stroke();
   }
+
   if (isResize) {
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
@@ -288,12 +321,57 @@ export const mouseMove = ({
 
     context!.clearRect(0, 0, canvas!.width, canvas!.height);
     context!.drawImage(image!, 0, 0, dimensions.width, dimensions.height);
-    context!.strokeStyle = "black";
+    context!.strokeStyle = "white";
     context!.setLineDash([5, 5]);
     context!.lineWidth = 2;
 
     let widthDiff = 0;
     let heightDiff = 0;
+
+    let movedArea = {
+      xMoved: currentCropped.startingX + (x - startingNode.startingNodeX),
+      yMoved: currentCropped.startingY + (y - startingNode.startingNodeY)
+    };
+
+    console.log("currentCropped isResize", currentCropped);
+
+    context!.setLineDash([5, 5]);
+    // left top node
+    context!.beginPath();
+    context!.lineWidth = 3;
+    context!.lineJoin = "round";
+    context!.strokeRect(movedArea.xMoved - 5, movedArea.yMoved - 5, 10, 0);
+    context!.strokeRect(movedArea.xMoved - 5, movedArea.yMoved - 5, 0, 10);
+    context!.fillStyle = "white";
+    context!.fill();
+    context!.stroke();
+    // right top node
+    context!.beginPath();
+    context!.lineWidth = 3;
+    context!.lineJoin = "round";
+    context!.strokeRect(movedArea.xMoved + currentCropped.width + 5, movedArea.yMoved - 5, -10, 0);
+    context!.strokeRect(movedArea.xMoved + currentCropped.width + 5, movedArea.yMoved - 5, 0, 10);
+    context!.fillStyle = "white";
+    context!.fill();
+    context!.stroke();
+    // left bottom node
+    context!.beginPath();
+    context!.lineWidth = 3;
+    context!.lineJoin = "round";
+    context!.strokeRect(movedArea.xMoved - 5, movedArea.yMoved + currentCropped.height + 5, 10, 0);
+    context!.strokeRect(movedArea.xMoved - 5, movedArea.yMoved + currentCropped.height + 5, 0, -10);
+    context!.fillStyle = "white";
+    context!.fill();
+    context!.stroke();
+    // right bottom node
+    context!.beginPath();
+    context!.lineWidth = 3;
+    context!.lineJoin = "round";
+    context!.strokeRect(movedArea.xMoved - 5 + currentCropped.width, movedArea.yMoved + currentCropped.height + 5, 10, 0);
+    context!.strokeRect(movedArea.xMoved + 5 + currentCropped.width, movedArea.yMoved + currentCropped.height + 5, 0, -10);
+    context!.fillStyle = "white";
+    context!.fill();
+    context!.stroke();
 
     switch (croppingNode) {
       case 1:
@@ -379,6 +457,23 @@ export const mouseMove = ({
         break;
     }
   }
+
+  annotations && annotations.forEach((annotationData: AnnotationProps) => {
+    const { currentAnnotationX, currentAnnotationY } = annotationData;
+    context!.beginPath();
+    context!.fillStyle = "yellow";
+    context!.arc(currentAnnotationX, currentAnnotationY, 10, 0, 2 * Math.PI);
+    context!.fill();
+  });
+  allTextTags && allTextTags.forEach((textTags: TextTag) => {
+    context!.textBaseline = "alphabetic";
+    context!.font = `${textTags.size || 22}px monospace`;
+    context!.fillStyle = textTags.color;
+    context!.fillText(textTags.text, textTags.x + 10, textTags.y);
+  });
+
+  // if show all tag is true
+  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
 };
 
 export const mouseUP = ({
@@ -397,11 +492,9 @@ export const mouseUP = ({
   const x = event.nativeEvent.offsetX;
   const y = event.nativeEvent.offsetY;
 
-  const distance = Math.sqrt(Math.pow(x - startingNode.x, 2) + Math.pow(y - startingNode.y, 2));
+  const distance = Math.sqrt(Math.pow(x - startingNode.startingNodeX, 2) + Math.pow(y - startingNode.startingNodeY, 2));
 
-  if (!isResize && !isDragging) {
-    return;
-  }
+  if (!isResize && !isDragging) return;
 
   if (distance < 10) {
     setIsResize(false);
@@ -415,8 +508,8 @@ export const mouseUP = ({
     totalHeight = 0;
 
   if (isDragging) {
-    startingX = currentCropped?.startingX + (event.nativeEvent.offsetX - startingNode.x);
-    startingY = currentCropped?.startingY + (event.nativeEvent.offsetY - startingNode.y);
+    startingX = currentCropped?.startingX + (event.nativeEvent.offsetX - startingNode.startingNodeX);
+    startingY = currentCropped?.startingY + (event.nativeEvent.offsetY - startingNode.startingNodeY);
     totalWidth = currentCropped?.width;
     totalHeight = currentCropped?.height;
     setCurrentCropped({
@@ -497,12 +590,7 @@ export const mouseUP = ({
   }
 };
 
-export const mouseLeave = ({
-  event,
-  setIsDragging,
-  setIsResize,
-  mouseUp
-}: MouseLeaveProps) => {
+export const mouseLeave = ({ event, setIsDragging, setIsResize, mouseUp }: MouseLeaveProps) => {
   const {
     difference,
     setDifference,

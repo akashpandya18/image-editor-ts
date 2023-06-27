@@ -27,16 +27,12 @@ export const clickHandler = ({
   const x = event.nativeEvent.offsetX;
   const y = event.nativeEvent.offsetY;
   const canvas = canvasRef.current;
-  if (!canvas) return;
-  const context = canvas.getContext("2d");
-  if (!context) return;
-  const image = new Image();
-  image.src = imgSrc;
+  const context = canvas!.getContext("2d");
 
   const clickRect = allTextTags.find((tags: TextTag) => {
-    context.font = tags.size + "px monospace";
-    let textWidth = context.measureText(tags.text).width;
-    const textHeight = parseInt(context.font, 10);
+    context!.font = tags.size + "px monospace";
+    let textWidth = context!.measureText(tags.text).width;
+    const textHeight = parseInt(context!.font, 10);
     const padding = 5;
     const rectHeight = textHeight + padding * 2;
 
@@ -49,33 +45,23 @@ export const clickHandler = ({
   });
 
   if (!clickRect) {
-    context.setLineDash([10, 10]);
-    context.lineWidth = 2;
+    context!.setLineDash([10, 10]);
+    context!.lineWidth = 2;
 
     const image = new Image();
     image.src = imgSrc;
-    image.width = canvas.width;
-    image.height = canvas.height;
+    image.width = canvas!.width;
+    image.height = canvas!.height;
 
     const clicked = { x, y };
     setTempPrompt(true);
     setIsEditing(false);
     setCurrentClicked(clicked);
-    setFormData({
-      text: "",
-      color: "#ffffff",
-      size: 32,
-      id: ""
-    });
+    setFormData({ text: "", color: "#ffffff", size: 32, id: "" });
   } else {
     // @ts-ignore
     const { x, y, text, color, size, id } = allTextTags.find((obj: TextTag) => obj.id === clickRect.id);
-    setFormData({
-      text: text,
-      color: color,
-      size: size,
-      id: id
-    });
+    setFormData({ text: text, color: color, size: size, id: id });
 
     const clicked = { x, y };
     setTempPrompt(true);
@@ -99,111 +85,102 @@ export const textOnChangeHandler = ({
 }: TextOnChangeHandlerProps) => {
   const { text, color, size } = textForm;
   const canvas = canvasRef.current;
-  if (!canvas) return;
-  const context = canvas.getContext("2d");
-  if (!context) return;
+  const context = canvas!.getContext("2d");
   const image = new Image();
   image.src = imgSrc;
 
-  context.setLineDash([10, 10]);
-  context.lineWidth = 2;
+  context!.setLineDash([10, 10]);
+  context!.lineWidth = 2;
 
-  image.width = canvas.width;
-  image.height = canvas.height;
+  image.width = canvas!.width;
+  image.height = canvas!.height;
 
-  context.fillStyle = color;
-  context.strokeStyle = "transparent";
+  context!.fillStyle = color;
+  context!.strokeStyle = "transparent";
 
-  const textWidth: number = context.measureText(text).width;
-  const textHeight: number = parseInt(context.font, 10);
+  const textWidth: number = context!.measureText(text).width;
+  const textHeight: number = parseInt(context!.font, 10);
   const padding: number = 10;
   const rectWidth: number = textWidth + padding * 2;
   const rectHeight: number = textHeight + padding * 2;
 
-  context.clearRect(currentClicked.x,currentClicked.y - textHeight, textWidth, textHeight);
-  context.drawImage(image, 0, 0, image.width, image.height);
+  context!.clearRect(currentClicked.x,currentClicked.y - textHeight, textWidth, textHeight);
+  context!.drawImage(image, 0, 0, image.width, image.height);
 
-  context.font = `${size}px monospace`;
+  context!.font = `${size}px monospace`;
 
-  if (showAllTags) {
-    showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
-  }
+  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
 
   if (image) {
     if (image.complete) {
       if (!isEditing) {
         // onChange validation for text input
-        if (text.length > 0 && text.length <= 10) {
-          setError("");
-        }
+        (text.length > 0 && text.length <= 10) && setError("");
 
-        context.strokeRect(
+        context!.strokeRect(
           currentClicked.x,
           currentClicked.y - rectHeight / 2,
           rectWidth,
           rectHeight
         );
-        context.textBaseline = "alphabetic";
+        context!.textBaseline = "alphabetic";
 
         if (text.length === 0) {
-          context.clearRect(0, 0, canvas.width, canvas.height);
-          context.drawImage(image, 0, 0, image.width, image.height);
+          context!.clearRect(0, 0, canvas!.width, canvas!.height);
+          context!.drawImage(image, 0, 0, image.width, image.height);
         } else {
-          context.fillText(text, currentClicked.x + padding, currentClicked.y);
+          context!.fillText(text, currentClicked.x + padding, currentClicked.y);
         }
 
         allTextTags.forEach((textTags: TextTag) => {
-          context.textBaseline = "alphabetic";
-          context.fillStyle = textTags.color;
-          context.font = `${textTags.size}px monospace`;
-          context.fillText(textTags.text, textTags.x + padding, textTags.y);
+          context!.textBaseline = "alphabetic";
+          context!.fillStyle = textTags.color;
+          context!.font = `${textTags.size}px monospace`;
+          context!.fillText(textTags.text, textTags.x + padding, textTags.y);
         });
         annotations.forEach((annotationData: AnnotationProps) => {
           const { x, y } = annotationData;
-          context.beginPath();
-          context.fillStyle = "yellow";
-          context.arc(x, y, 10, 0, 2 * Math.PI);
-          context.fill();
+          context!.beginPath();
+          context!.fillStyle = "yellow";
+          context!.arc(x, y, 10, 0, 2 * Math.PI);
+          context!.fill();
         });
-
       }
     } else {
       image.onload = () => {
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.drawImage(image, 0, 0, image.width, image.height);
+        context!.clearRect(0, 0, canvas!.width, canvas!.height);
+        context!.drawImage(image, 0, 0, image.width, image.height);
 
-        context.strokeRect(
+        context!.strokeRect(
           currentClicked.x,
           currentClicked.y - rectHeight / 2,
           rectWidth,
           rectHeight
         );
-        context.textBaseline = "alphabetic";
+        context!.textBaseline = "alphabetic";
 
         if (text.length === 0) {
-          context.clearRect(0, 0, canvas.width, canvas.height);
-          context.drawImage(image, 0, 0, image.width, image.height);
+          context!.clearRect(0, 0, canvas!.width, canvas!.height);
+          context!.drawImage(image, 0, 0, image.width, image.height);
         } else {
-          context.fillText(text, currentClicked.x + padding, currentClicked.y);
+          context!.fillText(text, currentClicked.x + padding, currentClicked.y);
         }
 
         allTextTags.forEach((textTags: TextTag) => {
-          context.textBaseline = "alphabetic";
-          context.fillStyle = textTags.color;
-          context.font = `${textTags.size}px monospace`;
-          context.fillText(textTags.text, textTags.x + padding, textTags.y);
+          context!.textBaseline = "alphabetic";
+          context!.fillStyle = textTags.color;
+          context!.font = `${textTags.size}px monospace`;
+          context!.fillText(textTags.text, textTags.x + padding, textTags.y);
         });
         annotations.forEach((annotationData: AnnotationProps) => {
           const { x, y } = annotationData;
-          context.beginPath();
-          context.fillStyle = "yellow";
-          context.arc(x, y, 10, 0, 2 * Math.PI);
-          context.fill();
+          context!.beginPath();
+          context!.fillStyle = "yellow";
+          context!.arc(x, y, 10, 0, 2 * Math.PI);
+          context!.fill();
         });
 
-        if (showAllTags) {
-          showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
-        }
+        showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
       }
     }
   }
@@ -214,19 +191,9 @@ export const submitHandler = ({
   setAllTextTags,
   currentClicked,
   setTempPrompt,
-  setError,
-  canvasRef,
-  imgSrc
+  setError
 }: SubmitHandlerProps) => {
   event.preventDefault();
-
-  const canvas = canvasRef.current;
-  if (!canvas) return;
-  const context = canvas.getContext("2d");
-  if (!context) return;
-  const image = new Image();
-  image.src = imgSrc;
-
   // submit validation for text input
   if (event.target.text.value.length === 0) {
     setError("Please enter text");
@@ -264,34 +231,29 @@ export const handleMouseMove = ({
 }: HandleMouseMoveProps) => {
   const mouseX = event.nativeEvent.offsetX;
   const mouseY = event.nativeEvent.offsetY;
-
   const canvas = canvasRef.current;
-  if (!canvas) return;
-  const context = canvas.getContext("2d");
-  if (!context) return;
+  const context = canvas!.getContext("2d");
   const image = new Image();
   image.src = imgSrc;
   const { width, height } = dimensions;
 
   handleTagMouseMove(event);
 
-  if (showAllTags) {
-    showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
-  }
+  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
 
   if (isDraggingText) {
-    canvas.width = width;
-    canvas.height = height;
-    context.strokeStyle = "gray";
-    context.setLineDash([10, 10]);
-    context.lineWidth = 2;
+    canvas!.width = width;
+    canvas!.height = height;
+    context!.strokeStyle = "gray";
+    context!.setLineDash([10, 10]);
+    context!.lineWidth = 2;
 
     // @ts-ignore
     const { text, id, x, y } = allTextTags.find((obj: TextTag) => obj.id === draggingText);
     const dragObject = allTextTags.find((obj: TextTag) => obj.id === id);
 
-    const textWidth: number = context.measureText(text).width;
-    const textHeight: number = parseInt(context.font, 10);
+    const textWidth: number = context!.measureText(text).width;
+    const textHeight: number = parseInt(context!.font, 10);
     const padding: number = 10;
 
     let movedArea = {
@@ -300,36 +262,33 @@ export const handleMouseMove = ({
     };
 
     if (image.complete) {
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(image, 0, 0, dimensions.width, dimensions.height);
+      context!.clearRect(0, 0, canvas!.width, canvas!.height);
+      context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
 
       allTextTags.forEach((texts: TextTag) => {
         const { x, y, text, color, size, id: currentId } = texts;
-        context.fillStyle = color;
-        context.font = `${size || 22}px monospace`;
-        context.beginPath();
-        if (currentId !== id) {
-          context.fillText(text, x + 10, y + (textHeight / 4));
-        }
+        context!.fillStyle = color;
+        context!.font = `${size || 22}px monospace`;
+        context!.beginPath();
+        currentId !== id && context!.fillText(text, x + 10, y + (textHeight / 4));
       });
       annotations.forEach((annotationData: AnnotationProps) => {
         const { x, y } = annotationData;
-        context.beginPath();
-        context.fillStyle = "yellow";
-        context.arc(x, y, 10, 0, 2 * Math.PI);
-        context.fill();
+        context!.beginPath();
+        context!.fillStyle = "yellow";
+        context!.arc(x, y, 10, 0, 2 * Math.PI);
+        context!.fill();
       });
 
-      context.fillStyle = dragObject!.color;
+      context!.fillStyle = dragObject!.color;
+      context!.font = `${dragObject!.size || 22}px monospace`;
+      context!.textBaseline = "alphabetic";
+      context!.fillText(text, movedArea.xMoved + 10, movedArea.yMoved + (textHeight / 4));
 
-      context.font = `${dragObject!.size || 22}px monospace`;
-      context.textBaseline = "alphabetic";
-      context.fillText(text, movedArea.xMoved + 10, movedArea.yMoved + (textHeight / 4));
-
-      const rectWidth: number = (context.measureText(text).width) + padding * 2;
+      const rectWidth: number = (context!.measureText(text).width) + padding * 2;
       const rectHeight: number = (parseInt(context!.font, 10));
 
-      context.strokeRect(
+      context!.strokeRect(
         movedArea.xMoved,
         movedArea.yMoved - rectHeight / 2 - 6,
         rectWidth,
@@ -337,34 +296,33 @@ export const handleMouseMove = ({
       );
     } else {
       image.onload = () => {
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.drawImage(image, 0, 0, dimensions.width, dimensions.height);
+        context!.clearRect(0, 0, canvas!.width, canvas!.height);
+        context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
+
+        allTextTags.forEach((texts: TextTag) => {
+          const { x, y, text, color, size, id: currentId } = texts;
+          context!.fillStyle = color;
+          context!.font = `${size || 22}px monospace`;
+          context!.beginPath();
+          currentId !== id && context!.fillText(text, x + 10, y + (textHeight / 4));
+        });
+        annotations.forEach((annotationData: AnnotationProps) => {
+          const { x, y } = annotationData;
+          context!.beginPath();
+          context!.fillStyle = "yellow";
+          context!.arc(x, y, 10, 0, 2 * Math.PI);
+          context!.fill();
+        });
+
+        context!.fillStyle = dragObject!.color;
+        context!.font = `${dragObject!.size || 22}px monospace`;
+        context!.textBaseline = "alphabetic";
+        context!.fillText(text, movedArea.xMoved + 10, movedArea.yMoved + (textHeight / 4));
 
         const rectWidth: number = textWidth + padding * 2;
         const rectHeight: number = textHeight + padding;
 
-        allTextTags.forEach((texts: TextTag) => {
-          const { x, y, text, color, size, id: currentId } = texts;
-          context.fillStyle = color;
-          context.font = `${size || 22}px monospace`;
-          context.beginPath();
-          if (currentId !== id) {
-            context.fillText(text, x + 10, y + (textHeight / 4));
-          }
-        });
-        annotations.forEach((annotationData: AnnotationProps) => {
-          const { x, y } = annotationData;
-          context.beginPath();
-          context.fillStyle = "yellow";
-          context.arc(x, y, 10, 0, 2 * Math.PI);
-          context.fill();
-        });
-
-        context.strokeRect(movedArea.xMoved, movedArea.yMoved - rectHeight / 2, rectWidth, rectHeight);
-        context.fillStyle = dragObject!.color;
-        context.font = `${dragObject!.size || 22}px monospace`;
-        context.textBaseline = "alphabetic";
-        context.fillText(text, movedArea.xMoved + 10, movedArea.yMoved + (textHeight / 4));
+        context!.strokeRect(movedArea.xMoved, movedArea.yMoved - rectHeight / 2, rectWidth, rectHeight);
       };
     }
   }
@@ -381,14 +339,12 @@ export const handleMouseDown = ({
   const x = event.nativeEvent.offsetX;
   const y = event.nativeEvent.offsetY;
   const canvas = canvasRef.current;
-  if (!canvas) return;
-  const context = canvas.getContext("2d");
-  if (!context) return;
+  const context = canvas!.getContext("2d");
 
   const clickRect = allTextTags.find((tags: TextTag) => {
-    context.font = tags.size + "px monospace";
-    let textWidth = context.measureText(tags.text).width;
-    const textHeight = parseInt(context.font, 10);
+    context!.font = tags.size + "px monospace";
+    let textWidth = context!.measureText(tags.text).width;
+    const textHeight = parseInt(context!.font, 10);
     const padding = 5;
     const rectHeight = textHeight + padding * 2;
 
@@ -425,17 +381,15 @@ export const handleMouseUp = ({
   const mouseX = event.nativeEvent.offsetX;
   const mouseY = event.nativeEvent.offsetY;
   const canvas = canvasRef.current;
-  if (!canvas) return;
-  const context = canvas.getContext("2d");
-  if (!context) return;
+  const context = canvas!.getContext("2d");
 
   // @ts-ignore
   const { x, y } = allTextTags.length > 0 && draggingText && allTextTags?.find((obj: TextTag) => obj.id === draggingText);
 
   const clickRect = allTextTags.length > 0 && allTextTags.find((tags: TextTag) => {
-    context.font = tags.size + "px monospace";
-    let textWidth = context.measureText(tags.text).width;
-    const textHeight = parseInt(context.font, 10);
+    context!.font = tags.size + "px monospace";
+    let textWidth = context!.measureText(tags.text).width;
+    const textHeight = parseInt(context!.font, 10);
     const padding = 5;
     const rectHeight = textHeight + padding * 2;
 
@@ -447,25 +401,18 @@ export const handleMouseUp = ({
     );
   });
 
-  if (clickRect) {
-    if (clickRect!.id === draggingText) {
-      setDeleteTextTag(true);
-    }
-  } else {
-    setDeleteTextTag(false);
-  }
+  clickRect && clickRect!.id === draggingText ? setDeleteTextTag(true) : setDeleteTextTag(false);
 
-  if (isDraggingText) {
+  isDraggingText &&
     setDraggingText("");
     setIsDraggingText(false);
-  }
 
   let movedArea = {
     xMoved: x + (mouseX - currentClicked.x),
     yMoved: y + (mouseY - currentClicked.y)
   };
 
-  if (isDraggingText) {
+  isDraggingText &&
     setAllTextTags((prevTag: TextObjectProps[]) => {
       return prevTag.map((tag: TextTag) => {
         if (tag.id === draggingText) {
@@ -476,7 +423,6 @@ export const handleMouseUp = ({
     });
     setIsDraggingText(false);
     setDraggingText("");
-  }
 };
 
 export const handleDelete = ({
@@ -504,33 +450,29 @@ export const handleCross = ({
   drawing
 }: HandleCrossProps) => {
   const canvas = canvasRef.current;
-  if (!canvas) return;
-  const context = canvas.getContext("2d");
-  if (!context) return;
+  const context = canvas!.getContext("2d");
   const image = new Image();
   image.src = imgSrc;
 
   setTempPrompt(false);
   setError("");
 
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  context.drawImage(image, 0, 0, image.width, image.height);
+  context!.clearRect(0, 0, canvas!.width, canvas!.height);
+  context!.drawImage(image, 0, 0, image.width, image.height);
 
   allTextTags.forEach((textTags: TextTag) => {
-    context.textBaseline = "alphabetic";
-    context.font = `${textTags.size || 22}px monospace`;
-    context.fillStyle = textTags.color;
-    context.fillText(textTags.text, textTags.x + 10, textTags.y);
+    context!.textBaseline = "alphabetic";
+    context!.font = `${textTags.size || 22}px monospace`;
+    context!.fillStyle = textTags.color;
+    context!.fillText(textTags.text, textTags.x + 10, textTags.y);
   });
   annotations.forEach((annotationData: AnnotationProps) => {
     const { x, y } = annotationData;
-    context.beginPath();
-    context.fillStyle = "yellow";
-    context.arc(x, y, 10, 0, 2 * Math.PI);
-    context.fill();
+    context!.beginPath();
+    context!.fillStyle = "yellow";
+    context!.arc(x, y, 10, 0, 2 * Math.PI);
+    context!.fill();
   });
 
-  if (showAllTags) {
-    showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
-  }
+  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
 };

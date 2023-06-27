@@ -14,10 +14,11 @@ import {
   TextTag,
   CropControlProps,
   PropsFlip,
-  PenControlProps
+  PenControlProps, FontSizeOptionsProps
 } from "../../types";
 import "./index.css";
 import { saveImage } from "../crop";
+import {FontSizeOptions} from "../../utils/data";
 
 export const TagControls = ({ annotations }: PropsTag) => {
   return (
@@ -26,13 +27,9 @@ export const TagControls = ({ annotations }: PropsTag) => {
       {annotations.length > 0 && (
         <div className={"tag-main"}>
           <ol className={"tag-ol"}>
-            {annotations.map((data: AnnotationProps) => {
-              return (
-                <li className={"list-tags"} key={data.id}>
-                  {data.tag}
-                </li>
-              );
-            })}
+            {annotations.map((data: AnnotationProps) => (
+              <li className={"list-tags"} key={data.id}> {data.tag} </li>
+            ))}
           </ol>
         </div>
       )}
@@ -53,12 +50,7 @@ export const TextOnImageControl = ({
   allTextTags,
   handleCross
 }: TextOnImageControlProps): JSX.Element => {
-  let data = {
-    text: "",
-    color: "",
-    size: 0,
-    id: ""
-  };
+  let data = { text: "", color: "", size: 0, id: "" };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = event.target;
@@ -73,25 +65,23 @@ export const TextOnImageControl = ({
   useEffect(() => {
     setTimeout(() => {
       const canvas = canvasRef.current;
-      if (!canvas) return;
-      const context = canvas.getContext("2d");
-      if (!context) return;
+      const context = canvas!.getContext("2d");
       const image = new Image();
-      image.src = imgSrc;if (!canvas) return;
+      image.src = imgSrc;
 
-      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
       annotations.forEach((annotationData: AnnotationProps) => {
-        const { x, y } = annotationData;
-        context.beginPath();
-        context.fillStyle = "yellow";
-        context.arc(x, y, 10, 0, 2 * Math.PI);
-        context.fill();
+        const { currentAnnotationX, currentAnnotationY } = annotationData;
+        context!.beginPath();
+        context!.fillStyle = "yellow";
+        context!.arc(currentAnnotationX, currentAnnotationY, 10, 0, 2 * Math.PI);
+        context!.fill();
       });
       allTextTags.forEach((textTags: TextTag) => {
-        context.textBaseline = "alphabetic";
-        context.font = `${textTags.size || 22}px monospace`;
-        context.fillStyle = textTags.color;
-        context.fillText(textTags.text, textTags.x + 10, textTags.y);
+        context!.textBaseline = "alphabetic";
+        context!.font = `${textTags.size || 22}px monospace`;
+        context!.fillStyle = textTags.color;
+        context!.fillText(textTags.text, textTags.x + 10, textTags.y);
       });
     }, 10);
   },[annotations, allTextTags]);
@@ -189,26 +179,9 @@ export const TextOnImageControl = ({
               }}
             >
               <select name={"size"} value={formData.size} onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleInputChange(event)}>
-                <option value={"8"}> 8px</option>
-                <option value={"10"}> 10px</option>
-                <option value={"12"}> 12px</option>
-                <option value={"14"}> 14px</option>
-                <option value={"16"}> 16px</option>
-                <option value={"18"}> 18px</option>
-                <option value={"20"}> 20px</option>
-                <option value={"24"}> 24px</option>
-                <option value={"28"}> 28px</option>
-                <option value={"32"}> 32px</option>
-                <option value={"36"}> 36px</option>
-                <option value={"40"}> 40px</option>
-                <option value={"42"}> 42px</option>
-                <option value={"46"}> 46px</option>
-                <option value={"50"}> 50px</option>
-                <option value={"54"}> 54px</option>
-                <option value={"58"}> 58px</option>
-                <option value={"62"}> 62px</option>
-                <option value={"66"}> 66px</option>
-                <option value={"72"}> 72px</option>
+                {FontSizeOptions?.map((fontSize: FontSizeOptionsProps) => (
+                  <option value={fontSize.value} key={fontSize.id}> {fontSize.text} </option>
+                ))}
               </select>
 
               <input

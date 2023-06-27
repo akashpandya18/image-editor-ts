@@ -7,13 +7,13 @@ import { OnSelectFileProps } from "./types";
 function App() {
   const [imgSrc, setImgSrc] = useState("")
 
-  const onSelectFile = (e: OnSelectFileProps) => {
-    if (e.target.files && e.target.files.length > 0) {
+  const onSelectFile = (selectFileEvent: OnSelectFileProps) => {
+    if (selectFileEvent.target.files && selectFileEvent.target.files.length > 0) {
       const reader = new FileReader();
       reader.addEventListener("load", () =>
         setImgSrc(reader.result?.toString() || "")
       );
-      reader.readAsDataURL(e.target.files[0]);
+      reader.readAsDataURL(selectFileEvent.target.files[0]);
     }
   };
 

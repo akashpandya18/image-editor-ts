@@ -1,15 +1,8 @@
 import React from "react";
-import {
-  Check,
-  Close
-} from "../../assets/icons";
+import { Check, Close } from "../../assets/icons";
 import { DeleteTextProps } from "../../types";
 
-export const DeleteText = ({
-  position,
-  handleDelete,
-  setDeleteTextTag
-}: DeleteTextProps) => {
+export const DeleteText = ({ position, handleDelete, setDeleteTextTag }: DeleteTextProps) => {
   return (
     <div
       style={{
@@ -34,7 +27,7 @@ export const DeleteText = ({
           margin: 0
         }}
       >
-        Delete this text?
+        Do you want to delete this text?
       </p>
       <button
         onClick={handleDelete}

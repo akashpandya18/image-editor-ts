@@ -34,10 +34,7 @@ export const Tag = () => {
           strokeWidth={"2"}
           strokeLinecap={"round"}
         />
-        <path
-          d={"M9.65 8.237A1 1 0 1 1 8.237 9.65a1 1 0 0 1 1.415-1.414z"}
-          fill={"currentColor"}
-        />
+        <path d={"M9.65 8.237A1 1 0 1 1 8.237 9.65a1 1 0 0 1 1.415-1.414z"} fill={"currentColor"} />
       </g>
       <defs>
         <clipPath>
@@ -108,7 +105,13 @@ export const TextOnImage = () => {
         strokeLinejoin={"round"}
         strokeWidth={"2"}
       >
-        <rect height={"18"} rx={"2"} width={"18"} x={"3"} y={"3"} />
+        <rect
+          height={"18"}
+          rx={"2"}
+          width={"18"}
+          x={"3"}
+          y={"3"}
+        />
         <path d={"M3 7h18M7 11.5h10M7 16h6"} />
       </g>
     </svg>
@@ -122,13 +125,8 @@ export const Crop = () => {
       height={"24"}
       fill={"none"}
     >
-      <g
-        stroke={"currentColor"}
-        strokeWidth={"2"}
-      >
-        <path
-          d={"M9 11H7c-1.886 0-2.828 0-3.414.586C3 12.172 3 13.114 3 15v2c0 1.886 0 2.828.586 3.414C4.172 21 5.114 21 7 21h2c1.886 0 2.828 0 3.414-.586C13 19.828 13 18.886 13 17v-2c0-1.886 0-2.828-.586-3.414C11.828 11 10.886 11 9 11z"}
-        />
+      <g stroke={"currentColor"} strokeWidth={"2"}>
+        <path d={"M9 11H7c-1.886 0-2.828 0-3.414.586C3 12.172 3 13.114 3 15v2c0 1.886 0 2.828.586 3.414C4.172 21 5.114 21 7 21h2c1.886 0 2.828 0 3.414-.586C13 19.828 13 18.886 13 17v-2c0-1.886 0-2.828-.586-3.414C11.828 11 10.886 11 9 11z"} />
         <path
           d={"M5.5 7.5V7c0-1.886 0-2.828.586-3.414C6.672 3 7.614 3 9.5 3h.5m11 4.5V7c0-1.886 0-2.828-.586-3.414C19.828 3 18.886 3 17 3h-.5M21 14v.5c0 1.886 0 2.828-.586 3.414-.586.586-1.528.586-3.414.586h-.5"}
           strokeLinecap={"round"}
@@ -236,10 +234,7 @@ export const Pen = () => {
       fill={"none"}
     >
       <g>
-        <path
-          d={"M10.293 12.293a1 1 0 1 0 1.414 1.414l-1.414-1.414zm8.414-5.586L19.414 6 18 4.586l-.707.707 1.414 1.414zm.586-3.414L18.586 4 20 5.414l.707-.707-1.414-1.414zm2.414.414a1 1 0 0 0-1.414-1.414l1.414 1.414zm-10 10l7-7-1.414-1.414-7 7 1.414 1.414zm9-9l1-1-1.414-1.414-1 1 1.414 1.414z"}
-          fill={"currentColor"}
-        />
+        <path d={"M10.293 12.293a1 1 0 1 0 1.414 1.414l-1.414-1.414zm8.414-5.586L19.414 6 18 4.586l-.707.707 1.414 1.414zm.586-3.414L18.586 4 20 5.414l.707-.707-1.414-1.414zm2.414.414a1 1 0 0 0-1.414-1.414l1.414 1.414zm-10 10l7-7-1.414-1.414-7 7 1.414 1.414zm9-9l1-1-1.414-1.414-1 1 1.414 1.414z"} fill={"currentColor"} />
         <path
           d={"M10 7H7c-1.886 0-2.828 0-3.414.586C3 8.172 3 9.114 3 11v6c0 1.886 0 2.828.586 3.414C4.172 21 5.114 21 7 21h6c1.886 0 2.828 0 3.414-.586C17 19.828 17 18.886 17 17v-3"}
           stroke={"currentColor"}
@@ -323,10 +318,7 @@ export const More = () => {
       fill={"none"}
     >
       <g>
-        <path
-          d={"M6 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"}
-          fill={"currentColor"}
-        />
+        <path d={"M6 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"} fill={"currentColor"} />
       </g>
       <defs>
         <clipPath>
@@ -344,12 +336,13 @@ export const Blur = () => {
       height={"24"}
       fill={"none"}
     >
-      <g
-        stroke={"currentColor"}
-        strokeWidth={"2"}
-      >
+      <g stroke={"currentColor"} strokeWidth={"2"}>
         <path d={"M22 12c0 2.418-5 7-10 7S2 14.418 2 12s5-7 10-7 10 4.582 10 7z"} />
-        <circle cx={"12"} cy={"12"} r={"3"} />
+        <circle
+          cx={"12"}
+          cy={"12"}
+          r={"3"}
+        />
       </g>
       <defs>
         <clipPath>
@@ -372,7 +365,11 @@ export const Zoom = () => {
         strokeWidth={"2"}
         strokeLinecap={"round"}
       >
-        <circle cx={"9.375"} cy={"9.375"} r={"6.375"} />
+        <circle
+          cx={"9.375"}
+          cy={"9.375"}
+          r={"6.375"}
+        />
         <path d={"M14.333 14.333L20 20"} />
       </g>
       <defs>
@@ -416,7 +413,13 @@ export const Brightness = () => {
       height={"24"}
       fill={"none"}
     >
-      <circle cx={"12"} cy={"12"} r={"4"} stroke={"currentColor"} strokeWidth={"2"} />
+      <circle
+        cx={"12"}
+        cy={"12"}
+        r={"4"}
+        stroke={"currentColor"}
+        strokeWidth={"2"}
+      />
       <path
         d={"M12 4.5V3m0 18v-1.5M4.5 12H3m18 0h-1.5m-1-6.5l-1 1m-11 11l-1 1m12-1l1 1m-12-12l-1-1"}
         stroke={"currentColor"}
@@ -520,10 +523,7 @@ export const ScreenShot = () => {
           strokeWidth={"2"}
           strokeLinecap={"round"}
         />
-        <path
-          d={"M16.571 10a.571.571 0 1 1 1.143 0 .571.571 0 1 1-1.143 0z"}
-          fill={"currentColor"}
-        />
+        <path d={"M16.571 10a.571.571 0 1 1 1.143 0 .571.571 0 1 1-1.143 0z"} fill={"currentColor"} />
       </g>
       <defs>
         <clipPath>

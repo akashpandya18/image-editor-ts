@@ -1,20 +1,13 @@
 import React from "react";
-import {
-  Check,
-  Close
-} from "../../assets/icons";
+import { Check, Close } from "../../assets/icons";
 import { DeleteTagProps } from "../../types";
 
-export const DeleteTag = ({
-  position,
-  setPromptOff,
-  deleteTagSubmit
-}: DeleteTagProps) => {
+export const DeleteTag = ({ position, setPromptOff, deleteTagSubmit }: DeleteTagProps) => {
   return (
     <div
       style={{
-        top: position.yN + 2,
-        left: position.xN - 100,
+        top: position.deletePositionY + 2,
+        left: position.deletePositionX - 100,
         position: "absolute",
         zIndex: 9,
         width: "12.5rem",
@@ -34,7 +27,7 @@ export const DeleteTag = ({
           fontSize: "1.25rem"
         }}
       >
-        Delete this tag?
+        Do you want to delete this tag?
       </p>
       <button
         onClick={deleteTagSubmit}

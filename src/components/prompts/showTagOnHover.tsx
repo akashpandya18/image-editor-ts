@@ -7,8 +7,8 @@ export default function ShowTagOnHover({ position, tag }: TagOnHoverProps) {
       style={{
         position: "absolute",
         zIndex: 9,
-        top: position.y - 40,
-        left: position.x,
+        top: position.hoveredDotY - 40,
+        left: position.hoveredDotX,
         backgroundColor: "#2a2a2a",
         color: "#fff",
         padding: "0.5rem",

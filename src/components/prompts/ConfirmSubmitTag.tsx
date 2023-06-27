@@ -5,8 +5,8 @@ export default function TempRedTag({ position }: SubmitTagsProps) {
   return (
     <div
       style={{
-        top: position.y - 10,
-        left: position.x - 10,
+        top: position.currentAnnotationY - 10,
+        left: position.currentAnnotationX - 10,
         position: "absolute",
         zIndex: 9,
         width: "1.25rem",
