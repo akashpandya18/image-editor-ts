@@ -34,16 +34,16 @@ export const MainCanvasControls = ({ clearFunction, showHideFunction, screenShot
               boxShadow: "0 0.25rem 0.25rem 0 rgba(0, 0, 0, 0.2)"
             }}
             title={item.title}
-            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+            onClick={(clickEvent: React.MouseEvent<HTMLButtonElement>) => {
               switch (item.type) {
                 case "clear":
-                  clearFunction(event);
+                  clearFunction(clickEvent);
                   break;
                 case "show-hide-tags":
                   showHideFunction();
                   break;
                 case "screenshot":
-                  screenShotFunction(event);
+                  screenShotFunction(clickEvent);
                   break;
                 default:
                   break;

@@ -15,7 +15,7 @@ import {
 import { showTags } from "../../TagAnnotation";
 
 export const clickHandler = ({
-  event,
+  textOnImageClickEvent,
   canvasRef,
   setTempPrompt,
   setCurrentClicked,
@@ -24,8 +24,8 @@ export const clickHandler = ({
   setIsEditing,
   setFormData
 }: TextOnImageClickHandlerProps) => {
-  const x = event.nativeEvent.offsetX;
-  const y = event.nativeEvent.offsetY;
+  const currentClickedX = textOnImageClickEvent.nativeEvent.offsetX;
+  const currentClickedY = textOnImageClickEvent.nativeEvent.offsetY;
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
 
@@ -37,10 +37,10 @@ export const clickHandler = ({
     const rectHeight = textHeight + padding * 2;
 
     return (
-      x > tags.x + 10 &&
-      x < tags.x + 10 + textWidth &&
-      y > tags.y - rectHeight / 2 &&
-      y < tags.y - rectHeight / 2 + rectHeight
+      currentClickedX > tags.textPositionX + 10 &&
+      currentClickedX < tags.textPositionX + 10 + textWidth &&
+      currentClickedY > tags.textPositionY - rectHeight / 2 &&
+      currentClickedY < tags.textPositionY - rectHeight / 2 + rectHeight
     );
   });
 
@@ -53,17 +53,17 @@ export const clickHandler = ({
     image.width = canvas!.width;
     image.height = canvas!.height;
 
-    const clicked = { x, y };
+    const clicked = { currentClickedX, currentClickedY };
     setTempPrompt(true);
     setIsEditing(false);
     setCurrentClicked(clicked);
     setFormData({ text: "", color: "#ffffff", size: 32, id: "" });
   } else {
     // @ts-ignore
-    const { x, y, text, color, size, id } = allTextTags.find((obj: TextTag) => obj.id === clickRect.id);
+    const { currentClickedX, currentClickedY, text, color, size, id } = allTextTags.find((obj: TextTag) => obj.id === clickRect.id);
     setFormData({ text: text, color: color, size: size, id: id });
 
-    const clicked = { x, y };
+    const clicked = { currentClickedX, currentClickedY };
     setTempPrompt(true);
     setIsEditing(true);
     setCurrentClicked(clicked);
@@ -104,8 +104,8 @@ export const textOnChangeHandler = ({
   const rectWidth: number = textWidth + padding * 2;
   const rectHeight: number = textHeight + padding * 2;
 
-  context!.clearRect(currentClicked.x,currentClicked.y - textHeight, textWidth, textHeight);
-  context!.drawImage(image, 0, 0, image.width, image.height);
+  // context!.clearRect(currentClicked.currentClickedX,currentClicked.currentClickedY - textHeight, textWidth, textHeight);
+  // context!.drawImage(image, 0, 0, image.width, image.height);
 
   context!.font = `${size}px monospace`;
 
@@ -118,8 +118,8 @@ export const textOnChangeHandler = ({
         (text.length > 0 && text.length <= 10) && setError("");
 
         context!.strokeRect(
-          currentClicked.x,
-          currentClicked.y - rectHeight / 2,
+          currentClicked.currentClickedX,
+          currentClicked.currentClickedY - rectHeight / 2,
           rectWidth,
           rectHeight
         );
@@ -129,20 +129,20 @@ export const textOnChangeHandler = ({
           context!.clearRect(0, 0, canvas!.width, canvas!.height);
           context!.drawImage(image, 0, 0, image.width, image.height);
         } else {
-          context!.fillText(text, currentClicked.x + padding, currentClicked.y);
+          context!.fillText(text, currentClicked.currentClickedX + padding, currentClicked.currentClickedY);
         }
 
         allTextTags.forEach((textTags: TextTag) => {
           context!.textBaseline = "alphabetic";
           context!.fillStyle = textTags.color;
           context!.font = `${textTags.size}px monospace`;
-          context!.fillText(textTags.text, textTags.x + padding, textTags.y);
+          context!.fillText(textTags.text, textTags.textPositionX + padding, textTags.textPositionY);
         });
         annotations.forEach((annotationData: AnnotationProps) => {
-          const { x, y } = annotationData;
+          const { currentAnnotationX, currentAnnotationY } = annotationData;
           context!.beginPath();
           context!.fillStyle = "yellow";
-          context!.arc(x, y, 10, 0, 2 * Math.PI);
+          context!.arc(currentAnnotationX, currentAnnotationY, 10, 0, 2 * Math.PI);
           context!.fill();
         });
       }
@@ -152,8 +152,8 @@ export const textOnChangeHandler = ({
         context!.drawImage(image, 0, 0, image.width, image.height);
 
         context!.strokeRect(
-          currentClicked.x,
-          currentClicked.y - rectHeight / 2,
+          currentClicked.currentClickedX,
+          currentClicked.currentClickedY - rectHeight / 2,
           rectWidth,
           rectHeight
         );
@@ -163,20 +163,20 @@ export const textOnChangeHandler = ({
           context!.clearRect(0, 0, canvas!.width, canvas!.height);
           context!.drawImage(image, 0, 0, image.width, image.height);
         } else {
-          context!.fillText(text, currentClicked.x + padding, currentClicked.y);
+          context!.fillText(text, currentClicked.currentClickedX + padding, currentClicked.currentClickedY);
         }
 
         allTextTags.forEach((textTags: TextTag) => {
           context!.textBaseline = "alphabetic";
           context!.fillStyle = textTags.color;
           context!.font = `${textTags.size}px monospace`;
-          context!.fillText(textTags.text, textTags.x + padding, textTags.y);
+          context!.fillText(textTags.text, textTags.textPositionX + padding, textTags.textPositionY);
         });
         annotations.forEach((annotationData: AnnotationProps) => {
-          const { x, y } = annotationData;
+          const { currentAnnotationX, currentAnnotationY } = annotationData;
           context!.beginPath();
           context!.fillStyle = "yellow";
-          context!.arc(x, y, 10, 0, 2 * Math.PI);
+          context!.arc(currentAnnotationX, currentAnnotationY, 10, 0, 2 * Math.PI);
           context!.fill();
         });
 
@@ -187,35 +187,35 @@ export const textOnChangeHandler = ({
 };
 
 export const submitHandler = ({
-  event,
+  textOnImageSubmitEvent,
   setAllTextTags,
   currentClicked,
   setTempPrompt,
   setError
 }: SubmitHandlerProps) => {
-  event.preventDefault();
+  textOnImageSubmitEvent.preventDefault();
   // submit validation for text input
-  if (event.target.text.value.length === 0) {
+  if (textOnImageSubmitEvent.target.text.value.length === 0) {
     setError("Please enter text");
     setTempPrompt(true);
-  } else if (event.target.text.value.length > 10) {
+  } else if (textOnImageSubmitEvent.target.text.value.length > 10) {
     setError("You can enter maximum 10 words");
     setTempPrompt(true);
   } else {
     setAllTextTags((prev: TextObjectProps[]) => [...prev, {
       id: nanoid(5),
-      x: currentClicked?.x,
-      y: currentClicked?.y,
-      text: event.target?.text.value,
-      size: event.target?.size.value,
-      color: event.target?.color.value
+      textPositionX: currentClicked?.currentClickedX,
+      textPositionY: currentClicked?.currentClickedY,
+      text: textOnImageSubmitEvent.target?.text.value,
+      size: textOnImageSubmitEvent.target?.size.value,
+      color: textOnImageSubmitEvent.target?.color.value
     }]);
     setTempPrompt(false);
   }
 };
 
 export const handleMouseMove = ({
-  event,
+  textOnImageMouseMoveEvent,
   isDraggingText,
   draggingText,
   canvasRef,
@@ -227,17 +227,21 @@ export const handleMouseMove = ({
   handleTagMouseMove,
   showAllTags,
   setShowAllTags,
-  drawing
+  drawing,
+  blur,
+  zoom,
+  rotate,
+  brightness
 }: HandleMouseMoveProps) => {
-  const mouseX = event.nativeEvent.offsetX;
-  const mouseY = event.nativeEvent.offsetY;
+  const mouseX = textOnImageMouseMoveEvent.nativeEvent.offsetX;
+  const mouseY = textOnImageMouseMoveEvent.nativeEvent.offsetY;
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
+  const { width, height } = dimensions;
   const image = new Image();
   image.src = imgSrc;
-  const { width, height } = dimensions;
 
-  handleTagMouseMove(event);
+  handleTagMouseMove(textOnImageMouseMoveEvent);
 
   showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
 
@@ -247,97 +251,141 @@ export const handleMouseMove = ({
     context!.strokeStyle = "gray";
     context!.setLineDash([10, 10]);
     context!.lineWidth = 2;
-
     // @ts-ignore
-    const { text, id, x, y } = allTextTags.find((obj: TextTag) => obj.id === draggingText);
+    const { text, id, textPositionX, textPositionY } = allTextTags.find((obj: TextTag) => obj.id === draggingText);
     const dragObject = allTextTags.find((obj: TextTag) => obj.id === id);
-
     const textWidth: number = context!.measureText(text).width;
     const textHeight: number = parseInt(context!.font, 10);
     const padding: number = 10;
-
+    const degToRad = (rotate: number) => rotate * Math.PI / 180;
     let movedArea = {
-      xMoved: x + (mouseX - currentClicked.x),
-      yMoved: y + (mouseY - currentClicked.y)
+      moveX: textPositionX + (mouseX - currentClicked.currentClickedX),
+      moveY: textPositionY + (mouseY - currentClicked.currentClickedY)
     };
 
     if (image.complete) {
       context!.clearRect(0, 0, canvas!.width, canvas!.height);
+      context!.filter = `blur(${blur}px) brightness(${brightness})`;
+      const centerX = canvas!.width / 2;
+      const centerY = canvas!.height / 2;
+
+      context!.translate(centerX, centerY);
+      context!.scale(zoom, zoom);
+      context!.translate(-centerX, -centerY);
+      context!.clearRect(0, 0, width, height);
+
+      if (rotate !== 0) {
+        console.log("controls index");
+        context!.clearRect(0, 0, canvas!.width, canvas!.height);
+        context!.save();
+        context!.translate(canvas!.width / 2, canvas!.height / 2);
+        context!.rotate(degToRad(rotate++ % 360));
+        context!.drawImage(
+          image,
+          image.width / -2,
+          image.height / -2,
+          image.width,
+          image.height
+        );
+        context!.restore();
+      }
       context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
 
       allTextTags.forEach((texts: TextTag) => {
-        const { x, y, text, color, size, id: currentId } = texts;
+        const { textPositionX, textPositionY, text, color, size, id: currentId } = texts;
         context!.fillStyle = color;
         context!.font = `${size || 22}px monospace`;
         context!.beginPath();
-        currentId !== id && context!.fillText(text, x + 10, y + (textHeight / 4));
+        currentId !== id && context!.fillText(text, textPositionX + 10, textPositionY + (textHeight / 4));
       });
       annotations.forEach((annotationData: AnnotationProps) => {
-        const { x, y } = annotationData;
+        const { currentAnnotationX, currentAnnotationY } = annotationData;
         context!.beginPath();
         context!.fillStyle = "yellow";
-        context!.arc(x, y, 10, 0, 2 * Math.PI);
+        context!.arc(currentAnnotationX, currentAnnotationY, 10, 0, 2 * Math.PI);
         context!.fill();
       });
-
-      context!.fillStyle = dragObject!.color;
-      context!.font = `${dragObject!.size || 22}px monospace`;
-      context!.textBaseline = "alphabetic";
-      context!.fillText(text, movedArea.xMoved + 10, movedArea.yMoved + (textHeight / 4));
 
       const rectWidth: number = (context!.measureText(text).width) + padding * 2;
       const rectHeight: number = (parseInt(context!.font, 10));
 
+      context!.fillStyle = dragObject!.color;
+      context!.font = `${dragObject!.size || 22}px monospace`;
+      context!.textBaseline = "alphabetic";
+      context!.fillText(text, movedArea.moveX + 10, movedArea.moveY + (textHeight / 4));
       context!.strokeRect(
-        movedArea.xMoved,
-        movedArea.yMoved - rectHeight / 2 - 6,
+        movedArea.moveX,
+        movedArea.moveY - rectHeight / 2 - 6,
         rectWidth,
         rectHeight
       );
     } else {
       image.onload = () => {
         context!.clearRect(0, 0, canvas!.width, canvas!.height);
+        context!.filter = `blur(${blur}px) brightness(${brightness})`;
+        const centerX = canvas!.width / 2;
+        const centerY = canvas!.height / 2;
+
+        context!.translate(centerX, centerY);
+        context!.scale(zoom, zoom);
+        context!.translate(-centerX, -centerY);
+        context!.clearRect(0, 0, width, height);
+
+        if (rotate !== 0) {
+          console.log("controls index");
+          context!.clearRect(0, 0, canvas!.width, canvas!.height);
+          context!.save();
+          context!.translate(canvas!.width / 2, canvas!.height / 2);
+          context!.rotate(degToRad(rotate++ % 360));
+          context!.drawImage(
+            image,
+            image.width / -2,
+            image.height / -2,
+            image.width,
+            image.height
+          );
+          context!.restore();
+        }
         context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
 
         allTextTags.forEach((texts: TextTag) => {
-          const { x, y, text, color, size, id: currentId } = texts;
+          const { textPositionX, textPositionY, text, color, size, id: currentId } = texts;
           context!.fillStyle = color;
           context!.font = `${size || 22}px monospace`;
           context!.beginPath();
-          currentId !== id && context!.fillText(text, x + 10, y + (textHeight / 4));
+          currentId !== id && context!.fillText(text,  textPositionX + 10, textPositionY + (textHeight / 4));
         });
         annotations.forEach((annotationData: AnnotationProps) => {
-          const { x, y } = annotationData;
+          const { currentAnnotationX, currentAnnotationY } = annotationData;
           context!.beginPath();
           context!.fillStyle = "yellow";
-          context!.arc(x, y, 10, 0, 2 * Math.PI);
+          context!.arc(currentAnnotationX, currentAnnotationY, 10, 0, 2 * Math.PI);
           context!.fill();
         });
-
-        context!.fillStyle = dragObject!.color;
-        context!.font = `${dragObject!.size || 22}px monospace`;
-        context!.textBaseline = "alphabetic";
-        context!.fillText(text, movedArea.xMoved + 10, movedArea.yMoved + (textHeight / 4));
 
         const rectWidth: number = textWidth + padding * 2;
         const rectHeight: number = textHeight + padding;
 
-        context!.strokeRect(movedArea.xMoved, movedArea.yMoved - rectHeight / 2, rectWidth, rectHeight);
+        context!.fillStyle = dragObject!.color;
+        context!.font = `${dragObject!.size || 22}px monospace`;
+        context!.textBaseline = "alphabetic";
+        context!.fillText(text, movedArea.moveX + 10, movedArea.moveY + (textHeight / 4));
+        context!.strokeRect(movedArea.moveX, movedArea.moveY - rectHeight / 2, rectWidth, rectHeight);
       };
     }
   }
 };
 
 export const handleMouseDown = ({
-  event,
+  textOnImageMouseDownEvent,
   setIsDraggingText,
   setDraggingText,
   canvasRef,
   allTextTags,
   setCurrentClicked
 }: HandleMouseDownProps) => {
-  const x = event.nativeEvent.offsetX;
-  const y = event.nativeEvent.offsetY;
+  const mouseX = textOnImageMouseDownEvent.nativeEvent.offsetX;
+  const mouseY = textOnImageMouseDownEvent.nativeEvent.offsetY;
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
 
@@ -349,17 +397,17 @@ export const handleMouseDown = ({
     const rectHeight = textHeight + padding * 2;
 
     return (
-      x > tags.x + 10 &&
-      x < tags.x + 10 + textWidth &&
-      y > tags.y - rectHeight / 2 &&
-      y < tags.y - rectHeight / 2 + rectHeight
+      mouseX > tags.textPositionX + 10 &&
+      mouseX < tags.textPositionX + 10 + textWidth &&
+      mouseY > tags.textPositionY - rectHeight / 2 &&
+      mouseY < tags.textPositionY - rectHeight / 2 + rectHeight
     );
   });
 
   if (clickRect) {
     setIsDraggingText(true);
     setDraggingText(String(clickRect.id));
-    setCurrentClicked({ x: x, y: y });
+    setCurrentClicked({ currentClickedX: mouseX, currentClickedY: mouseY });
   } else {
     setIsDraggingText(false);
     setDraggingText("");
@@ -367,7 +415,7 @@ export const handleMouseDown = ({
 };
 
 export const handleMouseUp = ({
-  event,
+  textOnImageMouseUpEvent,
   canvasRef,
   isDraggingText,
   setIsDraggingText,
@@ -378,13 +426,12 @@ export const handleMouseUp = ({
   currentClicked,
   setDeleteTextTag
 }: HandleMouseUpProps) => {
-  const mouseX = event.nativeEvent.offsetX;
-  const mouseY = event.nativeEvent.offsetY;
+  const mouseX = textOnImageMouseUpEvent.nativeEvent.offsetX;
+  const mouseY = textOnImageMouseUpEvent.nativeEvent.offsetY;
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
-
   // @ts-ignore
-  const { x, y } = allTextTags.length > 0 && draggingText && allTextTags?.find((obj: TextTag) => obj.id === draggingText);
+  const { textPositionX, textPositionY } = allTextTags.length > 0 && draggingText && allTextTags?.find((obj: TextTag) => obj.id === draggingText);
 
   const clickRect = allTextTags.length > 0 && allTextTags.find((tags: TextTag) => {
     context!.font = tags.size + "px monospace";
@@ -394,35 +441,43 @@ export const handleMouseUp = ({
     const rectHeight = textHeight + padding * 2;
 
     return (
-      mouseX > tags.x + 10 &&
-      mouseX < tags.x + 10 + textWidth &&
-      mouseY > tags.y - rectHeight / 2 &&
-      mouseY < tags.y - rectHeight / 2 + rectHeight
+      mouseX > tags.textPositionX + 10 &&
+      mouseX < tags.textPositionX + 10 + textWidth &&
+      mouseY > tags.textPositionY - rectHeight / 2 &&
+      mouseY < tags.textPositionY - rectHeight / 2 + rectHeight
     );
   });
 
-  clickRect && clickRect!.id === draggingText ? setDeleteTextTag(true) : setDeleteTextTag(false);
+  if (clickRect) {
+    if (clickRect!.id === draggingText) {
+      setDeleteTextTag(true);
+    } else {
+      setDeleteTextTag(false);
+    }
+  }
 
-  isDraggingText &&
+  if (isDraggingText) {
     setDraggingText("");
     setIsDraggingText(false);
+  }
 
   let movedArea = {
-    xMoved: x + (mouseX - currentClicked.x),
-    yMoved: y + (mouseY - currentClicked.y)
+    moveX: textPositionX + (mouseX - currentClicked.currentClickedX),
+    moveY: textPositionY + (mouseY - currentClicked.currentClickedY)
   };
 
-  isDraggingText &&
+  if (isDraggingText) {
     setAllTextTags((prevTag: TextObjectProps[]) => {
       return prevTag.map((tag: TextTag) => {
         if (tag.id === draggingText) {
-          return { ...tag, x: movedArea.xMoved, y: movedArea.yMoved };
+          return {...tag, textPositionX: movedArea.moveX, textPositionY: movedArea.moveY};
         }
         return tag;
       });
     });
     setIsDraggingText(false);
     setDraggingText("");
+  }
 };
 
 export const handleDelete = ({
@@ -447,30 +502,53 @@ export const handleCross = ({
   annotations,
   showAllTags,
   setShowAllTags,
-  drawing
+  drawing,
+  blur,
+  rotate,
+  brightness,
+  dimensions
 }: HandleCrossProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
   image.src = imgSrc;
+  const { width, height } = dimensions;
+  const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   setTempPrompt(false);
   setError("");
 
   context!.clearRect(0, 0, canvas!.width, canvas!.height);
-  context!.drawImage(image, 0, 0, image.width, image.height);
+  context!.filter = `blur(${blur}px) brightness(${brightness})`;
+
+  if (rotate !== 0) {
+    console.log("controls index");
+    context!.clearRect(0, 0, canvas!.width, canvas!.height);
+    context!.save();
+    context!.translate(canvas!.width / 2, canvas!.height / 2);
+    context!.rotate(degToRad(rotate++ % 360));
+    context!.drawImage(
+      image,
+      image.width / -2,
+      image.height / -2,
+      image.width,
+      image.height
+    );
+    context!.restore();
+  }
+  context!.drawImage(image, 0, 0, width, height);
 
   allTextTags.forEach((textTags: TextTag) => {
     context!.textBaseline = "alphabetic";
     context!.font = `${textTags.size || 22}px monospace`;
     context!.fillStyle = textTags.color;
-    context!.fillText(textTags.text, textTags.x + 10, textTags.y);
+    context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
   });
   annotations.forEach((annotationData: AnnotationProps) => {
-    const { x, y } = annotationData;
+    const { currentAnnotationX, currentAnnotationY } = annotationData;
     context!.beginPath();
     context!.fillStyle = "yellow";
-    context!.arc(x, y, 10, 0, 2 * Math.PI);
+    context!.arc(currentAnnotationX, currentAnnotationY, 10, 0, 2 * Math.PI);
     context!.fill();
   });
 

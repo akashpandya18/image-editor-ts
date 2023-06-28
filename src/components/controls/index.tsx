@@ -85,7 +85,7 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
   // Text on Image Canvas
   const [allTextTags, setAllTextTags] = useState([]);
   const [tempPrompt, setTempPrompt] = useState(false);
-  const [currentClicked, setCurrentClicked] = useState({ x: 0, y: 0 });
+  const [currentClicked, setCurrentClicked] = useState({ currentClickedX: 0, currentClickedY: 0 });
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ text: "", size: 32, color: "#ffffff", id: "" });
   const [error, setError] = useState("");
@@ -109,10 +109,12 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const nanoid = customAlphabet("1234567890abcdef", 10);
   const id = nanoid(5);
+
   // set height and width of image on canvas
   useEffect(() => {
     const image = new Image();
     image.src = imgSrc;
+
     image.onload = () => {
       const { width, height } = image;
       if (width > 1000) {
@@ -157,10 +159,10 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
     image.onload = () => {
       // setting flip on canvas
       flipValue(canvas, context);
-
       // setting blur and brightness value on canvas
       context!.clearRect(0, 0, canvas!.width, canvas!.height);
       context!.filter = `blur(${blur}px) brightness(${brightness})`;
+      console.log("context", context)
       setTimeout(() => {
         context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
       });
@@ -202,7 +204,7 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
           context!.textBaseline = "alphabetic";
           context!.font = `${texts.size || 22}px monospace`;
           context!.fillStyle = texts.color;
-          context!.fillText(texts.text, texts.x + 10, texts.y);
+          context!.fillText(texts.text, texts.textPositionX + 10, texts.textPositionY);
         });
       },10);
 
@@ -288,7 +290,6 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
         width: imageX,
         height: imageY
       });
-
       context!.setLineDash([5, 5]);
       // left top node
       context!.beginPath();
@@ -362,14 +363,13 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
     setSelectCanvas(!selectCanvas);
   };
   // set range slider values in more filter tab canvas
-  const handleEffectChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    event.target.id === "blur" && setBlur(Number(event.target.value));
-    event.target.id === "zoom" && setZoom(Number(event.target.value));
-    event.target.id === "rotate" && setRotate(Number(event.target.value));
-    event.target.id === "brightness" && setBrightness(Number(event.target.value));
+  const handleEffectChange = (moreFilterEvent: React.ChangeEvent<HTMLInputElement>) => {
+    moreFilterEvent.preventDefault();
+    moreFilterEvent.target.id === "blur" && setBlur(Number(moreFilterEvent.target.value));
+    moreFilterEvent.target.id === "zoom" && setZoom(Number(moreFilterEvent.target.value));
+    moreFilterEvent.target.id === "rotate" && setRotate(Number(moreFilterEvent.target.value));
+    moreFilterEvent.target.id === "brightness" && setBrightness(Number(moreFilterEvent.target.value));
   };
-
   // return range slider value in more filter tab canvas
   const inputValue = (name: string) => {
     if (name === "blur") {
@@ -385,7 +385,6 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
       return brightness;
     }
   };
-
   // clear all filters
   useEffect(() => {
     setAnnotations([]);
@@ -416,12 +415,12 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
 
     const canvas: HTMLCanvasElement | null = canvasRef.current;
     const { width, height } = dimensions;
-
-    canvas!.width = width;
-    canvas!.height = height;
     const context = canvas!.getContext("2d");
     const image = new Image();
     image.src = imgSrc;
+
+    canvas!.width = width;
+    canvas!.height = height;
 
     image.onload = () => {
       context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
@@ -458,10 +457,10 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
         {/* tools */}
         <div className={"controls-2div"}>
           <div className={"tools-grid"}>
-            {OptionsTools.map((x: ControlsType, index: number) => {
-              const key = x.type;
+            {OptionsTools.map((options: ControlsType, index: number) => {
+              const key = options.type;
               return (
-                <div key={x.id} className={"tools-map-div"}>
+                <div key={options.id} className={"tools-map-div"}>
                   <Button
                     className={"tools-button"}
                     isActive={index === activeIndex}
@@ -474,9 +473,9 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
                       });
                     }}
                   >
-                    {x.icon}
+                    {options.icon}
                   </Button>
-                  <span> {x.name} </span>
+                  <span> {options.name} </span>
                 </div>
               );
             })}
@@ -486,13 +485,13 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
         {/* controls */}
         <div className={"showControls-div"}>
           {currentControl === "tag-annotation" ? (
-            <TagControls annotations={annotations}/>
+            <TagControls annotations={annotations} />
           ) : currentControl === "text-on-image" ? (
             <TextOnImageControl
               tempPrompt={tempPrompt}
               textOnChangeHandler={textOnChangeHandlerCall}
-              onSubmit={(event: React.FormEvent<HTMLFormElement>) => submitHandler({
-                event,
+              onSubmit={(textOnImageSubmitEvent: React.FormEvent<HTMLFormElement>) => submitHandler({
+                textOnImageSubmitEvent,
                 setAllTextTags,
                 currentClicked,
                 setTempPrompt,
@@ -514,7 +513,11 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
                 annotations,
                 showAllTags,
                 setShowAllTags,
-                drawing
+                drawing,
+                blur,
+                rotate,
+                brightness,
+                dimensions
               })}
             />
           ) : currentControl === "crop" ? (
@@ -562,22 +565,22 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
             <div>
               <h3> More Controls </h3>
               <div className={"showControls-grid"}>
-                {MoreFilterControls.map((x: ControlsType) => (
-                  <div key={x.id} className={"controlsMap-div"}>
-                    <div className={"controlsMap-icon"}> {x.icon} </div>
+                {MoreFilterControls.map((more: ControlsType) => (
+                  <div key={more.id} className={"controlsMap-div"}>
+                    <div className={"controlsMap-icon"}> {more.icon} </div>
                     <div className={"brightness-slider"}>
                       <label className={"brightness-label"} htmlFor={"brightness"}>
-                        {x.name} :
+                        {more.name} :
                       </label>
                       <input
                         type={"range"}
-                        id={x.type}
-                        name={x.type}
-                        min={x.type === "zoom" ? 0.2 : x.type === "rotate" ? -180 : x.type === "brightness" ? 0.2 : 0}
-                        max={x.type === "zoom" ? 1.5 : x.type === "rotate" ? 180 : x.type === "blur" ? 5 : 1}
-                        step={x.type === "zoom" ? 0.1 : x.type === "rotate" ? 45 : x.type === "blur" ? 1 : 0.2}
-                        value={inputValue(x.type)}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleEffectChange(event)}
+                        id={more.type}
+                        name={more.type}
+                        min={more.type === "zoom" ? 0.2 : more.type === "rotate" ? -180 : more.type === "brightness" ? 0.2 : 0}
+                        max={more.type === "zoom" ? 1.5 : more.type === "rotate" ? 180 : more.type === "blur" ? 5 : 1}
+                        step={more.type === "zoom" ? 0.1 : more.type === "rotate" ? 45 : more.type === "blur" ? 1 : 0.2}
+                        value={inputValue(more.type)}
+                        onChange={(moreFilterEvent: React.ChangeEvent<HTMLInputElement>) => handleEffectChange(moreFilterEvent)}
                         autoComplete={"off"}
                       />
                     </div>
@@ -640,6 +643,10 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
             showAllTags={showAllTags}
             setShowAllTags={setShowAllTags}
             drawing={drawing}
+            blur={blur}
+            zoom={zoom}
+            rotate={rotate}
+            brightness={brightness}
           />
         ) : currentControl === "crop" ? (
           <CropCanvas
@@ -724,7 +731,9 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
                 setTag,
                 setCurrentAnnotation,
                 setTempRedPrompt,
-                showAllTags
+                showAllTags,
+                allTextTags,
+                rotate
               })}
               position={currentAnnotation}
             />
@@ -748,7 +757,9 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
               setTag,
               setCurrentAnnotation,
               setTempRedPrompt,
-              setShowAllTags
+              setShowAllTags,
+              allTextTags,
+              rotate
             })}
           />
         )}
@@ -774,10 +785,9 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
         {/* clear canvas, show-hide-tags, take screenshot */}
         <MainCanvasControls
           clearFunction={() => setClear(!clear)}
-          showHideFunction={() =>
-            showAllTags
-              ? hideTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags, rotate, dimensions, currentCropped, selectCanvas})
-              : showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags})
+          showHideFunction={() => showAllTags
+            ? hideTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags, rotate, dimensions, currentCropped, selectCanvas})
+            : showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags})
           }
           screenShotFunction={() => handleScreenShot({canvasRef})}
           iconTag={showAllTags ? <HideTags /> : <ShowTags />}

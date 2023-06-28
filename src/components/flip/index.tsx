@@ -25,7 +25,7 @@ export const flipHorizontally = ({
 
   showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
 
-  context!.clearRect(0, 0, canvas!.width, canvas!.height);
+  // context!.clearRect(0, 0, canvas!.width, canvas!.height);
   context!.translate(canvas!.width, 0);
   context!.scale(-1, 1);
   setFlipHorizontal(!flipHorizontal);
@@ -70,24 +70,30 @@ export const LoadImageFlip = ({
   drawing !== "" ? image.src = drawing : image.src = imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
+  context!.clearRect(0, 0, canvas!.width, canvas!.height);
   image.onload = () => {
-    context!.save();
-    context!.translate(canvas!.width / 2, canvas!.height / 2);
-    context!.rotate(degToRad(rotate++ % 360));
-    context!.drawImage(
-      image,
-      image.width / -2,
-      image.height / -2,
-      image.width,
-      image.height
-    );
-    context!.restore();
+    if (rotate !== 0) {
+      console.log("flip");
+      context!.save();
+      context!.translate(canvas!.width / 2, canvas!.height / 2);
+      context!.rotate(degToRad(rotate++ % 360));
+      context!.drawImage(
+        image,
+        image.width / -2,
+        image.height / -2,
+        image.width,
+        image.height
+      );
+      context!.restore();
+    } else {
+      context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
+    }
 
     allTextTags.forEach((textTags: TextTag) => {
       context!.textBaseline = "alphabetic";
       context!.font = `${textTags.size || 22}px monospace`;
       context!.fillStyle = textTags.color;
-      context!.fillText(textTags.text, textTags.x + 10, textTags.y);
+      context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
     });
     annotations.forEach((annotationData: AnnotationProps) => {
       const { currentAnnotationX, currentAnnotationY } = annotationData;

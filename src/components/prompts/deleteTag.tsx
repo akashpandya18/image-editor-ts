@@ -38,7 +38,8 @@ export const DeleteTag = ({ position, setPromptOff, deleteTagSubmit }: DeleteTag
           color: "#fff",
           backgroundColor: "#2a2a2a",
           cursor: "pointer",
-          boxShadow: "0 0.125rem 0.125rem 0 rgba(0, 0, 0, 0.2)"
+          boxShadow: "0 0.125rem 0.125rem 0 rgba(0, 0, 0, 0.2)",
+          marginRight: "0.5rem"
         }}
         title={"Delete Tag"}
       >

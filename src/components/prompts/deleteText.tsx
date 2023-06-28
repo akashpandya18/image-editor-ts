@@ -6,8 +6,8 @@ export const DeleteText = ({ position, handleDelete, setDeleteTextTag }: DeleteT
   return (
     <div
       style={{
-        top: position.y + 10,
-        left: position.x - 100,
+        top: position.currentClickedY + 10,
+        left: position.currentClickedX - 100,
         position: "absolute",
         zIndex: 9,
         width: "12.5rem",
@@ -38,7 +38,8 @@ export const DeleteText = ({ position, handleDelete, setDeleteTextTag }: DeleteT
           color: "#fff",
           backgroundColor: "#2a2a2a",
           cursor: "pointer",
-          boxShadow: "0 0.125rem 0.125rem 0 rgba(0, 0, 0, 0.2)"
+          boxShadow: "0 0.125rem 0.125rem 0 rgba(0, 0, 0, 0.2)",
+          marginRight: "0.5rem"
         }}
         title={"Delete Text"}
       >

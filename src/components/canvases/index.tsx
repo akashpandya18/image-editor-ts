@@ -67,7 +67,11 @@ export const TextOnImageCanvas = ({
   handleTagMouseMove,
   showAllTags,
   setShowAllTags,
-  drawing
+  drawing,
+  blur,
+  zoom,
+  rotate,
+  brightness
 }: TextOnImageProps) => {
   const [isDraggingText, setIsDraggingText] = useState<boolean>(false);
   const [draggingText, setDraggingText] = useState<string>("");
@@ -79,59 +83,55 @@ export const TextOnImageCanvas = ({
         borderRadius: "0.438rem",
         boxShadow: "0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.2)"
       }}
-      onClick={(event: React.MouseEvent<HTMLCanvasElement>) => {
-        clickHandler({
-          event,
-          canvasRef,
-          setTempPrompt,
-          setCurrentClicked,
-          imgSrc,
-          allTextTags,
-          setIsEditing,
-          setFormData
-        });
-      }}
-      onMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) => {
-        handleMouseMove({
-          event,
-          isDraggingText,
-          draggingText,
-          canvasRef,
-          allTextTags,
-          dimensions,
-          imgSrc,
-          currentClicked,
-          annotations,
-          handleTagMouseMove,
-          showAllTags,
-          setShowAllTags,
-          drawing
-        })
-      }}
-      onMouseDown={(event: React.MouseEvent<HTMLCanvasElement>) => {
-        handleMouseDown({
-          event,
-          setIsDraggingText,
-          setDraggingText,
-          canvasRef,
-          allTextTags,
-          setCurrentClicked
-        })
-      }}
-      onMouseUp={(event: React.MouseEvent<HTMLCanvasElement>) => {
-        handleMouseUp({
-          event,
-          canvasRef,
-          isDraggingText,
-          setIsDraggingText,
-          draggingText,
-          setDraggingText,
-          allTextTags,
-          setAllTextTags,
-          currentClicked,
-          setDeleteTextTag
-        })
-      }}
+      onClick={(textOnImageClickEvent: React.MouseEvent<HTMLCanvasElement>) => clickHandler({
+        textOnImageClickEvent,
+        canvasRef,
+        setTempPrompt,
+        setCurrentClicked,
+        imgSrc,
+        allTextTags,
+        setIsEditing,
+        setFormData
+      })}
+      onMouseMove={(textOnImageMouseMoveEvent: React.MouseEvent<HTMLCanvasElement>) => handleMouseMove({
+        textOnImageMouseMoveEvent,
+        isDraggingText,
+        draggingText,
+        canvasRef,
+        allTextTags,
+        dimensions,
+        imgSrc,
+        currentClicked,
+        annotations,
+        handleTagMouseMove,
+        showAllTags,
+        setShowAllTags,
+        drawing,
+        blur,
+        zoom,
+        rotate,
+        brightness
+      })}
+      onMouseDown={(textOnImageMouseDownEvent: React.MouseEvent<HTMLCanvasElement>) => handleMouseDown({
+        textOnImageMouseDownEvent,
+        setIsDraggingText,
+        setDraggingText,
+        canvasRef,
+        allTextTags,
+        setCurrentClicked
+      })}
+      onMouseUp={(textOnImageMouseUpEvent: React.MouseEvent<HTMLCanvasElement>) => handleMouseUp({
+        textOnImageMouseUpEvent,
+        canvasRef,
+        isDraggingText,
+        setIsDraggingText,
+        draggingText,
+        setDraggingText,
+        allTextTags,
+        setAllTextTags,
+        currentClicked,
+        setDeleteTextTag
+      })}
     />
   );
 };
@@ -151,7 +151,7 @@ export const CropCanvas = ({
   setHoverPos,
   setShowH
 }: CropProps): JSX.Element => {
-  const [difference, setDifference] = useState({ width: 0, height: 0, x: 0, y: 0 });
+  const [difference, setDifference] = useState({ width: 0, height: 0, differenceX: 0, differenceY: 0 });
   const [croppingNode, setCroppingNode] = useState<number>(0);
   const [isResize, setIsResize] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -187,8 +187,8 @@ export const CropCanvas = ({
           setIsDragging,
           setStartingNode
         })}
-        onMouseMove={(event) => mouseMove({
-          event,
+        onMouseMove={(cropMouseMoveEvent) => mouseMove({
+          cropMouseMoveEvent,
           setDifference,
           currentCropped,
           croppingNode,
@@ -208,8 +208,8 @@ export const CropCanvas = ({
           setHoverPos,
           setShowH
         })}
-        onMouseUp={(event) => mouseUP({
-          event,
+        onMouseUp={(cropMouseUpLeaveEvent) => mouseUP({
+          cropMouseUpLeaveEvent,
           difference,
           setDifference,
           currentCropped,
@@ -221,8 +221,8 @@ export const CropCanvas = ({
           setIsDragging,
           startingNode
         })}
-        onMouseLeave={(event: React.MouseEvent<HTMLCanvasElement>) => mouseLeave({
-          event,
+        onMouseLeave={(cropMouseUpLeaveEvent: React.MouseEvent<HTMLCanvasElement>) => mouseLeave({
+          cropMouseUpLeaveEvent,
           setIsDragging,
           setIsResize,
           mouseUp
@@ -255,36 +255,43 @@ export const FlipCanvas = ({ canvasRef, handleTagMouseMove }: FlipCanvasProps) =
 
 export const PenCanvas = ({ canvasRef, handleTagMouseMove }: PenProps) => {
   const [isDrawing, setIsDrawing] = useState(false);
+  let lastX = 0;
+  let lastY = 0;
 
-  const startDrawing = (event: React.MouseEvent<HTMLCanvasElement>) => {
+  const startDrawing = (penMouseDownEvent: React.MouseEvent<HTMLCanvasElement>) => {
+    console.log("penMouseDownEvent", penMouseDownEvent);
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
 
     if (context) {
+      [lastX, lastY] = [penMouseDownEvent.clientX, penMouseDownEvent.clientY];
       context.beginPath();
-      context.moveTo(event.nativeEvent.offsetX, event.nativeEvent.offsetY);
+      context.moveTo(penMouseDownEvent.nativeEvent.offsetX, penMouseDownEvent.nativeEvent.offsetY);
       setIsDrawing(true);
     }
   };
 
-  const draw = (event: React.MouseEvent<HTMLCanvasElement>) => {
+  const draw = (penMouseMoveEvent: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
     if (!isDrawing) return;
 
-    const x = event.nativeEvent.offsetX;
-    const y = event.nativeEvent.offsetY;
+    const mouseX = penMouseMoveEvent.nativeEvent.offsetX;
+    const mouseY = penMouseMoveEvent.nativeEvent.offsetY;
 
     if (context) {
-      // handleTagMouseMove(event);
-      context.lineTo(x, y);
+      // handleTagMouseMove(penMouseMoveEvent);
+      // context.beginPath();
+      // context.moveTo(lastX, lastY);
+      context.lineTo(mouseX, mouseY);
       context.stroke();
+      [lastX, lastY] = [penMouseMoveEvent.clientX, penMouseMoveEvent.clientY];
     }
   };
 
   const stopDrawing = () => { setIsDrawing(false); };
 
-  const clickDot = (event: React.MouseEvent<HTMLCanvasElement>) => {
+  const clickDot = (penMouseClickEvent: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
 
@@ -292,8 +299,8 @@ export const PenCanvas = ({ canvasRef, handleTagMouseMove }: PenProps) => {
       context.beginPath();
       context.fillStyle = "#000";
       context.arc(
-        event.nativeEvent.offsetX,
-        event.nativeEvent.offsetY,
+        penMouseClickEvent.nativeEvent.offsetX,
+        penMouseClickEvent.nativeEvent.offsetY,
         1,
         0,
         2 * Math.PI
@@ -305,11 +312,11 @@ export const PenCanvas = ({ canvasRef, handleTagMouseMove }: PenProps) => {
   return (
     <canvas
       ref={canvasRef}
-      onMouseDown={(event: React.MouseEvent<HTMLCanvasElement>) => startDrawing(event)}
-      onMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) => draw(event)}
+      onMouseDown={(penMouseDownEvent: React.MouseEvent<HTMLCanvasElement>) => startDrawing(penMouseDownEvent)}
+      onMouseMove={(penMouseMoveEvent: React.MouseEvent<HTMLCanvasElement>) => draw(penMouseMoveEvent)}
       onMouseUp={stopDrawing}
       onMouseLeave={stopDrawing}
-      onClick={(event: React.MouseEvent<HTMLCanvasElement>) => clickDot(event)}
+      onClick={(penMouseClickEvent: React.MouseEvent<HTMLCanvasElement>) => clickDot(penMouseClickEvent)}
       style={{
         borderRadius: "0.438rem",
         boxShadow: "0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.2)"
@@ -369,7 +376,6 @@ export const MoreFilterCanvas = ({
 
     image.onload = () => {
       context!.filter = `blur(${blur}px) brightness(${brightness})`;
-
       context!.clearRect(0, 0, canvas!.width, canvas!.height);
       context!.save();
       context!.translate(canvas!.width / 2, canvas!.height / 2);
@@ -383,7 +389,7 @@ export const MoreFilterCanvas = ({
       );
       context!.restore();
     };
-  },[blur, rotate, brightness]);
+  },[blur, zoom, rotate, brightness]);
 
   return (
     <canvas

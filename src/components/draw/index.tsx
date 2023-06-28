@@ -43,7 +43,7 @@ export const clearDrawing = ({
       context!.textBaseline = "alphabetic";
       context!.font = `${textTags.size || 22}px monospace`;
       context!.fillStyle = textTags.color;
-      context!.fillText(textTags.text, textTags.x + 10, textTags.y);
+      context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
     });
     annotations.forEach((annotationData: AnnotationProps) => {
       const { currentAnnotationX, currentAnnotationY } = annotationData;

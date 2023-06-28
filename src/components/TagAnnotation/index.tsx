@@ -37,9 +37,9 @@ export const handleCanvasMouseMove = ({
     canvas!.style.cursor = "pointer";
     let hoveredDotX = hoveredDot.currentAnnotationX;
     let hoveredDotY = hoveredDot.currentAnnotationY;
-    let pos = { hoveredDotX, hoveredDotY };
+    let position = { hoveredDotX, hoveredDotY };
     setHoverTag(hoveredDot.tag);
-    setHoverPos(pos);
+    setHoverPos(position);
     setShowH(true);
   } else {
     canvas!.style.cursor = "default";
@@ -108,16 +108,18 @@ export const handleSubmitTag = ({
   setTag,
   setCurrentAnnotation,
   setTempRedPrompt,
-  showAllTags
+  showAllTags,
+  allTextTags,
+  rotate
 }: HandleSubmitTagProps) => {
   tagSubmitEvent.preventDefault();
   const currentAnnotationX = currentAnnotation.currentAnnotationX;
   const currentAnnotationY = currentAnnotation.currentAnnotationY;
-
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
   image.src = imgSrc;
+  const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   image.width = canvas!.width;
   image.height = canvas!.height;
@@ -137,7 +139,18 @@ export const handleSubmitTag = ({
     if (showAllTags) {
       context!.clearRect(0, 0, canvas!.width, canvas!.height);
       setTimeout(() => {
-        context!.drawImage(image, 0, 0, image.width, image.height);
+        context!.clearRect(0, 0, canvas!.width, canvas!.height);
+        context!.save();
+        context!.translate(canvas!.width / 2, canvas!.height / 2);
+        context!.rotate(degToRad(rotate++ % 360));
+        context!.drawImage(
+          image,
+          image.width / -2,
+          image.height / -2,
+          image.width,
+          image.height
+        );
+        context!.restore();
         tempAnnotation.forEach((annotationData: {
           currentAnnotationX: number;
           currentAnnotationY: number;
@@ -176,6 +189,12 @@ export const handleSubmitTag = ({
             context!.fillText(tag, currentAnnotationX + 10, currentAnnotationY + 25);
           }
         });
+        allTextTags.forEach((textTags: TextTag) => {
+          context!.textBaseline = "alphabetic";
+          context!.fillStyle = textTags.color;
+          context!.font = `${textTags.size}px monospace`;
+          context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
+        });
       }, 10);
     }
   }
@@ -197,7 +216,9 @@ export const handleClearSingleTag = ({
   setTag,
   setCurrentAnnotation,
   setTempRedPrompt,
-  setShowAllTags
+  setShowAllTags,
+  allTextTags,
+  rotate
 }: HandleClearSingleTagProps) => {
   clearSingleTagEvent.preventDefault();
   setShowAllTags(false);
@@ -206,13 +227,25 @@ export const handleClearSingleTag = ({
   const context = canvas!.getContext("2d");
   const image = new Image();
   image.src = imgSrc;
+  const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   image.width = canvas!.width;
   image.height = canvas!.height;
 
   context!.clearRect(0, 0, canvas!.width, canvas!.height);
   setTimeout(() => {
-    context!.drawImage(image, 0, 0, image.width, image.height);
+    context!.clearRect(0, 0, canvas!.width, canvas!.height);
+    context!.save();
+    context!.translate(canvas!.width / 2, canvas!.height / 2);
+    context!.rotate(degToRad(rotate++ % 360));
+    context!.drawImage(
+      image,
+      image.width / -2,
+      image.height / -2,
+      image.width,
+      image.height
+    );
+    context!.restore();
     if (deleteTagId !== "") {
       // populate dots again
       filteredArray.forEach((annotationData: AnnotationProps) => {
@@ -220,6 +253,12 @@ export const handleClearSingleTag = ({
         context!.fillStyle = "yellow";
         context!.arc(annotationData.currentAnnotationX, annotationData.currentAnnotationY, 10, 0, 2 * Math.PI);
         context!.fill();
+      });
+      allTextTags.forEach((textTags: TextTag) => {
+        context!.textBaseline = "alphabetic";
+        context!.fillStyle = textTags.color;
+        context!.font = `${textTags.size}px monospace`;
+        context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
       });
       setAnnotations(filteredArray);
       setDeleteTag(false);
@@ -322,7 +361,7 @@ export const hideTags = ({
       context!.textBaseline = "alphabetic";
       context!.font = `${textTags.size || 22}px monospace`;
       context!.fillStyle = textTags.color;
-      context!.fillText(textTags.text, textTags.x + 10, textTags.y);
+      context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
     });
   }, 10);
 };
@@ -387,7 +426,7 @@ export const showTags = ({
       context!.textBaseline = "alphabetic";
       context!.font = `${textTags.size || 22}px monospace`;
       context!.fillStyle = textTags.color;
-      context!.fillText(textTags.text, textTags.x + 10, textTags.y);
+      context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
     });
   }, 10);
 };

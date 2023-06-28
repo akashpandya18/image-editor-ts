@@ -52,8 +52,8 @@ export const TextOnImageControl = ({
 }: TextOnImageControlProps): JSX.Element => {
   let data = { text: "", color: "", size: 0, id: "" };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = event.target;
+  const handleInputChange = (changeEvent: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = changeEvent.target;
     data = {
       ...formData,
       [name]: value
@@ -81,7 +81,7 @@ export const TextOnImageControl = ({
         context!.textBaseline = "alphabetic";
         context!.font = `${textTags.size || 22}px monospace`;
         context!.fillStyle = textTags.color;
-        context!.fillText(textTags.text, textTags.x + 10, textTags.y);
+        context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
       });
     }, 10);
   },[annotations, allTextTags]);
@@ -178,7 +178,7 @@ export const TextOnImageControl = ({
                 columnGap: "0.938rem"
               }}
             >
-              <select name={"size"} value={formData.size} onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleInputChange(event)}>
+              <select name={"size"} value={formData.size} onChange={(changeEvent: React.ChangeEvent<HTMLSelectElement>) => handleInputChange(changeEvent)}>
                 {FontSizeOptions?.map((fontSize: FontSizeOptionsProps) => (
                   <option value={fontSize.value} key={fontSize.id}> {fontSize.text} </option>
                 ))}
@@ -191,7 +191,7 @@ export const TextOnImageControl = ({
                 }}
                 value={formData.color}
                 type={"color"}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleInputChange(event)}
+                onChange={(changeEvent: React.ChangeEvent<HTMLInputElement>) => handleInputChange(changeEvent)}
                 name={"color"}
               />
             </div>
