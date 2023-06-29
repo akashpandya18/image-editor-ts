@@ -137,7 +137,6 @@ export const handleSubmitTag = ({
     setTempRedPrompt(false);
 
     if (showAllTags) {
-      context!.clearRect(0, 0, canvas!.width, canvas!.height);
       setTimeout(() => {
         context!.clearRect(0, 0, canvas!.width, canvas!.height);
         context!.save();
@@ -229,12 +228,11 @@ export const handleClearSingleTag = ({
   image.src = imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
-  image.width = canvas!.width;
-  image.height = canvas!.height;
-
-  context!.clearRect(0, 0, canvas!.width, canvas!.height);
   setTimeout(() => {
     context!.clearRect(0, 0, canvas!.width, canvas!.height);
+    image.width = canvas!.width;
+    image.height = canvas!.height;
+
     context!.save();
     context!.translate(canvas!.width / 2, canvas!.height / 2);
     context!.rotate(degToRad(rotate++ % 360));
@@ -289,11 +287,11 @@ export const hideTags = ({
   drawing !== "" ? image.src = drawing : image.src = imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
-  image.width = canvas!.width;
-  image.height = canvas!.height;
-
-  context!.clearRect(0, 0, canvas!.width, canvas!.height);
   setTimeout(() => {
+    context!.clearRect(0, 0, canvas!.width, canvas!.height);
+    image.width = canvas!.width;
+    image.height = canvas!.height;
+
     context!.save();
     context!.translate(canvas!.width / 2, canvas!.height / 2);
     context!.rotate(degToRad(rotate++ % 360));

@@ -206,7 +206,8 @@ export const CropCanvas = ({
           allTextTags,
           setHoverTag,
           setHoverPos,
-          setShowH
+          setShowH,
+          difference
         })}
         onMouseUp={(cropMouseUpLeaveEvent) => mouseUP({
           cropMouseUpLeaveEvent,
@@ -255,16 +256,12 @@ export const FlipCanvas = ({ canvasRef, handleTagMouseMove }: FlipCanvasProps) =
 
 export const PenCanvas = ({ canvasRef, handleTagMouseMove }: PenProps) => {
   const [isDrawing, setIsDrawing] = useState(false);
-  let lastX = 0;
-  let lastY = 0;
 
   const startDrawing = (penMouseDownEvent: React.MouseEvent<HTMLCanvasElement>) => {
-    console.log("penMouseDownEvent", penMouseDownEvent);
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
 
     if (context) {
-      [lastX, lastY] = [penMouseDownEvent.clientX, penMouseDownEvent.clientY];
       context.beginPath();
       context.moveTo(penMouseDownEvent.nativeEvent.offsetX, penMouseDownEvent.nativeEvent.offsetY);
       setIsDrawing(true);
@@ -281,11 +278,8 @@ export const PenCanvas = ({ canvasRef, handleTagMouseMove }: PenProps) => {
 
     if (context) {
       // handleTagMouseMove(penMouseMoveEvent);
-      // context.beginPath();
-      // context.moveTo(lastX, lastY);
       context.lineTo(mouseX, mouseY);
       context.stroke();
-      [lastX, lastY] = [penMouseMoveEvent.clientX, penMouseMoveEvent.clientY];
     }
   };
 
@@ -371,12 +365,12 @@ export const MoreFilterCanvas = ({
     drawing !== "" ? image.src = drawing : image.src = imgSrc;
     const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
-    image.width = canvas!.width;
-    image.height = canvas!.height;
-
     image.onload = () => {
-      context!.filter = `blur(${blur}px) brightness(${brightness})`;
       context!.clearRect(0, 0, canvas!.width, canvas!.height);
+      context!.filter = `blur(${blur}px) brightness(${brightness})`;
+      image.width = canvas!.width;
+      image.height = canvas!.height;
+
       context!.save();
       context!.translate(canvas!.width / 2, canvas!.height / 2);
       context!.rotate(degToRad(rotate++ % 360));

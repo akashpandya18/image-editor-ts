@@ -122,8 +122,8 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
         const newHeight = 1000 / ratio;
         const newWidth = 563 * ratio;
         setDimensions({ width: newWidth, height: newHeight });
-        // } else if (width < 500) {
-        //   setDimensions({ width: 500, height: 490 });
+      // } else if (width < 500) {
+      //   setDimensions({ width: 500, height: 490 });
       } else {
         setDimensions({ width, height });
       }
@@ -159,13 +159,7 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
     image.onload = () => {
       // setting flip on canvas
       flipValue(canvas, context);
-      // setting blur and brightness value on canvas
       context!.clearRect(0, 0, canvas!.width, canvas!.height);
-      context!.filter = `blur(${blur}px) brightness(${brightness})`;
-      console.log("context", context)
-      setTimeout(() => {
-        context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
-      });
 
       // setting zoom value on canvas
       if (canvas) {
@@ -181,7 +175,13 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
 
       // setting tag/annotation, texts and rotation on canvas
       setTimeout(() => {
+        // setting blur and brightness value on canvas
         context!.clearRect(0, 0, canvas!.width, canvas!.height);
+        context!.filter = `blur(${blur}px) brightness(${brightness})`;
+
+        context!.clearRect(0, 0, canvas!.width, canvas!.height);
+        image.width = canvas!.width;
+        image.height = canvas!.height;
         context!.save();
         context!.translate(canvas!.width / 2, canvas!.height / 2);
         context!.rotate(degToRad(rotate++ % 360));
@@ -215,7 +215,7 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
       setCurrentAnnotation({ currentAnnotationX: 0, currentAnnotationY: 0 });
       setTempRedPrompt(false);
     };
-  }, [currentControl, blur, zoom, rotate, brightness, allTextTags]);
+  }, [currentControl, blur, zoom, rotate, brightness, allTextTags, flipHorizontal, flipVertical]);
   // setting crop rectangle in crop tab canvas
   useEffect(() => {
     currentCropped.startingX < 0 &&
@@ -355,7 +355,8 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
       annotations,
       showAllTags,
       setShowAllTags,
-      drawing
+      drawing,
+      rotate
     });
   };
   // handle crop rectangle
@@ -516,8 +517,7 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
                 drawing,
                 blur,
                 rotate,
-                brightness,
-                dimensions
+                brightness
               })}
             />
           ) : currentControl === "crop" ? (

@@ -204,6 +204,7 @@ export interface TextOnChangeHandlerProps {
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
   drawing: string;
+  rotate: number;
 }
 
 export interface TextOnImageClickHandlerProps {
@@ -335,7 +336,6 @@ export interface HandleCrossProps {
   blur: number;
   rotate: number;
   brightness: number;
-  dimensions: { height: number; width: number; };
 }
 
 export interface DeleteTextProps {
@@ -418,6 +418,7 @@ export interface MouseMoveProps {
   setHoverTag: React.Dispatch<React.SetStateAction<string>>;
   setHoverPos: React.Dispatch<React.SetStateAction<{ hoveredDotX: number; hoveredDotY: number; }>>;
   setShowH: React.Dispatch<React.SetStateAction<boolean>>;
+  difference: DifferenceProps;
 }
 
 export interface MouseUPProps {
@@ -486,16 +487,6 @@ export interface FlipVerticallyProps {
   drawing: string;
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
-  allTextTags: TextTag[];
-  rotate: number;
-}
-
-export interface LoadImageFlipProps {
-  context: CanvasRenderingContext2D | null;
-  canvasRef: React.RefObject<HTMLCanvasElement>;
-  imgSrc: string;
-  annotations: AnnotationProps[];
-  drawing: string;
   allTextTags: TextTag[];
   rotate: number;
 }

@@ -30,56 +30,56 @@ export const mouseDown = ({
     setIsResize(true);
     setCroppingNode(1);
   } else if (
-    mouseX > currentCropped.startingX + currentCropped.width - 5 &&
-    mouseX < currentCropped.startingX + currentCropped.width + 5 &&
+    mouseX > currentCropped.startingX + 5 &&
+    mouseX < currentCropped.startingX + currentCropped.width - 5 &&
     mouseY > currentCropped.startingY - 5 &&
     mouseY < currentCropped.startingY + 5
   ) {
     setIsResize(true);
     setCroppingNode(2);
   } else if (
-    mouseX > currentCropped.startingX - 5 &&
-    mouseX < currentCropped.startingX + 5 &&
-    mouseY > currentCropped.startingY + currentCropped.height - 5 &&
-    mouseY < currentCropped.startingY + currentCropped.height + 5
+    mouseX > currentCropped.startingX + currentCropped.width - 5 &&
+    mouseX < currentCropped.startingX + currentCropped.width + 5 &&
+    mouseY > currentCropped.startingY - 5 &&
+    mouseY < currentCropped.startingY + 5
   ) {
     setIsResize(true);
     setCroppingNode(3);
   } else if (
     mouseX > currentCropped.startingX + currentCropped.width - 5 &&
     mouseX < currentCropped.startingX + currentCropped.width + 5 &&
-    mouseY > currentCropped.startingY + currentCropped.height - 5 &&
-    mouseY < currentCropped.startingY + currentCropped.height + 5
-  ) {
-    setIsResize(true);
-    setCroppingNode(4);
-  } else if (
-    mouseX > currentCropped.startingX + 5 &&
-    mouseX < currentCropped.startingX + currentCropped.width - 5 &&
-    mouseY > currentCropped.startingY - 5 &&
-    mouseY < currentCropped.startingY + 5
-  ) {
-    setIsResize(true);
-    setCroppingNode(5);
-  } else if (
-    mouseX > currentCropped.startingX - 5 &&
-    mouseX < currentCropped.startingX + 5 &&
     mouseY > currentCropped.startingY &&
     mouseY < currentCropped.height + currentCropped.startingY
   ) {
     setIsResize(true);
-    setCroppingNode(6);
+    setCroppingNode(4);
+  } else if (
+    mouseX > currentCropped.startingX + currentCropped.width - 5 &&
+    mouseX < currentCropped.startingX + currentCropped.width + 5 &&
+    mouseY > currentCropped.startingY + currentCropped.height - 5 &&
+    mouseY < currentCropped.startingY + currentCropped.height + 5
+  ) {
+    setIsResize(true);
+    setCroppingNode(5);
   } else if (
     mouseX > currentCropped.startingX + 5 &&
     mouseX < currentCropped.startingX + currentCropped.width - 5 &&
+    mouseY > currentCropped.startingY + currentCropped.height - 5 &&
+    mouseY < currentCropped.startingY + currentCropped.height + 5
+  ) {
+    setIsResize(true);
+    setCroppingNode(6);
+  } else if (
+    mouseX > currentCropped.startingX - 5 &&
+    mouseX < currentCropped.startingX + 5 &&
     mouseY > currentCropped.startingY + currentCropped.height - 5 &&
     mouseY < currentCropped.startingY + currentCropped.height + 5
   ) {
     setIsResize(true);
     setCroppingNode(7);
   } else if (
-    mouseX > currentCropped.startingX + currentCropped.width - 5 &&
-    mouseX < currentCropped.startingX + currentCropped.width + 5 &&
+    mouseX > currentCropped.startingX - 5 &&
+    mouseX < currentCropped.startingX + 5 &&
     mouseY > currentCropped.startingY &&
     mouseY < currentCropped.height + currentCropped.startingY
   ) {
@@ -96,7 +96,6 @@ export const mouseDown = ({
     setIsDragging(false);
     setIsResize(false);
   }
-
   setStartingNode({ startingNodeX: mouseX, startingNodeY: mouseY });
 };
 
@@ -147,7 +146,8 @@ export const mouseMove = ({
   allTextTags,
   setHoverTag,
   setHoverPos,
-  setShowH
+  setShowH,
+  difference
 }: MouseMoveProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -236,6 +236,8 @@ export const mouseMove = ({
   }
 
   if (isDragging) {
+    console.log("currentCropped dragging", currentCropped);
+    console.log("difference dragging", difference);
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
     const image = new Image();
@@ -314,6 +316,8 @@ export const mouseMove = ({
   }
 
   if (isResize) {
+    console.log("currentCropped resizing", currentCropped);
+    console.log("difference resizing", difference);
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
     const image = imgRef.current;

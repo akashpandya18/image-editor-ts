@@ -60,7 +60,7 @@ export const clickHandler = ({
     setFormData({ text: "", color: "#ffffff", size: 32, id: "" });
   } else {
     // @ts-ignore
-    const { currentClickedX, currentClickedY, text, color, size, id } = allTextTags.find((obj: TextTag) => obj.id === clickRect.id);
+    const { textPositionX: currentClickedX , textPositionY: currentClickedY, text, color, size, id } = allTextTags.find((obj: TextTag) => obj.id === clickRect.id);
     setFormData({ text: text, color: color, size: size, id: id });
 
     const clicked = { currentClickedX, currentClickedY };
@@ -81,13 +81,15 @@ export const textOnChangeHandler = ({
   annotations,
   showAllTags,
   setShowAllTags,
-  drawing
+  drawing,
+  rotate
 }: TextOnChangeHandlerProps) => {
   const { text, color, size } = textForm;
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
   image.src = imgSrc;
+  const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   context!.setLineDash([10, 10]);
   context!.lineWidth = 2;
@@ -104,8 +106,9 @@ export const textOnChangeHandler = ({
   const rectWidth: number = textWidth + padding * 2;
   const rectHeight: number = textHeight + padding * 2;
 
-  // context!.clearRect(currentClicked.currentClickedX,currentClicked.currentClickedY - textHeight, textWidth, textHeight);
-  // context!.drawImage(image, 0, 0, image.width, image.height);
+  context!.clearRect(currentClicked.currentClickedX,currentClicked.currentClickedY - textHeight, textWidth, textHeight);
+  image.width = canvas!.width;
+  image.height = canvas!.height;
 
   context!.font = `${size}px monospace`;
 
@@ -115,7 +118,9 @@ export const textOnChangeHandler = ({
     if (image.complete) {
       if (!isEditing) {
         // onChange validation for text input
-        (text.length > 0 && text.length <= 10) && setError("");
+        if (text.length > 0 && text.length <= 10) {
+          setError("");
+        }
 
         context!.strokeRect(
           currentClicked.currentClickedX,
@@ -124,6 +129,22 @@ export const textOnChangeHandler = ({
           rectHeight
         );
         context!.textBaseline = "alphabetic";
+
+        context!.clearRect(0, 0, canvas!.width, canvas!.height);
+        image.width = canvas!.width;
+        image.height = canvas!.height;
+
+        context!.save();
+        context!.translate(canvas!.width / 2, canvas!.height / 2);
+        context!.rotate(degToRad(rotate++ % 360));
+        context!.drawImage(
+          image,
+          image.width / -2,
+          image.height / -2,
+          image.width,
+          image.height
+        );
+        context!.restore();
 
         if (text.length === 0) {
           context!.clearRect(0, 0, canvas!.width, canvas!.height);
@@ -158,6 +179,22 @@ export const textOnChangeHandler = ({
           rectHeight
         );
         context!.textBaseline = "alphabetic";
+
+        context!.clearRect(0, 0, canvas!.width, canvas!.height);
+        image.width = canvas!.width;
+        image.height = canvas!.height;
+
+        context!.save();
+        context!.translate(canvas!.width / 2, canvas!.height / 2);
+        context!.rotate(degToRad(rotate++ % 360));
+        context!.drawImage(
+          image,
+          image.width / -2,
+          image.height / -2,
+          image.width,
+          image.height
+        );
+        context!.restore();
 
         if (text.length === 0) {
           context!.clearRect(0, 0, canvas!.width, canvas!.height);
@@ -274,22 +311,21 @@ export const handleMouseMove = ({
       context!.translate(-centerX, -centerY);
       context!.clearRect(0, 0, width, height);
 
-      if (rotate !== 0) {
-        console.log("controls index");
-        context!.clearRect(0, 0, canvas!.width, canvas!.height);
-        context!.save();
-        context!.translate(canvas!.width / 2, canvas!.height / 2);
-        context!.rotate(degToRad(rotate++ % 360));
-        context!.drawImage(
-          image,
-          image.width / -2,
-          image.height / -2,
-          image.width,
-          image.height
-        );
-        context!.restore();
-      }
-      context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
+      context!.clearRect(0, 0, canvas!.width, canvas!.height);
+      image.width = canvas!.width;
+      image.height = canvas!.height;
+
+      context!.save();
+      context!.translate(canvas!.width / 2, canvas!.height / 2);
+      context!.rotate(degToRad(rotate++ % 360));
+      context!.drawImage(
+        image,
+        image.width / -2,
+        image.height / -2,
+        image.width,
+        image.height
+      );
+      context!.restore();
 
       allTextTags.forEach((texts: TextTag) => {
         const { textPositionX, textPositionY, text, color, size, id: currentId } = texts;
@@ -331,22 +367,21 @@ export const handleMouseMove = ({
         context!.translate(-centerX, -centerY);
         context!.clearRect(0, 0, width, height);
 
-        if (rotate !== 0) {
-          console.log("controls index");
-          context!.clearRect(0, 0, canvas!.width, canvas!.height);
-          context!.save();
-          context!.translate(canvas!.width / 2, canvas!.height / 2);
-          context!.rotate(degToRad(rotate++ % 360));
-          context!.drawImage(
-            image,
-            image.width / -2,
-            image.height / -2,
-            image.width,
-            image.height
-          );
-          context!.restore();
-        }
-        context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
+        context!.clearRect(0, 0, canvas!.width, canvas!.height);
+        image.width = canvas!.width;
+        image.height = canvas!.height;
+
+        context!.save();
+        context!.translate(canvas!.width / 2, canvas!.height / 2);
+        context!.rotate(degToRad(rotate++ % 360));
+        context!.drawImage(
+          image,
+          image.width / -2,
+          image.height / -2,
+          image.width,
+          image.height
+        );
+        context!.restore();
 
         allTextTags.forEach((texts: TextTag) => {
           const { textPositionX, textPositionY, text, color, size, id: currentId } = texts;
@@ -505,14 +540,12 @@ export const handleCross = ({
   drawing,
   blur,
   rotate,
-  brightness,
-  dimensions
+  brightness
 }: HandleCrossProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
   image.src = imgSrc;
-  const { width, height } = dimensions;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   setTempPrompt(false);
@@ -521,22 +554,21 @@ export const handleCross = ({
   context!.clearRect(0, 0, canvas!.width, canvas!.height);
   context!.filter = `blur(${blur}px) brightness(${brightness})`;
 
-  if (rotate !== 0) {
-    console.log("controls index");
-    context!.clearRect(0, 0, canvas!.width, canvas!.height);
-    context!.save();
-    context!.translate(canvas!.width / 2, canvas!.height / 2);
-    context!.rotate(degToRad(rotate++ % 360));
-    context!.drawImage(
-      image,
-      image.width / -2,
-      image.height / -2,
-      image.width,
-      image.height
-    );
-    context!.restore();
-  }
-  context!.drawImage(image, 0, 0, width, height);
+  context!.clearRect(0, 0, canvas!.width, canvas!.height);
+  image.width = canvas!.width;
+  image.height = canvas!.height;
+
+  context!.save();
+  context!.translate(canvas!.width / 2, canvas!.height / 2);
+  context!.rotate(degToRad(rotate++ % 360));
+  context!.drawImage(
+    image,
+    image.width / -2,
+    image.height / -2,
+    image.width,
+    image.height
+  );
+  context!.restore();
 
   allTextTags.forEach((textTags: TextTag) => {
     context!.textBaseline = "alphabetic";
