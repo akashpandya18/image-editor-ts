@@ -18,11 +18,11 @@ export interface ButtonProps {
   onClick: () => void;
 }
 
-export interface FilterOptionsProps {
-  id: number;
-  name: string;
-  checked: boolean;
-}
+// export interface FilterOptionsProps {
+//   id: number;
+//   name: string;
+//   checked: boolean;
+// }
 
 export interface ControlsProps {
   imgSrc: string;
@@ -107,6 +107,7 @@ export interface HandleSubmitTagProps {
   showAllTags: boolean;
   allTextTags: TextTag[];
   rotate: number;
+  drawing: string;
 }
 
 export interface HandleClearSingleTagProps {
@@ -124,6 +125,7 @@ export interface HandleClearSingleTagProps {
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
   allTextTags: TextTag[];
   rotate: number;
+  drawing: string;
 }
 
 export interface HideTagsProps {
@@ -184,6 +186,7 @@ export interface TextOnImageControlProps {
   annotations: AnnotationProps[];
   allTextTags: TextTag[];
   handleCross: () => void;
+  drawing: string;
 }
 
 export interface FontSizeOptionsProps {
@@ -216,6 +219,7 @@ export interface TextOnImageClickHandlerProps {
   allTextTags: TextTag[];
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   setFormData: React.Dispatch<React.SetStateAction<{ text: string; size: number; color: string; id: string; }>>;
+  drawing: string;
 }
 
 export interface TextFormProps {
@@ -291,6 +295,7 @@ export interface HandleMouseMoveProps {
   zoom: number;
   rotate: number;
   brightness: number;
+  setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface HandleMouseDownProps {
@@ -418,7 +423,6 @@ export interface MouseMoveProps {
   setHoverTag: React.Dispatch<React.SetStateAction<string>>;
   setHoverPos: React.Dispatch<React.SetStateAction<{ hoveredDotX: number; hoveredDotY: number; }>>;
   setShowH: React.Dispatch<React.SetStateAction<boolean>>;
-  difference: DifferenceProps;
 }
 
 export interface MouseUPProps {
@@ -451,6 +455,9 @@ interface MouseUpProps {
 export interface FlipCanvasProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   handleTagMouseMove: (tagHoverEvent: React.MouseEvent<HTMLCanvasElement>) => void;
+  drawingPen: { x: number; y: number; }[];
+  imgSrc: string;
+  drawing: string;
 }
 
 export interface MouseLeaveProps {
@@ -494,6 +501,9 @@ export interface FlipVerticallyProps {
 export interface PenProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   handleTagMouseMove: (tagHoverEvent: React.MouseEvent<HTMLCanvasElement>) => void;
+  setDrawingPen: React.Dispatch<React.SetStateAction<{ x: number; y: number; }[] | never[] | any>>;
+  imgSrc: string;
+  drawing: string;
 }
 
 export interface PenControlProps {

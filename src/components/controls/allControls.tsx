@@ -48,7 +48,8 @@ export const TextOnImageControl = ({
   imgSrc,
   annotations,
   allTextTags,
-  handleCross
+  handleCross,
+  drawing
 }: TextOnImageControlProps): JSX.Element => {
   let data = { text: "", color: "", size: 0, id: "" };
 
@@ -67,7 +68,7 @@ export const TextOnImageControl = ({
       const canvas = canvasRef.current;
       const context = canvas!.getContext("2d");
       const image = new Image();
-      image.src = imgSrc;
+      drawing !== "" ? image.src = drawing : image.src = imgSrc;
 
       context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
       annotations.forEach((annotationData: AnnotationProps) => {

@@ -27,74 +27,74 @@ export const mouseDown = ({
     mouseY > currentCropped.startingY - 5 &&
     mouseY < currentCropped.startingY + 5
   ) {
-    setIsResize(true);
-    setCroppingNode(1);
-  } else if (
-    mouseX > currentCropped.startingX + 5 &&
-    mouseX < currentCropped.startingX + currentCropped.width - 5 &&
-    mouseY > currentCropped.startingY - 5 &&
-    mouseY < currentCropped.startingY + 5
-  ) {
-    setIsResize(true);
-    setCroppingNode(2);
+    setIsResize(true)
+    setCroppingNode(1)
   } else if (
     mouseX > currentCropped.startingX + currentCropped.width - 5 &&
     mouseX < currentCropped.startingX + currentCropped.width + 5 &&
     mouseY > currentCropped.startingY - 5 &&
     mouseY < currentCropped.startingY + 5
   ) {
-    setIsResize(true);
-    setCroppingNode(3);
+    setIsResize(true)
+    setCroppingNode(2)
   } else if (
-    mouseX > currentCropped.startingX + currentCropped.width - 5 &&
-    mouseX < currentCropped.startingX + currentCropped.width + 5 &&
-    mouseY > currentCropped.startingY &&
-    mouseY < currentCropped.height + currentCropped.startingY
+    mouseX > currentCropped.startingX - 5 &&
+    mouseX < currentCropped.startingX + 5 &&
+    mouseY > currentCropped.startingY + currentCropped.height - 5 &&
+    mouseY < currentCropped.startingY + currentCropped.height + 5
   ) {
-    setIsResize(true);
-    setCroppingNode(4);
+    setIsResize(true)
+    setCroppingNode(3)
   } else if (
     mouseX > currentCropped.startingX + currentCropped.width - 5 &&
     mouseX < currentCropped.startingX + currentCropped.width + 5 &&
     mouseY > currentCropped.startingY + currentCropped.height - 5 &&
     mouseY < currentCropped.startingY + currentCropped.height + 5
   ) {
-    setIsResize(true);
-    setCroppingNode(5);
+    setIsResize(true)
+    setCroppingNode(4)
+  } else if (
+    mouseX > currentCropped.startingX + 5 &&
+    mouseX < currentCropped.startingX + currentCropped.width - 5 &&
+    mouseY > currentCropped.startingY - 5 &&
+    mouseY < currentCropped.startingY + 5
+  ) {
+    setIsResize(true)
+    setCroppingNode(5)
+  } else if (
+    mouseX > currentCropped.startingX - 5 &&
+    mouseX < currentCropped.startingX + 5 &&
+    mouseY > currentCropped.startingY &&
+    mouseY < currentCropped.height + currentCropped.startingY
+  ) {
+    setIsResize(true)
+    setCroppingNode(6)
   } else if (
     mouseX > currentCropped.startingX + 5 &&
     mouseX < currentCropped.startingX + currentCropped.width - 5 &&
     mouseY > currentCropped.startingY + currentCropped.height - 5 &&
     mouseY < currentCropped.startingY + currentCropped.height + 5
   ) {
-    setIsResize(true);
-    setCroppingNode(6);
+    setIsResize(true)
+    setCroppingNode(7)
   } else if (
-    mouseX > currentCropped.startingX - 5 &&
-    mouseX < currentCropped.startingX + 5 &&
-    mouseY > currentCropped.startingY + currentCropped.height - 5 &&
-    mouseY < currentCropped.startingY + currentCropped.height + 5
-  ) {
-    setIsResize(true);
-    setCroppingNode(7);
-  } else if (
-    mouseX > currentCropped.startingX - 5 &&
-    mouseX < currentCropped.startingX + 5 &&
+    mouseX > currentCropped.startingX + currentCropped.width - 5 &&
+    mouseX < currentCropped.startingX + currentCropped.width + 5 &&
     mouseY > currentCropped.startingY &&
     mouseY < currentCropped.height + currentCropped.startingY
   ) {
-    setIsResize(true);
-    setCroppingNode(8);
+    setIsResize(true)
+    setCroppingNode(8)
   } else if (
     mouseX > currentCropped.startingX &&
     mouseX < currentCropped.width + currentCropped.startingX &&
     mouseY > currentCropped.startingY &&
     mouseY < currentCropped.height + currentCropped.startingY
   ) {
-    setIsDragging(true);
+    setIsDragging(true)
   } else {
-    setIsDragging(false);
-    setIsResize(false);
+    setIsDragging(false)
+    setIsResize(false)
   }
   setStartingNode({ startingNodeX: mouseX, startingNodeY: mouseY });
 };
@@ -146,8 +146,7 @@ export const mouseMove = ({
   allTextTags,
   setHoverTag,
   setHoverPos,
-  setShowH,
-  difference
+  setShowH
 }: MouseMoveProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -236,12 +235,10 @@ export const mouseMove = ({
   }
 
   if (isDragging) {
-    console.log("currentCropped dragging", currentCropped);
-    console.log("difference dragging", difference);
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
     const image = new Image();
-    image.src = imgSrc;
+    drawing !== "" ? image.src = drawing : image.src = imgSrc;
 
     context!.clearRect(0, 0, canvas!.width, canvas!.height);
     context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
@@ -316,8 +313,6 @@ export const mouseMove = ({
   }
 
   if (isResize) {
-    console.log("currentCropped resizing", currentCropped);
-    console.log("difference resizing", difference);
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
     const image = imgRef.current;
@@ -336,49 +331,47 @@ export const mouseMove = ({
       moveY: currentCropped.startingY + (mouseY - startingNode.startingNodeY)
     };
 
-    context!.setLineDash([5, 5]);
-    // left top node
-    context!.beginPath();
-    context!.lineWidth = 3;
-    context!.lineJoin = "round";
-    context!.strokeRect(movedArea.moveX - 5, movedArea.moveY - 5, 10, 0);
-    context!.strokeRect(movedArea.moveX - 5, movedArea.moveY - 5, 0, 10);
-    context!.fillStyle = "white";
-    context!.fill();
-    context!.stroke();
-    // right top node
-    context!.beginPath();
-    context!.lineWidth = 3;
-    context!.lineJoin = "round";
-    context!.strokeRect(movedArea.moveX + currentCropped.width + 5, movedArea.moveY - 5, -10, 0);
-    context!.strokeRect(movedArea.moveX + currentCropped.width + 5, movedArea.moveY - 5, 0, 10);
-    context!.fillStyle = "white";
-    context!.fill();
-    context!.stroke();
-    // left bottom node
-    context!.beginPath();
-    context!.lineWidth = 3;
-    context!.lineJoin = "round";
-    context!.strokeRect(movedArea.moveX - 5, movedArea.moveY + currentCropped.height + 5, 10, 0);
-    context!.strokeRect(movedArea.moveX - 5, movedArea.moveY + currentCropped.height + 5, 0, -10);
-    context!.fillStyle = "white";
-    context!.fill();
-    context!.stroke();
-    // right bottom node
-    context!.beginPath();
-    context!.lineWidth = 3;
-    context!.lineJoin = "round";
-    context!.strokeRect(movedArea.moveX - 5 + currentCropped.width, movedArea.moveY + currentCropped.height + 5, 10, 0);
-    context!.strokeRect(movedArea.moveX + 5 + currentCropped.width, movedArea.moveY + currentCropped.height + 5, 0, -10);
-    context!.fillStyle = "white";
-    context!.fill();
-    context!.stroke();
-
     switch (croppingNode) {
       case 1:
         widthDiff = currentCropped.startingX - mouseX;
         heightDiff = currentCropped.startingY - mouseY;
         context!.strokeRect(mouseX, mouseY, currentCropped.width + widthDiff, currentCropped.height + heightDiff);
+        // left top node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(movedArea.moveX - 5, movedArea.moveY - 5, 10, 0);
+        context!.strokeRect(movedArea.moveX - 5, movedArea.moveY - 5, 0, 10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
+        // right top node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(currentCropped.startingX + currentCropped.width + 5, movedArea.moveY - 5, -10, 0);
+        context!.strokeRect(currentCropped.startingX + currentCropped.width + 5, movedArea.moveY - 5, 0, 10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
+        // left bottom node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(movedArea.moveX - 5, movedArea.moveY + currentCropped.height + 5, 10, 0);
+        context!.strokeRect(movedArea.moveX - 5, movedArea.moveY + currentCropped.height + 5, 0, -10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
+        // right bottom node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(movedArea.moveX - 5 + currentCropped.width, movedArea.moveY + currentCropped.height + 5, 10, 0);
+        context!.strokeRect(movedArea.moveX + 5 + currentCropped.width, movedArea.moveY + currentCropped.height + 5, 0, -10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
         setDifference({
           width: currentCropped.width + widthDiff,
           height: currentCropped.height + heightDiff,
@@ -417,6 +410,42 @@ export const mouseMove = ({
       case 5:
         heightDiff = currentCropped.startingY - mouseY;
         context!.strokeRect(currentCropped.startingX, mouseY, currentCropped.width, currentCropped.height + heightDiff);
+        // left top node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(movedArea.moveX - 5, movedArea.moveY - 5, 10, 0);
+        context!.strokeRect(movedArea.moveX - 5, movedArea.moveY - 5, 0, 10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
+        // right top node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(currentCropped.startingX + currentCropped.width + 5, movedArea.moveY - 5, -10, 0);
+        context!.strokeRect(currentCropped.startingX + currentCropped.width + 5, movedArea.moveY - 5, 0, 10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
+        // left bottom node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(movedArea.moveX - 5, currentCropped.startingY + currentCropped.height + 5, 10, 0);
+        context!.strokeRect(movedArea.moveX - 5, currentCropped.startingY + currentCropped.height + 5, 0, -10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
+        // right bottom node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(currentCropped.startingX - 5 + currentCropped.width, currentCropped.startingY + currentCropped.height + 5, 10, 0);
+        context!.strokeRect(currentCropped.startingX + 5 + currentCropped.width, currentCropped.startingY + currentCropped.height + 5, 0, -10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
         setDifference({
           width: 0,
           height: currentCropped.height + heightDiff,
@@ -427,6 +456,42 @@ export const mouseMove = ({
       case 6:
         widthDiff = currentCropped.startingX - mouseX;
         context!.strokeRect(mouseX, currentCropped.startingY, currentCropped.width + widthDiff, currentCropped.height);
+        // left top node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(movedArea.moveX - 5, currentCropped.startingY - 5, 10, 0);
+        context!.strokeRect(movedArea.moveX - 5, currentCropped.startingY - 5, 0, 10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
+        // right top node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(currentCropped.startingX + currentCropped.width + 5, currentCropped.startingY - 5, -10, 0);
+        context!.strokeRect(currentCropped.startingX + currentCropped.width + 5, currentCropped.startingY - 5, 0, 10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
+        // left bottom node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(movedArea.moveX - 5, movedArea.moveY + currentCropped.height + 5, 10, 0);
+        context!.strokeRect(movedArea.moveX - 5, movedArea.moveY + currentCropped.height + 5, 0, -10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
+        // right bottom node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(currentCropped.startingX - 5 + currentCropped.width, movedArea.moveY + currentCropped.height + 5, 10, 0);
+        context!.strokeRect(currentCropped.startingX + 5 + currentCropped.width, movedArea.moveY + currentCropped.height + 5, 0, -10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
         setDifference({
           width: currentCropped.width + widthDiff,
           height: 0,
@@ -437,6 +502,42 @@ export const mouseMove = ({
       case 7:
         heightDiff = mouseY - (currentCropped.startingY + currentCropped.height);
         context!.strokeRect(currentCropped.startingX, currentCropped.startingY, currentCropped.width, currentCropped.height + heightDiff);
+        // left top node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(currentCropped.startingX - 5, currentCropped.startingY - 5, 10, 0);
+        context!.strokeRect(currentCropped.startingX - 5, currentCropped.startingY - 5, 0, 10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
+        // right top node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(movedArea.moveX + currentCropped.width + 5, currentCropped.startingY - 5, -10, 0);
+        context!.strokeRect(movedArea.moveX + currentCropped.width + 5, currentCropped.startingY - 5, 0, 10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
+        // left bottom node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(currentCropped.startingX - 5, movedArea.moveY + currentCropped.height + 5, 10, 0);
+        context!.strokeRect(currentCropped.startingX - 5, movedArea.moveY + currentCropped.height + 5, 0, -10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
+        // right bottom node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(movedArea.moveX - 5 + currentCropped.width, movedArea.moveY + currentCropped.height + 5, 10, 0);
+        context!.strokeRect(movedArea.moveX + 5 + currentCropped.width, movedArea.moveY + currentCropped.height + 5, 0, -10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
         setDifference({
           width: 0,
           height: currentCropped.height + heightDiff,
@@ -447,6 +548,42 @@ export const mouseMove = ({
       case 8:
         widthDiff = mouseX - (currentCropped.startingX + currentCropped.width);
         context!.strokeRect(currentCropped.startingX, currentCropped.startingY, currentCropped.width + widthDiff, currentCropped.height);
+        // left top node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(currentCropped.startingX - 5, movedArea.moveY - 5, 10, 0);
+        context!.strokeRect(currentCropped.startingX - 5, movedArea.moveY - 5, 0, 10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
+        // right top node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(movedArea.moveX + currentCropped.width + 5, movedArea.moveY - 5, -10, 0);
+        context!.strokeRect(movedArea.moveX + currentCropped.width + 5, movedArea.moveY - 5, 0, 10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
+        // left bottom node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(currentCropped.startingX - 5, movedArea.moveY + currentCropped.height + 5, 10, 0);
+        context!.strokeRect(currentCropped.startingX - 5, movedArea.moveY + currentCropped.height + 5, 0, -10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
+        // right bottom node
+        context!.beginPath();
+        context!.lineWidth = 3;
+        context!.lineJoin = "round";
+        context!.strokeRect(movedArea.moveX - 5 + currentCropped.width, movedArea.moveY + currentCropped.height + 5, 10, 0);
+        context!.strokeRect(movedArea.moveX + 5 + currentCropped.width, movedArea.moveY + currentCropped.height + 5, 0, -10);
+        context!.fillStyle = "white";
+        context!.fill();
+        context!.stroke();
         setDifference({
           width: currentCropped.width + widthDiff,
           height: 0,

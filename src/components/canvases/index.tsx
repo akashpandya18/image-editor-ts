@@ -91,7 +91,8 @@ export const TextOnImageCanvas = ({
         imgSrc,
         allTextTags,
         setIsEditing,
-        setFormData
+        setFormData,
+        drawing
       })}
       onMouseMove={(textOnImageMouseMoveEvent: React.MouseEvent<HTMLCanvasElement>) => handleMouseMove({
         textOnImageMouseMoveEvent,
@@ -110,7 +111,8 @@ export const TextOnImageCanvas = ({
         blur,
         zoom,
         rotate,
-        brightness
+        brightness,
+        setDeleteTextTag
       })}
       onMouseDown={(textOnImageMouseDownEvent: React.MouseEvent<HTMLCanvasElement>) => handleMouseDown({
         textOnImageMouseDownEvent,
@@ -206,8 +208,7 @@ export const CropCanvas = ({
           allTextTags,
           setHoverTag,
           setHoverPos,
-          setShowH,
-          difference
+          setShowH
         })}
         onMouseUp={(cropMouseUpLeaveEvent) => mouseUP({
           cropMouseUpLeaveEvent,
@@ -241,7 +242,29 @@ export const CropCanvas = ({
   );
 };
 
-export const FlipCanvas = ({ canvasRef, handleTagMouseMove }: FlipCanvasProps) => {
+export const FlipCanvas = ({ canvasRef, handleTagMouseMove, drawingPen, imgSrc, drawing }: FlipCanvasProps) => {
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas!.getContext("2d");
+    const image = new Image();
+    drawing !== "" ? image.src = drawing : image.src = imgSrc;
+
+    // context!.clearRect(0, 0, canvas!.width, canvas!.height);
+
+    // Draw the lines connecting the points
+    context!.beginPath();
+    drawingPen.forEach((point: { x: number; y: number; }, index: number) => {
+      const { x, y } = point;
+      if (index === 0) {
+        context!.moveTo(x, y);
+      } else {
+        context!.lineTo(x, y);
+      }
+    });
+    context!.stroke();
+    // context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
+  }, [drawingPen]);
+
   return (
     <canvas
       ref={canvasRef}
@@ -254,7 +277,7 @@ export const FlipCanvas = ({ canvasRef, handleTagMouseMove }: FlipCanvasProps) =
   );
 };
 
-export const PenCanvas = ({ canvasRef, handleTagMouseMove }: PenProps) => {
+export const PenCanvas = ({ canvasRef, /* handleTagMouseMove, */ setDrawingPen, imgSrc, drawing }: PenProps) => {
   const [isDrawing, setIsDrawing] = useState(false);
 
   const startDrawing = (penMouseDownEvent: React.MouseEvent<HTMLCanvasElement>) => {
@@ -271,16 +294,22 @@ export const PenCanvas = ({ canvasRef, handleTagMouseMove }: PenProps) => {
   const draw = (penMouseMoveEvent: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
+    const image = new Image();
+    drawing !== "" ? image.src = drawing : image.src = imgSrc;
     if (!isDrawing) return;
 
     const mouseX = penMouseMoveEvent.nativeEvent.offsetX;
     const mouseY = penMouseMoveEvent.nativeEvent.offsetY;
+    const { clientX, clientY } = penMouseMoveEvent; // Assuming the event provides the coordinates
 
     if (context) {
       // handleTagMouseMove(penMouseMoveEvent);
       context.lineTo(mouseX, mouseY);
       context.stroke();
     }
+
+    // Update the drawing state with the new point
+    setDrawingPen((prevDrawing: ({ x: number; y: number; })[]) => [...prevDrawing, { x: clientX, y: clientY }]);
   };
 
   const stopDrawing = () => { setIsDrawing(false); };
@@ -334,7 +363,7 @@ export const MoreFilterCanvas = ({
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
     const image = new Image();
-    image.src = imgSrc;
+    drawing !== "" ? image.src = drawing : image.src = imgSrc;
 
     context!.clearRect(0, 0, canvas!.width, canvas!.height);
 

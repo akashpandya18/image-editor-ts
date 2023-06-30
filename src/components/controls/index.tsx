@@ -47,7 +47,7 @@ import { TagAnnotationForm } from "../forms/TagAnnotForm";
 import TempRedTag from "../prompts/ConfirmSubmitTag";
 import {
   MoreFilterControls,
-  filterOptions,
+  // filterOptions,
   handleToolClick,
   OptionsTools
 } from "../../utils/data";
@@ -57,7 +57,7 @@ import {
   Cropped,
   TextFormProps,
   TextTag,
-  FilterOptionsProps,
+  // FilterOptionsProps,
   ControlsType
 } from "../../types";
 import { HideTags, ShowTags } from "../../assets/icons";
@@ -99,6 +99,7 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
   const [flipVertical, setFlipVertical] = useState<boolean>(false);
   // Pen Canvas
   const [drawing, setDrawing] = useState("");
+  const [drawingPen, setDrawingPen] = useState([]);
   // More filter Canvas
   let [blur, setBlur] = useState<number>(0);
   const [zoom, setZoom] = useState<number>(1);
@@ -113,7 +114,7 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
   // set height and width of image on canvas
   useEffect(() => {
     const image = new Image();
-    image.src = imgSrc;
+    drawing !== "" ? image.src = drawing : image.src = imgSrc;
 
     image.onload = () => {
       const { width, height } = image;
@@ -146,6 +147,7 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
   };
   // values are sync with all tabs
   useEffect(() => {
+    setTempPrompt(false);
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
     const { width, height } = dimensions;
@@ -179,7 +181,6 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
         context!.clearRect(0, 0, canvas!.width, canvas!.height);
         context!.filter = `blur(${blur}px) brightness(${brightness})`;
 
-        context!.clearRect(0, 0, canvas!.width, canvas!.height);
         image.width = canvas!.width;
         image.height = canvas!.height;
         context!.save();
@@ -413,12 +414,13 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
     setTempPrompt(false);
     setError("");
     setDeleteTextTag(false);
+    setDrawingPen([]);
 
     const canvas: HTMLCanvasElement | null = canvasRef.current;
     const { width, height } = dimensions;
     const context = canvas!.getContext("2d");
     const image = new Image();
-    image.src = imgSrc;
+    drawing !== "" ? image.src = drawing : image.src = imgSrc;
 
     canvas!.width = width;
     canvas!.height = height;
@@ -431,28 +433,28 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
   return (
     <div className={"controls-out"}>
       {/* filter options */}
-      <div className={"options-div"}>
-        <div>
-          <h3> Tabs </h3>
-          <div style={{ marginTop: "1rem" }}>
-            {filterOptions.map((filterOptionsValue: FilterOptionsProps) => {
-              return (
-                <div className={"filter-options-div"} key={filterOptionsValue.id}>
-                  <input
-                    type={"checkbox"}
-                    name={filterOptionsValue.name}
-                    value={filterOptionsValue.name}
-                    className={"checkbox"}
-                    // onChange={() => filterOptionsValue.checked = !filterOptionsValue.checked}
-                    // checked={filterOptionsValue.checked}
-                  />
-                  <label> {filterOptionsValue.name} </label>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+      {/*<div className={"options-div"}>*/}
+      {/*  <div>*/}
+      {/*    <h3> Tabs </h3>*/}
+      {/*    <div style={{ marginTop: "1rem" }}>*/}
+      {/*      {filterOptions.map((filterOptionsValue: FilterOptionsProps) => {*/}
+      {/*        return (*/}
+      {/*          <div className={"filter-options-div"} key={filterOptionsValue.id}>*/}
+      {/*            <input*/}
+      {/*              type={"checkbox"}*/}
+      {/*              name={filterOptionsValue.name}*/}
+      {/*              value={filterOptionsValue.name}*/}
+      {/*              className={"checkbox"}*/}
+      {/*              // onChange={() => filterOptionsValue.checked = !filterOptionsValue.checked}*/}
+      {/*              // checked={filterOptionsValue.checked}*/}
+      {/*            />*/}
+      {/*            <label> {filterOptionsValue.name} </label>*/}
+      {/*          </div>*/}
+      {/*        );*/}
+      {/*      })}*/}
+      {/*    </div>*/}
+      {/*  </div>*/}
+      {/*</div>*/}
 
       <div className={"controls-main"}>
         {/* tools */}
@@ -519,6 +521,7 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
                 rotate,
                 brightness
               })}
+              drawing={drawing}
             />
           ) : currentControl === "crop" ? (
             <CropControl
@@ -675,6 +678,9 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
               setHoverPos,
               setShowH
             })}
+            drawingPen={drawingPen}
+            imgSrc={imgSrc}
+            drawing={drawing}
           />
         ) : currentControl === "pen" ? (
           <PenCanvas
@@ -687,6 +693,9 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
               setHoverPos,
               setShowH
             })}
+            setDrawingPen={setDrawingPen}
+            imgSrc={imgSrc}
+            drawing={drawing}
           />
         ) : currentControl === "more" ? (
           <MoreFilterCanvas
@@ -733,7 +742,8 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
                 setTempRedPrompt,
                 showAllTags,
                 allTextTags,
-                rotate
+                rotate,
+                drawing
               })}
               position={currentAnnotation}
             />
@@ -759,7 +769,8 @@ export const Controls = ({ imgSrc, setImgSrc }: ControlsProps): JSX.Element => {
               setTempRedPrompt,
               setShowAllTags,
               allTextTags,
-              rotate
+              rotate,
+              drawing
             })}
           />
         )}

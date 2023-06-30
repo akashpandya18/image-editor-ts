@@ -12,20 +12,20 @@ import {
   Brightness
 } from "../assets/icons";
 import {
-  FilterOptionsProps,
+  // FilterOptionsProps,
   ControlsType,
   FontSizeOptionsProps,
   HandleToolClickProps
 } from "../types";
 
-export const filterOptions: FilterOptionsProps[] = [
-  { id: 1, name: "Tag/Annotation", checked: true },
-  { id: 2, name: "Text on Image", checked: true },
-  { id: 3, name: "Crop", checked: false },
-  { id: 4, name: "Flip", checked: true },
-  { id: 5, name: "Pen", checked: true },
-  { id: 6, name: "More", checked: true }
-];
+// export const filterOptions: FilterOptionsProps[] = [
+//   { id: 1, name: "Tag/Annotation", checked: true },
+//   { id: 2, name: "Text on Image", checked: true },
+//   { id: 3, name: "Crop", checked: false },
+//   { id: 4, name: "Flip", checked: true },
+//   { id: 5, name: "Pen", checked: true },
+//   { id: 6, name: "More", checked: true }
+// ];
 
 export const MoreFilterControls: ControlsType[] = [
   { id: 1, name: "Blur", type: "blur", icon: <Blur /> },

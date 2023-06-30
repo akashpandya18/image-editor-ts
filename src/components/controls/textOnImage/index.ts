@@ -22,7 +22,8 @@ export const clickHandler = ({
   imgSrc,
   allTextTags,
   setIsEditing,
-  setFormData
+  setFormData,
+  drawing
 }: TextOnImageClickHandlerProps) => {
   const currentClickedX = textOnImageClickEvent.nativeEvent.offsetX;
   const currentClickedY = textOnImageClickEvent.nativeEvent.offsetY;
@@ -49,7 +50,7 @@ export const clickHandler = ({
     context!.lineWidth = 2;
 
     const image = new Image();
-    image.src = imgSrc;
+    drawing !== "" ? image.src = drawing : image.src = imgSrc;
     image.width = canvas!.width;
     image.height = canvas!.height;
 
@@ -88,7 +89,7 @@ export const textOnChangeHandler = ({
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = imgSrc;
+  drawing !== "" ? image.src = drawing : image.src = imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   context!.setLineDash([10, 10]);
@@ -268,7 +269,8 @@ export const handleMouseMove = ({
   blur,
   zoom,
   rotate,
-  brightness
+  brightness,
+  setDeleteTextTag
 }: HandleMouseMoveProps) => {
   const mouseX = textOnImageMouseMoveEvent.nativeEvent.offsetX;
   const mouseY = textOnImageMouseMoveEvent.nativeEvent.offsetY;
@@ -276,13 +278,15 @@ export const handleMouseMove = ({
   const context = canvas!.getContext("2d");
   const { width, height } = dimensions;
   const image = new Image();
-  image.src = imgSrc;
+  drawing !== "" ? image.src = drawing : image.src = imgSrc;
 
   handleTagMouseMove(textOnImageMouseMoveEvent);
 
   showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
 
   if (isDraggingText) {
+    setDeleteTextTag(false);
+
     canvas!.width = width;
     canvas!.height = height;
     context!.strokeStyle = "gray";
@@ -545,7 +549,7 @@ export const handleCross = ({
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = imgSrc;
+  drawing !== "" ? image.src = drawing : image.src = imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   setTempPrompt(false);

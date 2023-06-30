@@ -110,7 +110,8 @@ export const handleSubmitTag = ({
   setTempRedPrompt,
   showAllTags,
   allTextTags,
-  rotate
+  rotate,
+  drawing
 }: HandleSubmitTagProps) => {
   tagSubmitEvent.preventDefault();
   const currentAnnotationX = currentAnnotation.currentAnnotationX;
@@ -118,7 +119,7 @@ export const handleSubmitTag = ({
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = imgSrc;
+  drawing !== "" ? image.src = drawing : image.src = imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   image.width = canvas!.width;
@@ -217,7 +218,8 @@ export const handleClearSingleTag = ({
   setTempRedPrompt,
   setShowAllTags,
   allTextTags,
-  rotate
+  rotate,
+  drawing
 }: HandleClearSingleTagProps) => {
   clearSingleTagEvent.preventDefault();
   setShowAllTags(false);
@@ -225,7 +227,7 @@ export const handleClearSingleTag = ({
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = imgSrc;
+  drawing !== "" ? image.src = drawing : image.src = imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   setTimeout(() => {
