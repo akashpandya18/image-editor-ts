@@ -111,7 +111,8 @@ export const handleSubmitTag = ({
   showAllTags,
   allTextTags,
   rotate,
-  drawing
+  drawing,
+  cropCanvas
 }: HandleSubmitTagProps) => {
   tagSubmitEvent.preventDefault();
   const currentAnnotationX = currentAnnotation.currentAnnotationX;
@@ -119,7 +120,7 @@ export const handleSubmitTag = ({
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  drawing !== "" ? image.src = drawing : image.src = imgSrc;
+  image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   image.width = canvas!.width;
@@ -219,7 +220,8 @@ export const handleClearSingleTag = ({
   setShowAllTags,
   allTextTags,
   rotate,
-  drawing
+  drawing,
+  cropCanvas
 }: HandleClearSingleTagProps) => {
   clearSingleTagEvent.preventDefault();
   setShowAllTags(false);
@@ -227,7 +229,7 @@ export const handleClearSingleTag = ({
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  drawing !== "" ? image.src = drawing : image.src = imgSrc;
+  image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   setTimeout(() => {
@@ -278,15 +280,13 @@ export const hideTags = ({
   drawing,
   allTextTags,
   rotate,
-  dimensions,
-  currentCropped,
-  selectCanvas
+  cropCanvas
 }: HideTagsProps) => {
   setShowAllTags(false);
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  drawing !== "" ? image.src = drawing : image.src = imgSrc;
+  image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   setTimeout(() => {
@@ -305,51 +305,6 @@ export const hideTags = ({
       image.height
     );
     context!.restore();
-
-    if (selectCanvas) {
-      context!.strokeStyle = "white";
-      context!.setLineDash([5, 5]);
-      context!.lineWidth = 2;
-      context!.strokeRect(currentCropped.startingX, currentCropped.startingY, currentCropped.width, currentCropped.height);
-
-      context!.setLineDash([5, 5]);
-      // left top node
-      context!.beginPath();
-      context!.lineWidth = 3;
-      context!.lineJoin = "round";
-      context!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 10, 0);
-      context!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) - 5, 0, 10);
-      context!.fillStyle = "white";
-      context!.fill();
-      context!.stroke();
-      // right top node
-      context!.beginPath();
-      context!.lineWidth = 3;
-      context!.lineJoin = "round";
-      context!.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, -10, 0);
-      context!.strokeRect((dimensions.width / 4) + (dimensions.width / 4) + 5, (dimensions.height / 4) - 5, 0, 10);
-      context!.fillStyle = "white";
-      context!.fill();
-      context!.stroke();
-      // left bottom node
-      context!.beginPath();
-      context!.lineWidth = 3;
-      context!.lineJoin = "round";
-      context!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0);
-      context!.strokeRect((dimensions.width / 4) - 5, (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10);
-      context!.fillStyle = "white";
-      context!.fill();
-      context!.stroke();
-      // right bottom node
-      context!.beginPath();
-      context!.lineWidth = 3;
-      context!.lineJoin = "round";
-      context!.strokeRect((dimensions.width / 4) - 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 10, 0);
-      context!.strokeRect((dimensions.width / 4) + 5 + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) + 5, 0, -10);
-      context!.fillStyle = "white";
-      context!.fill();
-      context!.stroke();
-    }
 
     annotations.forEach((annotationData: AnnotationProps) => {
       context!.beginPath();
@@ -372,13 +327,14 @@ export const showTags = ({
   canvasRef,
   annotations,
   drawing,
-  allTextTags
+  allTextTags,
+  cropCanvas
 }: ShowTagsProps) => {
   setShowAllTags(true);
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  drawing !== "" ? image.src = drawing : image.src = imgSrc;
+  image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
 
   image.width = canvas!.width;
   image.height = canvas!.height;

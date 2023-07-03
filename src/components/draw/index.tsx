@@ -7,15 +7,28 @@ import {
   TextTag
 } from "../../types";
 
-export const saveDrawing = ({ canvasRef, setDrawing, imgSrc }: SaveDrawingProps) => {
+export const saveDrawing = ({ canvasRef, /* setDrawing, */ setBlur, blur, /* imgSrc, */ drawingPen }: SaveDrawingProps) => {
   const canvas = canvasRef.current;
-  // const context = canvas!.getContext("2d");
+  const context = canvas!.getContext("2d");
   const image = new Image();
-  imgSrc = canvas!.toDataURL();
-  image.src = imgSrc;
+  image.src = canvas!.toDataURL(); // imgSrc;
 
-  // context.drawImage(image, 0, 0, canvas.width, canvas.height);
-  setDrawing(canvas!.toDataURL());
+  setBlur(blur);
+  context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
+  // setDrawing(canvas!.toDataURL());
+
+  // Draw the lines connecting the points
+  context!.beginPath();
+  console.log("drawingPen in draw save", drawingPen);
+  drawingPen.forEach((point: { x: number; y: number; }, index: number) => {
+    const { x, y } = point;
+    if (index === 0) {
+      context!.moveTo(x, y);
+    } else {
+      context!.lineTo(x, y);
+    }
+  });
+  context!.stroke();
 };
 
 export const clearDrawing = ({
@@ -26,7 +39,8 @@ export const clearDrawing = ({
   showAllTags,
   setShowAllTags,
   drawing,
-  allTextTags
+  allTextTags,
+  cropCanvas
 }: ClearDrawingProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -36,7 +50,7 @@ export const clearDrawing = ({
   const message = confirm("Do you want to clear the draw?");
   message &&
     setDrawing("");
-    showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags});
+    showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags, cropCanvas});
     context!.clearRect(0, 0, canvas!.width, canvas!.height);
     context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
     allTextTags.forEach((textTags: TextTag) => {

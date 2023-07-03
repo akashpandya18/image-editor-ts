@@ -22,7 +22,7 @@ import {
   CropProps,
   FlipCanvasProps,
   PenProps,
-  MoreFilterProps
+  MoreFilterProps, AnnotationProps
 } from "../../types";
 
 export const RegularCanvas = ({ canvasRef }: CanvasRefProps) => {
@@ -71,7 +71,8 @@ export const TextOnImageCanvas = ({
   blur,
   zoom,
   rotate,
-  brightness
+  brightness,
+  cropCanvas
 }: TextOnImageProps) => {
   const [isDraggingText, setIsDraggingText] = useState<boolean>(false);
   const [draggingText, setDraggingText] = useState<string>("");
@@ -92,7 +93,8 @@ export const TextOnImageCanvas = ({
         allTextTags,
         setIsEditing,
         setFormData,
-        drawing
+        drawing,
+        cropCanvas
       })}
       onMouseMove={(textOnImageMouseMoveEvent: React.MouseEvent<HTMLCanvasElement>) => handleMouseMove({
         textOnImageMouseMoveEvent,
@@ -112,7 +114,8 @@ export const TextOnImageCanvas = ({
         zoom,
         rotate,
         brightness,
-        setDeleteTextTag
+        setDeleteTextTag,
+        cropCanvas
       })}
       onMouseDown={(textOnImageMouseDownEvent: React.MouseEvent<HTMLCanvasElement>) => handleMouseDown({
         textOnImageMouseDownEvent,
@@ -151,7 +154,8 @@ export const CropCanvas = ({
   allTextTags,
   setHoverTag,
   setHoverPos,
-  setShowH
+  setShowH,
+  cropCanvas
 }: CropProps): JSX.Element => {
   const [difference, setDifference] = useState({ width: 0, height: 0, differenceX: 0, differenceY: 0 });
   const [croppingNode, setCroppingNode] = useState<number>(0);
@@ -208,7 +212,8 @@ export const CropCanvas = ({
           allTextTags,
           setHoverTag,
           setHoverPos,
-          setShowH
+          setShowH,
+          cropCanvas
         })}
         onMouseUp={(cropMouseUpLeaveEvent) => mouseUP({
           cropMouseUpLeaveEvent,
@@ -242,27 +247,32 @@ export const CropCanvas = ({
   );
 };
 
-export const FlipCanvas = ({ canvasRef, handleTagMouseMove, drawingPen, imgSrc, drawing }: FlipCanvasProps) => {
+export const FlipCanvas = ({ canvasRef, handleTagMouseMove, drawingPen, imgSrc, drawing, cropCanvas }: FlipCanvasProps) => {
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
     const image = new Image();
-    drawing !== "" ? image.src = drawing : image.src = imgSrc;
+    image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
 
-    // context!.clearRect(0, 0, canvas!.width, canvas!.height);
+    context!.clearRect(0, 0, canvas!.width, canvas!.height);
 
     // Draw the lines connecting the points
+    console.log("drawingPen in flip", drawingPen);
+    drawingPen.forEach((point: any) => {
+      const { clientX, clientY, endX, endY } = point;
     context!.beginPath();
-    drawingPen.forEach((point: { x: number; y: number; }, index: number) => {
-      const { x, y } = point;
-      if (index === 0) {
-        context!.moveTo(x, y);
-      } else {
-        context!.lineTo(x, y);
-      }
-    });
+      context!.moveTo(clientX, clientY);
+      context!.lineTo(endX, endY);
     context!.stroke();
-    // context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
+      // if (index === 0) {
+      //   context!.moveTo(x, y);
+      //   console.log("move to", x,y)
+      // } else {
+      //   context!.lineTo(x, y);
+      //   console.log("line to", x,y)
+      // }
+    });
+    context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
   }, [drawingPen]);
 
   return (
@@ -277,7 +287,18 @@ export const FlipCanvas = ({ canvasRef, handleTagMouseMove, drawingPen, imgSrc, 
   );
 };
 
-export const PenCanvas = ({ canvasRef, /* handleTagMouseMove, */ setDrawingPen, imgSrc, drawing }: PenProps) => {
+export const PenCanvas = ({
+  canvasRef,
+  setDrawingPen,
+  imgSrc,
+  drawing,
+  hoverPos,
+  annotations,
+  setHoverTag,
+  setHoverPos,
+  setShowH,
+  cropCanvas
+}: PenProps) => {
   const [isDrawing, setIsDrawing] = useState(false);
 
   const startDrawing = (penMouseDownEvent: React.MouseEvent<HTMLCanvasElement>) => {
@@ -295,7 +316,7 @@ export const PenCanvas = ({ canvasRef, /* handleTagMouseMove, */ setDrawingPen, 
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
     const image = new Image();
-    drawing !== "" ? image.src = drawing : image.src = imgSrc;
+    image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
     if (!isDrawing) return;
 
     const mouseX = penMouseMoveEvent.nativeEvent.offsetX;
@@ -303,13 +324,34 @@ export const PenCanvas = ({ canvasRef, /* handleTagMouseMove, */ setDrawingPen, 
     const { clientX, clientY } = penMouseMoveEvent; // Assuming the event provides the coordinates
 
     if (context) {
-      // handleTagMouseMove(penMouseMoveEvent);
+      if (hoverPos.hoveredDotX === mouseX && hoverPos.hoveredDotY === mouseY) {
+        // Check if the mouse is hovering over the white dot
+        const hoveredDot = annotations.find((annotation: AnnotationProps) => {
+          context!.beginPath();
+          context!.arc(annotation.currentAnnotationX, annotation.currentAnnotationY, 10, 0, 2 * Math.PI);
+          return context!.isPointInPath(mouseX, mouseY);
+        });
+        if (hoveredDot && hoverPos.hoveredDotX === mouseX && hoverPos.hoveredDotY === mouseY) {
+          let hoveredDotX = hoveredDot.currentAnnotationX;
+          let hoveredDotY = hoveredDot.currentAnnotationY;
+          let position = { hoveredDotX, hoveredDotY };
+          setHoverTag(hoveredDot.tag);
+          setHoverPos(position);
+          setShowH(true);
+        } else {
+          setHoverTag("");
+          setShowH(false);
+        }
+      } else {
+        setHoverTag("");
+        setShowH(false);
+      }
       context.lineTo(mouseX, mouseY);
       context.stroke();
     }
 
     // Update the drawing state with the new point
-    setDrawingPen((prevDrawing: ({ x: number; y: number; })[]) => [...prevDrawing, { x: clientX, y: clientY }]);
+    setDrawingPen((prevDrawing: ({ x: number; y: number; })[]) => [...prevDrawing, {clientX, clientY, endX: clientX, endY: clientY }]);
   };
 
   const stopDrawing = () => { setIsDrawing(false); };
@@ -357,13 +399,14 @@ export const MoreFilterCanvas = ({
   brightness,
   imgSrc,
   drawing,
-  handleTagMouseMove
+  handleTagMouseMove,
+  cropCanvas
 }: MoreFilterProps) => {
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
     const image = new Image();
-    drawing !== "" ? image.src = drawing : image.src = imgSrc;
+    image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
 
     context!.clearRect(0, 0, canvas!.width, canvas!.height);
 
@@ -391,7 +434,7 @@ export const MoreFilterCanvas = ({
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
     const image = new Image();
-    drawing !== "" ? image.src = drawing : image.src = imgSrc;
+    image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
     const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
     image.onload = () => {
