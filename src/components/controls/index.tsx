@@ -207,6 +207,39 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
           context!.fillStyle = texts.color;
           context!.fillText(texts.text, texts.textPositionX + 10, texts.textPositionY);
         });
+        drawingPen.forEach((line: any) => {
+          const isArc = line.endY - line.startY < 5;
+          if (isArc) {
+            context!.beginPath();
+            context!.fillStyle = "#000";
+            context!.arc(
+              line.endX,
+              line.endY,
+              1,
+              0,
+              2 * Math.PI
+            );
+            context!.stroke();
+          } else {
+            context!.beginPath();
+            context!.moveTo(line.startX, line.startY);
+            context!.lineTo(line.endX, line.endY);
+            // context!.quadraticCurveTo(line.startX, line.startY, line.endX, line.endY);
+            // context!.fillStyle = "#000";
+            // context!.arc(
+            //   line.endX,
+            //   line.endY,
+            //   1,
+            //   0,
+            //   2 * Math.PI
+            // );
+            // context!.fill();
+            context!.strokeStyle = "black";
+            context!.lineWidth = 2;
+            context!.stroke();
+          }
+        });
+        // context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
       },10);
 
       // if show all tag is true
@@ -225,119 +258,119 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
     };
   }, [currentControl, blur, zoom, rotate, brightness, allTextTags, flipHorizontal, flipVertical]);
   // setting crop rectangle in crop tab canvas
-  useEffect(() => {
-    currentCropped.startingX < 0 &&
-      setCurrentCropped((prevState) => ({
-        ...prevState,
-        startingX: 0
-      }));
-    currentCropped.startingY < 0 &&
-      setCurrentCropped((prevState) => ({
-        ...prevState,
-        startingY: 0
-      }));
-    currentCropped.startingX - 1 > Math.floor(dimensions.width) - currentCropped.width &&
-      setCurrentCropped((prevState) => ({
-        ...prevState,
-        startingX: dimensions.width - currentCropped.width
-      }));
-    currentCropped.startingY - 1 >= dimensions.height - currentCropped.height &&
-      setCurrentCropped((prevState) => ({
-        ...prevState,
-        startingY: dimensions.height - currentCropped.height
-      }));
-    currentCropped.width < 0 &&
-      setCurrentCropped((precState) => ({
-        ...precState,
-        startingX: precState.startingX - Math.abs(precState.width),
-        width: Math.abs(precState.width)
-      }));
-    currentCropped.height < 0 &&
-      setCurrentCropped((precState) => ({
-        ...precState,
-        startingY: precState.startingY - Math.abs(precState.height),
-        height: Math.abs(precState.height)
-      }));
-
-    currentCropped.startingX === 0 && currentCropped.startingY === 0 && currentCropped.height === 0 && currentCropped.width === 0 ?
-      setSelectCanvas(false) : setSelectCanvas(true);
-
-    // preview of the cropped image
-    if (selectCanvas) {
-      const canvas1 = canvasRef.current;
-      const context1 = canvas1?.getContext("2d");
-      let newCanvas = document.createElement("canvas");
-      let newCtx = newCanvas.getContext("2d");
-      const { width, height } = currentCropped;
-
-      newCanvas.height = height;
-      newCanvas.width = width;
-
-      const imageData = context1!.getImageData(currentCropped.startingX + 2, currentCropped.startingY + 2, currentCropped.width - 3, currentCropped.height - 3);
-      newCtx!.putImageData(imageData, 0, 0);
-      let crop = newCanvas.toDataURL();
-      setCroppedImage(crop);
-    }
-  }, [currentControl, currentCropped]);
+  // useEffect(() => {
+  //   currentCropped.startingX < 0 &&
+  //     setCurrentCropped((prevState) => ({
+  //       ...prevState,
+  //       startingX: 0
+  //     }));
+  //   currentCropped.startingY < 0 &&
+  //     setCurrentCropped((prevState) => ({
+  //       ...prevState,
+  //       startingY: 0
+  //     }));
+  //   currentCropped.startingX - 1 > Math.floor(dimensions.width) - currentCropped.width &&
+  //     setCurrentCropped((prevState) => ({
+  //       ...prevState,
+  //       startingX: dimensions.width - currentCropped.width
+  //     }));
+  //   currentCropped.startingY - 1 >= dimensions.height - currentCropped.height &&
+  //     setCurrentCropped((prevState) => ({
+  //       ...prevState,
+  //       startingY: dimensions.height - currentCropped.height
+  //     }));
+  //   currentCropped.width < 0 &&
+  //     setCurrentCropped((precState) => ({
+  //       ...precState,
+  //       startingX: precState.startingX - Math.abs(precState.width),
+  //       width: Math.abs(precState.width)
+  //     }));
+  //   currentCropped.height < 0 &&
+  //     setCurrentCropped((precState) => ({
+  //       ...precState,
+  //       startingY: precState.startingY - Math.abs(precState.height),
+  //       height: Math.abs(precState.height)
+  //     }));
+  //
+  //   currentCropped.startingX === 0 && currentCropped.startingY === 0 && currentCropped.height === 0 && currentCropped.width === 0 ?
+  //     setSelectCanvas(false) : setSelectCanvas(true);
+  //
+  //   // preview of the cropped image
+  //   if (selectCanvas) {
+  //     const canvas1 = canvasRef.current;
+  //     const context1 = canvas1?.getContext("2d");
+  //     let newCanvas = document.createElement("canvas");
+  //     let newCtx = newCanvas.getContext("2d");
+  //     const { width, height } = currentCropped;
+  //
+  //     newCanvas.height = height;
+  //     newCanvas.width = width;
+  //
+  //     const imageData = context1!.getImageData(currentCropped.startingX + 2, currentCropped.startingY + 2, currentCropped.width - 3, currentCropped.height - 3);
+  //     newCtx!.putImageData(imageData, 0, 0);
+  //     let crop = newCanvas.toDataURL();
+  //     setCroppedImage(crop);
+  //   }
+  // }, [currentCropped]);
   // create rectangle for crop canvas in crop tab canvas
-  useEffect(() => {
-    if (selectCanvas) {
-      const canvas = canvasRef.current;
-      const context = canvas!.getContext("2d");
-
-      context!.strokeStyle = "white";
-      context!.setLineDash([5, 5]);
-      const imageX = Math.floor(canvas!.width / 4);
-      const imageY = Math.floor(canvas!.height / 4);
-      context!.lineWidth = 2;
-      context!.strokeRect(imageX, imageY, imageX, imageY);
-
-      setCurrentCropped({
-        startingX: imageX,
-        startingY: imageY,
-        width: imageX,
-        height: imageY
-      });
-      context!.setLineDash([5, 5]);
-      // left top node
-      context!.beginPath();
-      context!.fillRect((dimensions.width / 4) - 2, (dimensions.height / 4) - 4, 6, 6);
-      context!.fillStyle = "white";
-      context!.fill();
-      context!.stroke();
-      // right top node
-      context!.beginPath();
-      context!.fillRect((dimensions.width / 4) + (dimensions.width / 4) - 2, (dimensions.height / 4) - 6, 6, 6);
-      context!.fillStyle = "white";
-      context!.fill();
-      context!.stroke();
-      // left bottom node
-      context!.beginPath();
-      context!.fillRect((dimensions.width / 4) - 4, (dimensions.height / 4) + (dimensions.height / 4) - 3, 6, 6);
-      context!.fillStyle = "white";
-      context!.fill();
-      context!.stroke();
-      // right bottom node
-      context!.beginPath();
-      context!.fillRect((dimensions.width / 4) + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) - 4, 6, 6);
-      context!.fillStyle = "white";
-      context!.fill();
-      context!.stroke();
-
-      const canvas1 = canvasRef.current;
-      const context1 = canvas1!.getContext("2d");
-      let newCanvas = document.createElement("canvas");
-      let newCtx = newCanvas.getContext("2d");
-
-      newCanvas.height = imageY;
-      newCanvas.width = imageX;
-
-      const imageData = context1!.getImageData(dimensions.width / 4 + 2, dimensions.height / 4 + 2, dimensions.width / 4 - 3, dimensions.height / 4 - 3);
-      newCtx!.putImageData(imageData, 0, 0);
-      let crop = newCanvas.toDataURL();
-      setCroppedImage(crop);
-    }
-  }, [currentControl, selectCanvas, showAllTags]);
+  // useEffect(() => {
+  //   if (selectCanvas) {
+  //     const canvas = canvasRef.current;
+  //     const context = canvas!.getContext("2d");
+  //
+  //     context!.strokeStyle = "white";
+  //     context!.setLineDash([5, 5]);
+  //     const imageX = Math.floor(canvas!.width / 4);
+  //     const imageY = Math.floor(canvas!.height / 4);
+  //     context!.lineWidth = 2;
+  //     context!.strokeRect(imageX, imageY, imageX, imageY);
+  //
+  //     setCurrentCropped({
+  //       startingX: imageX,
+  //       startingY: imageY,
+  //       width: imageX,
+  //       height: imageY
+  //     });
+  //     context!.setLineDash([5, 5]);
+  //     // left top node
+  //     context!.beginPath();
+  //     context!.fillRect((dimensions.width / 4) - 2, (dimensions.height / 4) - 4, 6, 6);
+  //     context!.fillStyle = "white";
+  //     context!.fill();
+  //     context!.stroke();
+  //     // right top node
+  //     context!.beginPath();
+  //     context!.fillRect((dimensions.width / 4) + (dimensions.width / 4) - 2, (dimensions.height / 4) - 6, 6, 6);
+  //     context!.fillStyle = "white";
+  //     context!.fill();
+  //     context!.stroke();
+  //     // left bottom node
+  //     context!.beginPath();
+  //     context!.fillRect((dimensions.width / 4) - 4, (dimensions.height / 4) + (dimensions.height / 4) - 3, 6, 6);
+  //     context!.fillStyle = "white";
+  //     context!.fill();
+  //     context!.stroke();
+  //     // right bottom node
+  //     context!.beginPath();
+  //     context!.fillRect((dimensions.width / 4) + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) - 4, 6, 6);
+  //     context!.fillStyle = "white";
+  //     context!.fill();
+  //     context!.stroke();
+  //
+  //     const canvas1 = canvasRef.current;
+  //     const context1 = canvas1!.getContext("2d");
+  //     let newCanvas = document.createElement("canvas");
+  //     let newCtx = newCanvas.getContext("2d");
+  //
+  //     newCanvas.height = imageY;
+  //     newCanvas.width = imageX;
+  //
+  //     const imageData = context1!.getImageData(dimensions.width / 4 + 2, dimensions.height / 4 + 2, dimensions.width / 4 - 3, dimensions.height / 4 - 3);
+  //     newCtx!.putImageData(imageData, 0, 0);
+  //     let crop = newCanvas.toDataURL();
+  //     setCroppedImage(crop);
+  //   }
+  // }, [selectCanvas, showAllTags]);
   // input filed handleChange event of text-on-image tab canvas
   const textOnChangeHandlerCall = (textForm: TextFormProps) => {
     textOnChangeHandler({
@@ -566,8 +599,8 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
             />
           ) : currentControl === "pen" ? (
             <PenControl
-              saveDrawing={() => saveDrawing({canvasRef, setDrawing, setBlur, blur, imgSrc, drawingPen})}
-              clearDrawing={() => clearDrawing({canvasRef, imgSrc, annotations, setDrawing, showAllTags, setShowAllTags, drawing, allTextTags, cropCanvas})}
+              saveDrawing={() => saveDrawing({canvasRef, setDrawing, imgSrc, drawingPen})}
+              clearDrawing={() => clearDrawing({canvasRef, imgSrc, annotations, setDrawing, showAllTags, setShowAllTags, drawing, allTextTags, drawingPen, setDrawingPen, cropCanvas})}
             />
           ) : currentControl === "more" && (
             <div>
@@ -685,14 +718,11 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               setHoverPos,
               setShowH
             })}
-            drawingPen={drawingPen}
-            imgSrc={imgSrc}
-            drawing={drawing}
-            cropCanvas={cropCanvas}
           />
         ) : currentControl === "pen" ? (
           <PenCanvas
             canvasRef={canvasRef}
+            drawingPen={drawingPen}
             setDrawingPen={setDrawingPen}
             imgSrc={imgSrc}
             drawing={drawing}

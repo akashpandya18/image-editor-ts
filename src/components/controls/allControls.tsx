@@ -325,7 +325,7 @@ export const PenControl = ({ saveDrawing, clearDrawing }: PenControlProps) => {
           marginLeft: "0.313rem"
         }}
         onClick={clearDrawing}
-        title={"Clear Draw"}
+        title={"Undo"}
       >
         <Clear />
       </button>

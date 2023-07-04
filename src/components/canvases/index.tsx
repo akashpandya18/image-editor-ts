@@ -22,7 +22,8 @@ import {
   CropProps,
   FlipCanvasProps,
   PenProps,
-  MoreFilterProps, AnnotationProps
+  MoreFilterProps,
+  AnnotationProps
 } from "../../types";
 
 export const RegularCanvas = ({ canvasRef }: CanvasRefProps) => {
@@ -247,34 +248,10 @@ export const CropCanvas = ({
   );
 };
 
-export const FlipCanvas = ({ canvasRef, handleTagMouseMove, drawingPen, imgSrc, drawing, cropCanvas }: FlipCanvasProps) => {
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas!.getContext("2d");
-    const image = new Image();
-    image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
-
-    context!.clearRect(0, 0, canvas!.width, canvas!.height);
-
-    // Draw the lines connecting the points
-    console.log("drawingPen in flip", drawingPen);
-    drawingPen.forEach((point: any) => {
-      const { clientX, clientY, endX, endY } = point;
-    context!.beginPath();
-      context!.moveTo(clientX, clientY);
-      context!.lineTo(endX, endY);
-    context!.stroke();
-      // if (index === 0) {
-      //   context!.moveTo(x, y);
-      //   console.log("move to", x,y)
-      // } else {
-      //   context!.lineTo(x, y);
-      //   console.log("line to", x,y)
-      // }
-    });
-    context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
-  }, [drawingPen]);
-
+export const FlipCanvas = ({
+  canvasRef,
+  handleTagMouseMove
+}: FlipCanvasProps) => {
   return (
     <canvas
       ref={canvasRef}
@@ -289,6 +266,7 @@ export const FlipCanvas = ({ canvasRef, handleTagMouseMove, drawingPen, imgSrc, 
 
 export const PenCanvas = ({
   canvasRef,
+  drawingPen,
   setDrawingPen,
   imgSrc,
   drawing,
@@ -304,24 +282,32 @@ export const PenCanvas = ({
   const startDrawing = (penMouseDownEvent: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
+    const rect = canvas!.getBoundingClientRect();
+    const startX = penMouseDownEvent.clientX - rect.left;
+    const startY = penMouseDownEvent.clientY - rect.top;
 
     if (context) {
       context.beginPath();
       context.moveTo(penMouseDownEvent.nativeEvent.offsetX, penMouseDownEvent.nativeEvent.offsetY);
       setIsDrawing(true);
     }
+    // Add the new line to the state
+    setDrawingPen((prevLines: any) => [...prevLines, { startX, startY, endX: startX, endY: startY }]);
   };
 
   const draw = (penMouseMoveEvent: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
+    // const rect = canvas!.getBoundingClientRect();
+    // const currentX = penMouseMoveEvent.clientX - rect.left;
+    // const currentY = penMouseMoveEvent.clientY - rect.top;
+
     const image = new Image();
     image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
     if (!isDrawing) return;
 
     const mouseX = penMouseMoveEvent.nativeEvent.offsetX;
     const mouseY = penMouseMoveEvent.nativeEvent.offsetY;
-    const { clientX, clientY } = penMouseMoveEvent; // Assuming the event provides the coordinates
 
     if (context) {
       if (hoverPos.hoveredDotX === mouseX && hoverPos.hoveredDotY === mouseY) {
@@ -350,8 +336,15 @@ export const PenCanvas = ({
       context.stroke();
     }
 
-    // Update the drawing state with the new point
-    setDrawingPen((prevDrawing: ({ x: number; y: number; })[]) => [...prevDrawing, {clientX, clientY, endX: clientX, endY: clientY }]);
+    // Update the last line in the state with the current position
+    // setDrawingPen((prevLines: any) => {
+    //   const updatedLines = [...prevLines];
+    //   const lastLine = updatedLines[updatedLines.length - 1];
+    //   lastLine.endX = currentX;
+    //   lastLine.endY = currentY;
+    //   return updatedLines;
+    // });
+    // setDrawingPen((prevDrawing: ({ x: number; y: number; })[]) => [...prevDrawing, {clientX, clientY, endX: clientX, endY: clientY }]);
   };
 
   const stopDrawing = () => { setIsDrawing(false); };
@@ -373,6 +366,51 @@ export const PenCanvas = ({
       context.fill();
     }
   };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas!.getContext("2d");
+    const image = new Image();
+    image.src = drawing !== "" ? drawing : imgSrc;
+
+    // Draw each line
+    if (drawingPen.length > 0) {
+      console.log("drawingPen", drawingPen);
+      drawingPen.forEach((line: any) => {
+        const isArc = line.endY - line.startY < 5;
+        if (isArc) {
+          context!.beginPath();
+          context!.moveTo(line.startX, line.startY);
+          context!.fillStyle = "#000";
+          context!.arc(
+            line.endX,
+            line.endY,
+            0,
+            0,
+            2 * Math.PI
+          );
+          context!.stroke();
+        } else {
+          context!.beginPath();
+          // context!.moveTo(line.startX, line.startY);
+          context!.lineTo(line.endX, line.endY);
+          // context!.quadraticCurveTo(line.startX, line.startY, line.endX, line.endY);
+          // context!.fillStyle = "#000";
+          // context!.arc(
+          //   line.endX,
+          //   line.endY,
+          //   1,
+          //   0,
+          //   2 * Math.PI
+          // );
+          // context!.fill();
+          context!.strokeStyle = "black";
+          context!.lineWidth = 2;
+          context!.stroke();
+        }
+      });
+    }
+  }, [drawingPen]);
 
   return (
     <canvas
@@ -413,21 +451,24 @@ export const MoreFilterCanvas = ({
     image.width = canvas!.width;
     image.height = canvas!.height;
 
-    if (canvas) {
-      const { width, height } = canvas;
-      // Set canvas dimensions
-      canvas.width = width;
-      canvas.height = height;
-      // Clear canvas and scale it
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
+    // setTimeout(() => {
+      if (canvas) {
+        const { width, height } = canvas;
+        // Set canvas dimensions
+        canvas.width = width;
+        canvas.height = height;
+        // Clear canvas and scale it
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
 
-      context!.translate(centerX, centerY);
-      context!.scale(zoom, zoom);
-      context!.translate(-centerX, -centerY);
-      context!.clearRect(0, 0, width, height);
-    }
-    context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
+        context!.translate(centerX, centerY);
+        context!.scale(zoom, zoom);
+        context!.translate(-centerX, -centerY);
+        context!.clearRect(0, 0, width, height);
+      }
+
+      context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
+    // }, 0);
   }, [zoom, rotate]);
 
   useEffect(() => {
@@ -446,13 +487,15 @@ export const MoreFilterCanvas = ({
       context!.save();
       context!.translate(canvas!.width / 2, canvas!.height / 2);
       context!.rotate(degToRad(rotate++ % 360));
-      context!.drawImage(
-        image,
-        image.width / -2,
-        image.height / -2,
-        image.width,
-        image.height
-      );
+      // setTimeout(() => {
+        context!.drawImage(
+          image,
+          image.width / -2,
+          image.height / -2,
+          image.width,
+          image.height
+        );
+      // });
       context!.restore();
     };
   },[blur, zoom, rotate, brightness]);

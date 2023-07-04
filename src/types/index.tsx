@@ -471,10 +471,6 @@ interface MouseUpProps {
 export interface FlipCanvasProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   handleTagMouseMove: (tagHoverEvent: React.MouseEvent<HTMLCanvasElement>) => void;
-  drawingPen: { x: number; y: number; }[];
-  imgSrc: string;
-  drawing: string;
-  cropCanvas: string;
 }
 
 export interface MouseLeaveProps {
@@ -519,7 +515,8 @@ export interface FlipVerticallyProps {
 
 export interface PenProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  setDrawingPen: React.Dispatch<React.SetStateAction<{ x: number; y: number; }[] | never[] | any>>;
+  drawingPen: any;
+  setDrawingPen: any;
   imgSrc: string;
   drawing: string;
   hoverPos: { hoveredDotX: number; hoveredDotY: number; };
@@ -538,10 +535,8 @@ export interface PenControlProps {
 export interface SaveDrawingProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   setDrawing: React.Dispatch<React.SetStateAction<string>>;
-  setBlur:  React.Dispatch<React.SetStateAction<number>>;
   imgSrc: string;
-  blur: number;
-  drawingPen: { x: number; y: number; }[];
+  drawingPen: any;
 }
 
 export interface ClearDrawingProps {
@@ -553,6 +548,8 @@ export interface ClearDrawingProps {
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
   drawing: string;
   allTextTags: TextTag[];
+  drawingPen: any;
+  setDrawingPen: any;
   cropCanvas: string;
 }
 
