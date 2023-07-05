@@ -11,14 +11,14 @@ import {
   PropsTag,
   AnnotationProps,
   TextOnImageControlProps,
-  TextTag,
   CropControlProps,
   PropsFlip,
   PenControlProps, FontSizeOptionsProps
 } from "../../types";
 import "./index.css";
 import { saveImage } from "../crop";
-import {FontSizeOptions} from "../../utils/data";
+import { FontSizeOptions } from "../../utils/data";
+import { AllTextTags } from "../../utils/AllTextTags";
 
 export const TagControls = ({ annotations }: PropsTag) => {
   return (
@@ -49,8 +49,9 @@ export const TextOnImageControl = ({
   annotations,
   allTextTags,
   handleCross,
-  drawing,
-  cropCanvas
+  cropCanvas,
+  flipHorizontal,
+  flipVertical
 }: TextOnImageControlProps): JSX.Element => {
   let data = { text: "", color: "", size: 0, id: "" };
 
@@ -69,7 +70,7 @@ export const TextOnImageControl = ({
       const canvas = canvasRef.current;
       const context = canvas!.getContext("2d");
       const image = new Image();
-      image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
+      image.src = cropCanvas !== "" ? cropCanvas : imgSrc;
 
       context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
       annotations.forEach((annotationData: AnnotationProps) => {
@@ -79,12 +80,7 @@ export const TextOnImageControl = ({
         context!.arc(currentAnnotationX, currentAnnotationY, 10, 0, 2 * Math.PI);
         context!.fill();
       });
-      allTextTags.forEach((textTags: TextTag) => {
-        context!.textBaseline = "alphabetic";
-        context!.font = `${textTags.size || 22}px monospace`;
-        context!.fillStyle = textTags.color;
-        context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
-      });
+      AllTextTags({canvasRef, allTextTags, flipHorizontal, flipVertical});
     }, 10);
   },[annotations, allTextTags]);
 
@@ -111,6 +107,7 @@ export const TextOnImageControl = ({
               >
                 <input
                   autoFocus
+                  id={formData.id}
                   value={formData.text}
                   style={{
                     height: "1.875rem",

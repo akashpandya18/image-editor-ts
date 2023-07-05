@@ -5,10 +5,10 @@ import {
   MouseMoveProps,
   MouseUPProps,
   MouseLeaveProps,
-  AnnotationProps,
-  TextTag
+  AnnotationProps
 } from "../../types";
 import { showTags } from "../TagAnnotation";
+import { AllTextTags } from "../../utils/AllTextTags";
 
 export const mouseDown = ({
   cropMouseDownEvent,
@@ -140,12 +140,13 @@ export const mouseMove = ({
   annotations,
   showAllTags,
   setShowAllTags,
-  drawing,
   allTextTags,
   setHoverTag,
   setHoverPos,
   setShowH,
-  cropCanvas
+  cropCanvas,
+  flipHorizontal,
+  flipVertical
 }: MouseMoveProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -237,7 +238,7 @@ export const mouseMove = ({
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
     const image = new Image();
-    image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
+    image.src = cropCanvas !== "" ? cropCanvas : imgSrc;
 
     context!.clearRect(0, 0, canvas!.width, canvas!.height);
     context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
@@ -529,14 +530,9 @@ export const mouseMove = ({
     context!.arc(currentAnnotationX, currentAnnotationY, 10, 0, 2 * Math.PI);
     context!.fill();
   });
-  allTextTags && allTextTags.forEach((textTags: TextTag) => {
-    context!.textBaseline = "alphabetic";
-    context!.font = `${textTags.size || 22}px monospace`;
-    context!.fillStyle = textTags.color;
-    context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
-  });
+  AllTextTags({canvasRef, allTextTags, flipHorizontal, flipVertical});
   // if show all tag is true
-  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags, cropCanvas});
+  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, cropCanvas, flipHorizontal, flipVertical});
 };
 
 export const mouseUP = ({

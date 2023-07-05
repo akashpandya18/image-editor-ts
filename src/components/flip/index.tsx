@@ -3,9 +3,9 @@ import { showTags } from "../TagAnnotation";
 import {
   FlipHorizontallyProps,
   FlipVerticallyProps,
-  AnnotationProps,
-  TextTag
+  AnnotationProps
 } from "../../types";
+import { AllTextTags } from "../../utils/AllTextTags";
 
 export const flipHorizontally = ({
   canvasRef,
@@ -13,20 +13,20 @@ export const flipHorizontally = ({
   annotations,
   flipHorizontal,
   setFlipHorizontal,
-  drawing,
   showAllTags,
   setShowAllTags,
   allTextTags,
   rotate,
-  cropCanvas
+  cropCanvas,
+  flipVertical
 }: FlipHorizontallyProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
+  image.src = cropCanvas !== "" ? cropCanvas : imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
-  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags, cropCanvas});
+  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, cropCanvas, flipHorizontal, flipVertical});
 
   image.width = canvas!.width;
   image.height = canvas!.height;
@@ -50,12 +50,7 @@ export const flipHorizontally = ({
     );
     context!.restore();
 
-    allTextTags.forEach((textTags: TextTag) => {
-      context!.textBaseline = "alphabetic";
-      context!.font = `${textTags.size || 22}px monospace`;
-      context!.fillStyle = textTags.color;
-      context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
-    });
+    AllTextTags({canvasRef, allTextTags, flipHorizontal, flipVertical});
     annotations.forEach((annotationData: AnnotationProps) => {
       const { currentAnnotationX, currentAnnotationY } = annotationData;
       context!.beginPath();
@@ -72,20 +67,20 @@ export const flipVertically = ({
   annotations,
   flipVertical,
   setFlipVertical,
-  drawing,
   showAllTags,
   setShowAllTags,
   allTextTags,
   rotate,
-  cropCanvas
+  cropCanvas,
+  flipHorizontal
 }: FlipVerticallyProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
+  image.src = cropCanvas !== "" ? cropCanvas : imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
-  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags, cropCanvas});
+  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, cropCanvas, flipHorizontal, flipVertical});
 
   image.width = canvas!.width;
   image.height = canvas!.height;
@@ -109,12 +104,7 @@ export const flipVertically = ({
     );
     context!.restore();
 
-    allTextTags.forEach((textTags: TextTag) => {
-      context!.textBaseline = "alphabetic";
-      context!.font = `${textTags.size || 22}px monospace`;
-      context!.fillStyle = textTags.color;
-      context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
-    });
+    AllTextTags({canvasRef, allTextTags, flipHorizontal, flipVertical});
     annotations.forEach((annotationData: AnnotationProps) => {
       const { currentAnnotationX, currentAnnotationY } = annotationData;
       context!.beginPath();

@@ -106,8 +106,9 @@ export interface HandleSubmitTagProps {
   showAllTags: boolean;
   allTextTags: TextTag[];
   rotate: number;
-  drawing: string;
   cropCanvas: string;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface HandleClearSingleTagProps {
@@ -125,8 +126,9 @@ export interface HandleClearSingleTagProps {
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
   allTextTags: TextTag[];
   rotate: number;
-  drawing: string;
   cropCanvas: string;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface HideTagsProps {
@@ -134,10 +136,11 @@ export interface HideTagsProps {
   imgSrc: string;
   canvasRef: React.RefObject<HTMLCanvasElement>;
   annotations: AnnotationProps[];
-  drawing: string;
   allTextTags: TextTag[];
   rotate: number;
   cropCanvas: string;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface ShowTagsProps {
@@ -145,9 +148,10 @@ export interface ShowTagsProps {
   imgSrc: string;
   canvasRef: React.RefObject<HTMLCanvasElement>;
   annotations: AnnotationProps[];
-  drawing: string;
   allTextTags: TextTag[];
   cropCanvas: string;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface TagAnnotationFormProps {
@@ -186,8 +190,9 @@ export interface TextOnImageControlProps {
   annotations: AnnotationProps[];
   allTextTags: TextTag[];
   handleCross: () => void;
-  drawing: string;
   cropCanvas: string;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface FontSizeOptionsProps {
@@ -207,9 +212,12 @@ export interface TextOnChangeHandlerProps {
   annotations: AnnotationProps[];
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
-  drawing: string;
   rotate: number;
   cropCanvas: string;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
+  setAllTextTags: React.Dispatch<React.SetStateAction<TextTag[] | any | never[]>>;
+  setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface TextOnImageClickHandlerProps {
@@ -221,14 +229,16 @@ export interface TextOnImageClickHandlerProps {
   allTextTags: TextTag[];
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   setFormData: React.Dispatch<React.SetStateAction<{ text: string; size: number; color: string; id: string; }>>;
-  drawing: string;
   cropCanvas: string;
+  flipVertical: boolean;
+  flipHorizontal: boolean;
 }
 
 export interface TextFormProps {
   text: string;
   color: string;
   size: number;
+  id: string;
 }
 
 export interface TextTag {
@@ -256,12 +266,13 @@ export interface TextOnImageProps {
   handleTagMouseMove: (tagHoverEvent: React.MouseEvent<HTMLCanvasElement>) => void;
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
-  drawing: string;
   blur: number;
   zoom: number;
   rotate: number;
   brightness: number;
   cropCanvas: string;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface TextObjectProps {
@@ -294,13 +305,14 @@ export interface HandleMouseMoveProps {
   handleTagMouseMove: (tagHoverEvent: React.MouseEvent<HTMLCanvasElement>) => void;
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
-  drawing: string;
   blur: number;
   zoom: number;
   rotate: number;
   brightness: number;
   setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
   cropCanvas: string;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface HandleMouseDownProps {
@@ -310,6 +322,8 @@ export interface HandleMouseDownProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   allTextTags: TextTag[];
   setCurrentClicked: React.Dispatch<React.SetStateAction<{ currentClickedX: number; currentClickedY: number; }>>;
+  flipVertical: boolean;
+  flipHorizontal: boolean;
 }
 
 export interface HandleMouseUpProps {
@@ -323,6 +337,8 @@ export interface HandleMouseUpProps {
   setAllTextTags: React.Dispatch<React.SetStateAction<TextTag[] | any | never[]>>;
   currentClicked: { currentClickedX: number; currentClickedY: number; };
   setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface HandleDeleteProps {
@@ -342,17 +358,21 @@ export interface HandleCrossProps {
   annotations: AnnotationProps[];
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
-  drawing: string;
   blur: number;
   rotate: number;
   brightness: number;
   cropCanvas: string;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface DeleteTextProps {
   position: { currentClickedX: number; currentClickedY: number; };
   handleDelete: () => void;
   setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
+  canvasRef: React.RefObject<HTMLCanvasElement>;
 }
 
 export interface CropControlProps {
@@ -377,12 +397,13 @@ export interface CropProps {
   annotations: AnnotationProps[];
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
-  drawing: string;
   allTextTags: TextTag[];
   setHoverTag: React.Dispatch<React.SetStateAction<string>>;
   setHoverPos: React.Dispatch<React.SetStateAction<{ hoveredDotX: number; hoveredDotY: number; }>>;
   setShowH: React.Dispatch<React.SetStateAction<boolean>>;
   cropCanvas: string;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface DifferenceProps {
@@ -433,12 +454,13 @@ export interface MouseMoveProps {
   annotations: AnnotationProps[];
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
-  drawing: string;
   allTextTags: TextTag[];
   setHoverTag: React.Dispatch<React.SetStateAction<string>>;
   setHoverPos: React.Dispatch<React.SetStateAction<{ hoveredDotX: number; hoveredDotY: number; }>>;
   setShowH: React.Dispatch<React.SetStateAction<boolean>>;
   cropCanvas: string;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface MouseUPProps {
@@ -491,12 +513,12 @@ export interface FlipHorizontallyProps {
   annotations: AnnotationProps[];
   flipHorizontal: boolean;
   setFlipHorizontal: React.Dispatch<React.SetStateAction<boolean>>;
-  drawing: string;
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
   allTextTags: TextTag[];
   rotate: number;
   cropCanvas: string;
+  flipVertical: boolean;
 }
 
 export interface FlipVerticallyProps {
@@ -505,12 +527,12 @@ export interface FlipVerticallyProps {
   annotations: AnnotationProps[];
   flipVertical: boolean;
   setFlipVertical: React.Dispatch<React.SetStateAction<boolean>>;
-  drawing: string;
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
   allTextTags: TextTag[];
   rotate: number;
   cropCanvas: string;
+  flipHorizontal: boolean;
 }
 
 export interface PenProps {
@@ -518,7 +540,6 @@ export interface PenProps {
   drawingPen: any;
   setDrawingPen: any;
   imgSrc: string;
-  drawing: string;
   hoverPos: { hoveredDotX: number; hoveredDotY: number; };
   annotations: AnnotationProps[];
   setHoverTag: React.Dispatch<React.SetStateAction<string>>;
@@ -534,23 +555,22 @@ export interface PenControlProps {
 
 export interface SaveDrawingProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  setDrawing: React.Dispatch<React.SetStateAction<string>>;
   imgSrc: string;
   drawingPen: any;
 }
 
-export interface ClearDrawingProps {
+export interface UndoDrawingProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   imgSrc: string;
   annotations: AnnotationProps[];
-  setDrawing: React.Dispatch<React.SetStateAction<string>>;
   showAllTags: boolean;
   setShowAllTags: React.Dispatch<React.SetStateAction<boolean>>;
-  drawing: string;
   allTextTags: TextTag[];
   drawingPen: any;
   setDrawingPen: any;
   cropCanvas: string;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface ControlsType {
@@ -562,14 +582,7 @@ export interface ControlsType {
 
 export interface MoreFilterProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  blur: number;
-  zoom: number;
-  rotate: number;
-  brightness: number;
-  imgSrc: string;
-  drawing: string;
   handleTagMouseMove: (tagHoverEvent: React.MouseEvent<HTMLCanvasElement>) => void;
-  cropCanvas: string;
 }
 
 export interface HandleToolClickProps {
@@ -583,4 +596,12 @@ export interface HandleToolClickProps {
     (value: SetStateAction<string>): void;
     (arg0: string): void;
   };
+}
+
+export interface AllTextTagsProps {
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+  allTextTags: TextTag[];
+  flipHorizontal: boolean;
+  flipVertical: boolean;
+  id?: string;
 }

@@ -33,7 +33,7 @@ import {
   CropCanvas,
   FlipCanvas
 } from "../canvases";
-import { saveDrawing, clearDrawing } from "../draw";
+import { saveDrawing, undoDrawing } from "../draw";
 import {
   handleCross,
   handleDelete,
@@ -56,13 +56,13 @@ import {
   AnnotationProps,
   Cropped,
   TextFormProps,
-  TextTag,
   // FilterOptionsProps,
   ControlsType
 } from "../../types";
 import { HideTags, ShowTags } from "../../assets/icons";
 import "./sliders/index.css";
 import "./index.css";
+import { AllTextTags } from "../../utils/AllTextTags";
 
 export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
   // Canvas and selected/active tab
@@ -99,7 +99,6 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
   const [flipHorizontal, setFlipHorizontal] = useState<boolean>(false);
   const [flipVertical, setFlipVertical] = useState<boolean>(false);
   // Pen Canvas
-  const [drawing, setDrawing] = useState("");
   const [drawingPen, setDrawingPen] = useState([]);
   // More filter Canvas
   let [blur, setBlur] = useState<number>(0);
@@ -115,7 +114,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
   // set height and width of image on canvas
   useEffect(() => {
     const image = new Image();
-    image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
+    image.src = cropCanvas !== "" ? cropCanvas : imgSrc;
 
     image.onload = () => {
       const { width, height } = image;
@@ -152,7 +151,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
     const context = canvas!.getContext("2d");
     const { width, height } = dimensions;
     const image = new Image();
-    image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
+    image.src = cropCanvas !== "" ? cropCanvas : imgSrc;
     const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
     canvas!.width = width;
@@ -161,14 +160,17 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
     image.onload = () => {
       // setting flip on canvas
       flipValue(canvas, context);
-      context!.clearRect(0, 0, canvas!.width, canvas!.height);
-
-      // Clear canvas and scale it
-      const centerX = canvas!.width / 2;
-      const centerY = canvas!.height / 2;
+      // context!.clearRect(0, 0, canvas!.width, canvas!.height);
 
       // setting zoom value on canvas
       if (canvas) {
+        // setting blur and brightness value on canvas
+        context!.filter = `blur(${blur}px) brightness(${brightness})`;
+
+        // Clear canvas and scale it
+        const centerX = canvas!.width / 2;
+        const centerY = canvas!.height / 2;
+
         context!.translate(centerX, centerY);
         context!.scale(zoom, zoom);
         context!.translate(-centerX, -centerY);
@@ -177,14 +179,10 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
 
       // setting tag/annotation, texts and rotation on canvas
       setTimeout(() => {
-        // setting blur and brightness value on canvas
-        context!.clearRect(0, 0, canvas!.width, canvas!.height);
-        context!.filter = `blur(${blur}px) brightness(${brightness})`;
-
         image.width = canvas!.width;
         image.height = canvas!.height;
         context!.save();
-        context!.translate(centerX, centerY);
+        context!.translate(canvas!.width / 2, canvas!.height / 2);
         context!.rotate(degToRad(rotate++ % 360));
         context!.drawImage(
           image,
@@ -194,6 +192,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
           canvas!.height
         );
         context!.restore();
+
         annotations.forEach((annotationData: AnnotationProps) => {
           const { currentAnnotationX, currentAnnotationY } = annotationData;
           context!.beginPath();
@@ -201,12 +200,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
           context!.arc(currentAnnotationX, currentAnnotationY, 10, 0, 2 * Math.PI);
           context!.fill();
         });
-        allTextTags.forEach((texts: TextTag) => {
-          context!.textBaseline = "alphabetic";
-          context!.font = `${texts.size || 22}px monospace`;
-          context!.fillStyle = texts.color;
-          context!.fillText(texts.text, texts.textPositionX + 10, texts.textPositionY);
-        });
+        AllTextTags({canvasRef, allTextTags, flipHorizontal, flipVertical});
         drawingPen.forEach((line: any) => {
           const isArc = line.endY - line.startY < 5;
           if (isArc) {
@@ -243,7 +237,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
       },10);
 
       // if show all tag is true
-      showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags, cropCanvas});
+      showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, cropCanvas, flipHorizontal, flipVertical});
 
       setTag("");
       setCurrentAnnotation({ currentAnnotationX: 0, currentAnnotationY: 0 });
@@ -332,6 +326,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
         height: imageY
       });
       context!.setLineDash([5, 5]);
+      context!.fillStyle = "white";
       // left top node
       context!.beginPath();
       context!.fillRect((dimensions.width / 4) - 2, (dimensions.height / 4) - 4, 6, 6);
@@ -353,7 +348,6 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
       // right bottom node
       context!.beginPath();
       context!.fillRect((dimensions.width / 4) + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) - 4, 6, 6);
-      context!.fillStyle = "white";
       context!.fill();
       context!.stroke();
 
@@ -370,7 +364,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
       let crop = newCanvas.toDataURL();
       setCroppedImage(crop);
     }
-  }, [selectCanvas, showAllTags]);
+  }, [selectCanvas]);
   // input filed handleChange event of text-on-image tab canvas
   const textOnChangeHandlerCall = (textForm: TextFormProps) => {
     textOnChangeHandler({
@@ -384,9 +378,12 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
       annotations,
       showAllTags,
       setShowAllTags,
-      drawing,
       rotate,
-      cropCanvas
+      cropCanvas,
+      flipHorizontal,
+      flipVertical,
+      setAllTextTags,
+      setDeleteTextTag
     });
   };
   // handle crop rectangle
@@ -439,7 +436,6 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
     setBrightness(1);
     setFlipVertical(false);
     setFlipHorizontal(false);
-    setDrawing("");
     setTempPrompt(false);
     setError("");
     setDeleteTextTag(false);
@@ -450,7 +446,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
     const { width, height } = dimensions;
     const context = canvas!.getContext("2d");
     const image = new Image();
-    image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
+    image.src = cropCanvas !== "" ? cropCanvas : imgSrc;
 
     canvas!.width = width;
     canvas!.height = height;
@@ -546,14 +542,16 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
                 annotations,
                 showAllTags,
                 setShowAllTags,
-                drawing,
                 blur,
                 rotate,
                 brightness,
-                cropCanvas
+                cropCanvas,
+                flipHorizontal,
+                flipVertical
               })}
-              drawing={drawing}
               cropCanvas={cropCanvas}
+              flipHorizontal={flipHorizontal}
+              flipVertical={flipVertical}
             />
           ) : currentControl === "crop" ? (
             <CropControl
@@ -576,12 +574,12 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
                 annotations,
                 flipHorizontal,
                 setFlipHorizontal,
-                drawing,
                 showAllTags,
                 setShowAllTags,
                 allTextTags,
                 rotate,
-                cropCanvas
+                cropCanvas,
+                flipVertical
               })}
               flipVertically={() => flipVertically({
                 canvasRef,
@@ -589,18 +587,18 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
                 annotations,
                 flipVertical,
                 setFlipVertical,
-                drawing,
                 showAllTags,
                 setShowAllTags,
                 allTextTags,
                 rotate,
-                cropCanvas
+                cropCanvas,
+                flipHorizontal
               })}
             />
           ) : currentControl === "pen" ? (
             <PenControl
-              saveDrawing={() => saveDrawing({canvasRef, setDrawing, imgSrc, drawingPen})}
-              clearDrawing={() => clearDrawing({canvasRef, imgSrc, annotations, setDrawing, showAllTags, setShowAllTags, drawing, allTextTags, drawingPen, setDrawingPen, cropCanvas})}
+              saveDrawing={() => saveDrawing({canvasRef, imgSrc, drawingPen})}
+              clearDrawing={() => undoDrawing({canvasRef, imgSrc, annotations, showAllTags, setShowAllTags, allTextTags, drawingPen, setDrawingPen, cropCanvas, flipHorizontal, flipVertical})}
             />
           ) : currentControl === "more" && (
             <div>
@@ -683,12 +681,13 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
             })}
             showAllTags={showAllTags}
             setShowAllTags={setShowAllTags}
-            drawing={drawing}
             blur={blur}
             zoom={zoom}
             rotate={rotate}
             brightness={brightness}
             cropCanvas={cropCanvas}
+            flipHorizontal={flipHorizontal}
+            flipVertical={flipVertical}
           />
         ) : currentControl === "crop" ? (
           <CropCanvas
@@ -700,12 +699,13 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
             annotations={annotations}
             showAllTags={showAllTags}
             setShowAllTags={setShowAllTags}
-            drawing={drawing}
             allTextTags={allTextTags}
             setHoverTag={setHoverTag}
             setHoverPos={setHoverPos}
             setShowH={setShowH}
             cropCanvas={cropCanvas}
+            flipHorizontal={flipHorizontal}
+            flipVertical={flipVertical}
           />
         ) : currentControl === "flip" ? (
           <FlipCanvas
@@ -725,7 +725,6 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
             drawingPen={drawingPen}
             setDrawingPen={setDrawingPen}
             imgSrc={imgSrc}
-            drawing={drawing}
             hoverPos={hoverPos}
             annotations={annotations}
             setHoverTag={setHoverTag}
@@ -736,12 +735,6 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
         ) : currentControl === "more" ? (
           <MoreFilterCanvas
             canvasRef={canvasRef}
-            zoom={zoom}
-            blur={blur}
-            rotate={rotate}
-            brightness={brightness}
-            imgSrc={imgSrc}
-            drawing={drawing}
             handleTagMouseMove={(tagHoverEvent: React.MouseEvent<HTMLCanvasElement>) => handleCanvasMouseMove({
               tagHoverEvent,
               canvasRef,
@@ -750,7 +743,6 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               setHoverPos,
               setShowH
             })}
-            cropCanvas={cropCanvas}
           />
         ) : (
           <RegularCanvas canvasRef={canvasRef} />
@@ -780,8 +772,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
                 showAllTags,
                 allTextTags,
                 rotate,
-                drawing,
-                cropCanvas
+                cropCanvas,
+                flipHorizontal,
+                flipVertical
               })}
               position={currentAnnotation}
             />
@@ -808,8 +801,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               setShowAllTags,
               allTextTags,
               rotate,
-              drawing,
-              cropCanvas
+              cropCanvas,
+              flipHorizontal,
+              flipVertical
             })}
           />
         )}
@@ -826,6 +820,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               setTempPrompt
             })}
             setDeleteTextTag={setDeleteTextTag}
+            flipHorizontal={flipHorizontal}
+            flipVertical={flipVertical}
+            canvasRef={canvasRef}
           />
         )}
 
@@ -836,8 +833,8 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
         <MainCanvasControls
           clearFunction={() => setClear(!clear)}
           showHideFunction={() => showAllTags
-            ? hideTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags, rotate, cropCanvas})
-            : showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags, cropCanvas})
+            ? hideTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, rotate, cropCanvas, flipHorizontal, flipVertical})
+            : showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, cropCanvas, flipHorizontal, flipVertical})
           }
           screenShotFunction={() => handleScreenShot({canvasRef})}
           iconTag={showAllTags ? <HideTags /> : <ShowTags />}

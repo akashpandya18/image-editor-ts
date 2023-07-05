@@ -2,12 +2,12 @@ import React from "react";
 import { showTags } from "../TagAnnotation";
 import {
   SaveDrawingProps,
-  ClearDrawingProps,
-  AnnotationProps,
-  TextTag
+  UndoDrawingProps,
+  AnnotationProps
 } from "../../types";
+import { AllTextTags } from "../../utils/AllTextTags";
 
-export const saveDrawing = ({ canvasRef, /* setDrawing, imgSrc, */ drawingPen }: SaveDrawingProps) => {
+export const saveDrawing = ({ canvasRef, /* imgSrc, */ drawingPen }: SaveDrawingProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
@@ -48,22 +48,21 @@ export const saveDrawing = ({ canvasRef, /* setDrawing, imgSrc, */ drawingPen }:
   });
 
   // context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
-  // setDrawing(canvas!.toDataURL());
 };
 
-export const clearDrawing = ({
+export const undoDrawing = ({
   canvasRef,
   imgSrc,
   annotations,
-  setDrawing,
   showAllTags,
   setShowAllTags,
-  drawing,
   allTextTags,
   drawingPen,
   setDrawingPen,
-  cropCanvas
-}: ClearDrawingProps) => {
+  cropCanvas,
+  flipHorizontal,
+  flipVertical
+}: UndoDrawingProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
@@ -71,8 +70,7 @@ export const clearDrawing = ({
 
   const message = confirm("Do you want to undo the draw?");
   message &&
-    setDrawing("");
-    showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags, cropCanvas});
+    showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, cropCanvas, flipHorizontal, flipVertical});
 
     if (drawingPen.length > 0) {
       const updatedArray = drawingPen.slice(0, drawingPen.length - 1);
@@ -81,13 +79,8 @@ export const clearDrawing = ({
       context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
     }
 
-    allTextTags.forEach((textTags: TextTag) => {
-      context!.textBaseline = "alphabetic";
-      context!.font = `${textTags.size || 22}px monospace`;
-      context!.fillStyle = textTags.color;
-      context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
-    });
-    annotations.forEach((annotationData: AnnotationProps) => {
+  AllTextTags({canvasRef, allTextTags, flipHorizontal, flipVertical});
+  annotations.forEach((annotationData: AnnotationProps) => {
       const { currentAnnotationX, currentAnnotationY } = annotationData;
       context!.beginPath();
       context!.fillStyle = "yellow";
