@@ -99,11 +99,14 @@ export const mouseDown = ({
   setStartingNode({ startingNodeX: mouseX, startingNodeY: mouseY });
 };
 
-export const saveImage = ({ canvasRef, imgSrc, currentCropped, setCropCanvas, setSelectCanvas, setCroppedImage, setCurrentCropped }: SaveImageProps) => {
+export const saveImage = ({ canvasRef, currentCropped, setCropCanvas, setSelectCanvas, setCroppedImage }: SaveImageProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = imgSrc;
+  image.src = canvas!.toDataURL();
+
+  canvas!.width = currentCropped.width;
+  canvas!.height = currentCropped.height;
 
   image.onload = () => {
     context!.drawImage(
@@ -121,7 +124,6 @@ export const saveImage = ({ canvasRef, imgSrc, currentCropped, setCropCanvas, se
     setCropCanvas(canvas!.toDataURL());
     setSelectCanvas(false);
     setCroppedImage("");
-    setCurrentCropped({ startingX: 0, startingY: 0, height: 0, width: 0 });
   };
 };
 

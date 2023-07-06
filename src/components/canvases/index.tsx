@@ -257,10 +257,7 @@ export const CropCanvas = ({
   );
 };
 
-export const FlipCanvas = ({
-  canvasRef,
-  handleTagMouseMove
-}: FlipCanvasProps) => {
+export const FlipCanvas = ({ canvasRef, handleTagMouseMove }: FlipCanvasProps) => {
   return (
     <canvas
       ref={canvasRef}

@@ -384,8 +384,7 @@ export interface CropControlProps {
   setCropCanvas: React.Dispatch<React.SetStateAction<string>>;
   setSelectCanvas: React.Dispatch<React.SetStateAction<boolean>>;
   setCroppedImage: React.Dispatch<React.SetStateAction<string>>;
-  setCurrentCropped: React.Dispatch<React.SetStateAction<Cropped>>;
-  imgSrc: string;
+  croppedImage: string;
 }
 
 export interface CropProps {
@@ -431,12 +430,10 @@ export interface MouseDownProps {
 
 export interface SaveImageProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  imgSrc: string;
   currentCropped: Cropped;
   setCropCanvas: React.Dispatch<React.SetStateAction<string>>;
   setSelectCanvas: React.Dispatch<React.SetStateAction<boolean>>;
   setCroppedImage: React.Dispatch<React.SetStateAction<string>>;
-  setCurrentCropped: React.Dispatch<React.SetStateAction<Cropped>>;
 }
 
 export interface MouseMoveProps {

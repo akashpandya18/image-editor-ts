@@ -154,8 +154,13 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
     image.src = cropCanvas !== "" ? cropCanvas : imgSrc;
     const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
-    canvas!.width = width;
-    canvas!.height = height;
+    if (cropCanvas !== "") {
+      canvas!.width = currentCropped.width;
+      canvas!.height = currentCropped.height;
+    } else {
+      canvas!.width = width;
+      canvas!.height = height;
+    }
 
     image.onload = () => {
       // setting flip on canvas
@@ -179,18 +184,38 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
 
       // setting tag/annotation, texts and rotation on canvas
       setTimeout(() => {
-        image.width = canvas!.width;
-        image.height = canvas!.height;
+        if (cropCanvas !== "") {
+          canvas!.width = currentCropped.width;
+          canvas!.height = currentCropped.height;
+        } else {
+          image.width = canvas!.width;
+          image.height = canvas!.height;
+        }
+
         context!.save();
         context!.translate(canvas!.width / 2, canvas!.height / 2);
         context!.rotate(degToRad(rotate++ % 360));
-        context!.drawImage(
-          image,
-          image.width / -2,
-          image.height / -2,
-          canvas!.width,
-          canvas!.height
-        );
+        // if (cropCanvas !== "") {
+        //   context!.drawImage(
+        //     image,
+        //     currentCropped.startingX + 2,
+        //     currentCropped.startingY + 2,
+        //     currentCropped.width - 3,
+        //     currentCropped.height - 3,
+        //     0,
+        //     0,
+        //     canvas!.width,
+        //     canvas!.height
+        //   );
+        // } else {
+          context!.drawImage(
+            image,
+            image.width / -2,
+            image.height / -2,
+            canvas!.width,
+            canvas!.height
+          );
+        // }
         context!.restore();
 
         annotations.forEach((annotationData: AnnotationProps) => {
@@ -246,9 +271,8 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
         setTempPrompt(false);
       }
       // set crop rectangle disable when user didn't save crop changes and move to other tab
-      if (currentControl !== "crop") {
-        setCurrentCropped({ startingX: 0, startingY: 0, height: 0, width: 0 });
-      }
+      setCroppedImage("");
+      setSelectCanvas(false);
     };
   }, [currentControl, blur, zoom, rotate, brightness, allTextTags, flipHorizontal, flipVertical]);
   // setting crop rectangle in crop tab canvas
@@ -563,8 +587,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               setCropCanvas={setCropCanvas}
               setSelectCanvas={setSelectCanvas}
               setCroppedImage={setCroppedImage}
-              setCurrentCropped={setCurrentCropped}
-              imgSrc={imgSrc}
+              croppedImage={croppedImage}
             />
           ) : currentControl === "flip" ? (
             <FlipControl

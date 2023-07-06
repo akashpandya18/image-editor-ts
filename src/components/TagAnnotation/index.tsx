@@ -347,9 +347,23 @@ export const showTags = ({
         context!.fillStyle = "#2A2A2A";
         context!.fillRect(currentAnnotationX - textWidth - 20, currentAnnotationY, textWidth + 20, 35);
         context!.fillStyle = "#fff";
-        context!.translate(textWidth + 20, 0);
-        context!.scale(-1, 1);
-        context!.fillText(tag, currentAnnotationX - textWidth - 10, currentAnnotationY + 25);
+        if (flipHorizontal && !flipVertical) {
+          context!.translate(textWidth, 0);
+          context!.scale(-1, 1);
+          context!.fillText(tag, -currentAnnotationX + textWidth + 10, currentAnnotationY + 25);
+        } else if (flipVertical && !flipHorizontal) {
+          context!.translate(0, currentAnnotationY + currentAnnotationY + 35);
+          context!.scale(1, -1);
+          context!.fillText(tag, currentAnnotationX - textWidth - 10, currentAnnotationY + 25);
+        } else if (flipVertical && flipHorizontal) {
+          context!.translate(textWidth, 0);
+          context!.scale(-1, 1);
+          context!.translate(0, currentAnnotationY + currentAnnotationY + 35);
+          context!.scale(1, -1);
+          context!.fillText(tag, -currentAnnotationX + textWidth + 10, currentAnnotationY + 25);
+        } else {
+          context!.fillText(tag, currentAnnotationX - textWidth - 10, currentAnnotationY + 25);
+        }
         context!.restore();
       } else if (currentAnnotationX - image.width < -200 && currentAnnotationY - image.height > -100) {
         context!.save();
@@ -357,9 +371,23 @@ export const showTags = ({
         context!.fillStyle = "#2A2A2A";
         context!.fillRect(currentAnnotationX, currentAnnotationY - 40, textWidth + 20, 35);
         context!.fillStyle = "#fff";
-        context!.translate(canvas!.width, 0);
-        context!.scale(-1, 1);
-        context!.fillText(tag, currentAnnotationX + 10, currentAnnotationY - 15);
+        if (flipHorizontal && !flipVertical) {
+          context!.translate(currentAnnotationX, 0);
+          context!.scale(-1, 1);
+          context!.fillText(tag,  -textWidth - 10, currentAnnotationY - 15);
+        } else if (flipVertical && !flipHorizontal) {
+          context!.translate(0, currentAnnotationY + currentAnnotationY - 45);
+          context!.scale(1, -1);
+          context!.fillText(tag, currentAnnotationX + 10, currentAnnotationY - 15);
+        } else if (flipVertical && flipHorizontal) {
+          context!.translate(currentAnnotationX, 0);
+          context!.scale(-1, 1);
+          context!.translate(0, currentAnnotationY + currentAnnotationY - 45);
+          context!.scale(1, -1);
+          context!.fillText(tag,  -textWidth - 10, currentAnnotationY - 15);
+        } else {
+          context!.fillText(tag, currentAnnotationX + 10, currentAnnotationY - 15);
+        }
         context!.restore();
       } else if (currentAnnotationX - image.width > -200 && currentAnnotationY - image.height > -100) {
         context!.save();
@@ -367,9 +395,23 @@ export const showTags = ({
         context!.fillStyle = "#2A2A2A";
         context!.fillRect(currentAnnotationX - textWidth - 20, currentAnnotationY - 40, textWidth + 20, 35);
         context!.fillStyle = "#fff";
-        context!.translate(canvas!.width, 0);
-        context!.scale(-1, 1);
-        context!.fillText(tag, currentAnnotationX - textWidth - 10, currentAnnotationY - 15);
+        if (flipHorizontal && !flipVertical) {
+          context!.translate(textWidth, 0);
+          context!.scale(-1, 1);
+          context!.fillText(tag, -currentAnnotationX + textWidth + 10, currentAnnotationY - 15);
+        } else if (flipVertical && !flipHorizontal) {
+          context!.translate(0, currentAnnotationY + currentAnnotationY - 45);
+          context!.scale(1, -1);
+          context!.fillText(tag, currentAnnotationX - textWidth - 10, currentAnnotationY - 15);
+        } else if (flipVertical && flipHorizontal) {
+          context!.translate(textWidth, 0);
+          context!.scale(-1, 1);
+          context!.translate(0, currentAnnotationY + currentAnnotationY - 45);
+          context!.scale(1, -1);
+          context!.fillText(tag, -currentAnnotationX + textWidth + 10, currentAnnotationY - 15);
+        } else {
+          context!.fillText(tag, currentAnnotationX - textWidth - 10, currentAnnotationY - 15);
+        }
         context!.restore();
       } else {
         context!.save();
@@ -380,16 +422,17 @@ export const showTags = ({
         if (flipHorizontal && !flipVertical) {
           context!.translate(currentAnnotationX, 0);
           context!.scale(-1, 1);
-          context!.fillText(tag, -currentAnnotationX + 10, currentAnnotationY + 25);
+          context!.fillText(tag, -textWidth - 10, currentAnnotationY + 25);
         } else if (flipVertical && !flipHorizontal) {
           context!.translate(0, currentAnnotationY + currentAnnotationY + 35);
           context!.scale(1, -1);
+          context!.fillText(tag, currentAnnotationX + 10, currentAnnotationY + 25);
         } else if (flipVertical && flipHorizontal) {
           context!.translate(currentAnnotationX, 0);
           context!.scale(-1, 1);
           context!.translate(0, currentAnnotationY + currentAnnotationY + 35);
           context!.scale(1, -1);
-          context!.fillText(tag, -currentAnnotationX + 10, currentAnnotationY + 25);
+          context!.fillText(tag, -textWidth - 10, currentAnnotationY + 25);
         } else {
           context!.fillText(tag, currentAnnotationX + 10, currentAnnotationY + 25);
         }
