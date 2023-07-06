@@ -588,6 +588,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               setSelectCanvas={setSelectCanvas}
               setCroppedImage={setCroppedImage}
               croppedImage={croppedImage}
+              imgSrc={imgSrc}
             />
           ) : currentControl === "flip" ? (
             <FlipControl
@@ -602,7 +603,8 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
                 allTextTags,
                 rotate,
                 cropCanvas,
-                flipVertical
+                flipVertical,
+                currentCropped
               })}
               flipVertically={() => flipVertically({
                 canvasRef,
@@ -669,7 +671,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               setDeleteTagId,
               setCurrentAnnotation,
               setTag,
-              setDeletePos
+              setDeletePos,
+              flipHorizontal,
+              flipVertical
             })}
             handleTagMouseMove={(tagHoverEvent: React.MouseEvent<HTMLCanvasElement>) => handleCanvasMouseMove({
               tagHoverEvent,
@@ -677,7 +681,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               annotations,
               setHoverTag,
               setHoverPos,
-              setShowH
+              setShowH,
+              flipHorizontal,
+              flipVertical
             })}
           />
         ) : currentControl === "text-on-image" ? (
@@ -700,7 +706,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               annotations,
               setHoverTag,
               setHoverPos,
-              setShowH
+              setShowH,
+              flipHorizontal,
+              flipVertical
             })}
             showAllTags={showAllTags}
             setShowAllTags={setShowAllTags}
@@ -739,7 +747,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               annotations,
               setHoverTag,
               setHoverPos,
-              setShowH
+              setShowH,
+              flipHorizontal,
+              flipVertical
             })}
           />
         ) : currentControl === "pen" ? (
@@ -764,7 +774,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               annotations,
               setHoverTag,
               setHoverPos,
-              setShowH
+              setShowH,
+              flipHorizontal,
+              flipVertical
             })}
           />
         ) : (
@@ -808,7 +820,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
         {deleteTag && (
           <DeleteTag
             position={deletePos}
-            setPromptOff={() => setDeleteTag(false)}
+            setDeleteTag={setDeleteTag}
             deleteTagSubmit={(clearSingleTagEvent: React.MouseEvent<HTMLButtonElement>) => handleClearSingleTag({
               clearSingleTagEvent,
               setDeleteTagId,
@@ -828,6 +840,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               flipHorizontal,
               flipVertical
             })}
+            flipHorizontal={flipHorizontal}
+            flipVertical={flipVertical}
+            canvasRef={canvasRef}
           />
         )}
 

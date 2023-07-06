@@ -18,7 +18,8 @@ export const flipHorizontally = ({
   allTextTags,
   rotate,
   cropCanvas,
-  flipVertical
+  flipVertical,
+  currentCropped
 }: FlipHorizontallyProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -28,8 +29,13 @@ export const flipHorizontally = ({
 
   showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, cropCanvas, flipHorizontal, flipVertical});
 
-  image.width = canvas!.width;
-  image.height = canvas!.height;
+  if (cropCanvas !== "") {
+    canvas!.width = currentCropped.width;
+    canvas!.height = currentCropped.height;
+  } else {
+    image.width = canvas!.width;
+    image.height = canvas!.height;
+  }
 
   context!.clearRect(0, 0, canvas!.width, canvas!.height);
   context!.translate(canvas!.width, 0);

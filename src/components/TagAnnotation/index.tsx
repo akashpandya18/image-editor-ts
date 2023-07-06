@@ -18,11 +18,14 @@ export const handleCanvasMouseMove = ({
   annotations,
   setHoverTag,
   setHoverPos,
-  setShowH
+  setShowH,
+  flipHorizontal,
+  flipVertical
 }: HandleCanvasMouseMoveProps) => {
   tagHoverEvent.preventDefault();
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
+  const rect = canvas!.getBoundingClientRect();
 
   const mouseX = tagHoverEvent.nativeEvent.offsetX;
   const mouseY = tagHoverEvent.nativeEvent.offsetY;
@@ -34,16 +37,27 @@ export const handleCanvasMouseMove = ({
     return context!.isPointInPath(mouseX, mouseY);
   });
   if (hoveredDot) {
-    canvas!.style.cursor = "pointer";
     let hoveredDotX = hoveredDot.currentAnnotationX;
     let hoveredDotY = hoveredDot.currentAnnotationY;
+    canvas!.style.cursor = "pointer";
+    if (flipHorizontal && !flipVertical) {
+      hoveredDotX = rect.width - hoveredDot.currentAnnotationX;
+      hoveredDotY = hoveredDot.currentAnnotationY;
+    }
+    if (flipVertical && !flipHorizontal) {
+      hoveredDotX = hoveredDot.currentAnnotationX;
+      hoveredDotY = rect.height - hoveredDot.currentAnnotationY;
+    }
+    if (flipHorizontal && flipVertical) {
+      hoveredDotX = rect.width - hoveredDot.currentAnnotationX;
+      hoveredDotY = rect.height - hoveredDot.currentAnnotationY;
+    }
     let position = { hoveredDotX, hoveredDotY };
     setHoverTag(hoveredDot.tag);
     setHoverPos(position);
     setShowH(true);
   } else {
     canvas!.style.cursor = "default";
-    setHoverTag("");
     setShowH(false);
   }
 };
@@ -58,14 +72,16 @@ export const handleCanvasClick = ({
   setDeleteTagId,
   setCurrentAnnotation,
   setTag,
-  setDeletePos
+  setDeletePos,
+  flipHorizontal,
+  flipVertical
 }: HandleCanvasClickProps) => {
   setTempRedPrompt(true);
   setDeleteTag(false);
   setDeleteTagId("");
 
-  const mouseX = tagCanvasClickEvent.nativeEvent.offsetX;
-  const mouseY = tagCanvasClickEvent.nativeEvent.offsetY;
+  // const mouseX = tagCanvasClickEvent.nativeEvent.offsetX;
+  // const mouseY = tagCanvasClickEvent.nativeEvent.offsetY;
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const rect = canvas!.getBoundingClientRect();
@@ -73,14 +89,35 @@ export const handleCanvasClick = ({
   const currentAnnotationY = tagCanvasClickEvent.clientY - rect!.top;
   const annotation = { currentAnnotationX, currentAnnotationY };
 
+  let mouseX: number;
+  let mouseY: number;
+
+  if (flipHorizontal && !flipVertical) {
+    mouseX = rect.width - tagCanvasClickEvent.nativeEvent.offsetX;
+    mouseY = tagCanvasClickEvent.nativeEvent.offsetY;
+  } else if (flipVertical && !flipHorizontal) {
+    mouseX = tagCanvasClickEvent.nativeEvent.offsetX;
+    mouseY = rect.height - tagCanvasClickEvent.nativeEvent.offsetY;
+  } else if (flipVertical && flipHorizontal) {
+    mouseX = rect.width - tagCanvasClickEvent.nativeEvent.offsetX;
+    mouseY = rect.height - tagCanvasClickEvent.nativeEvent.offsetY;
+  } else {
+    mouseX = tagCanvasClickEvent.nativeEvent.offsetX;
+    mouseY = tagCanvasClickEvent.nativeEvent.offsetY;
+  }
+
   setCurrentAnnotation(annotation);
   setTag("");
+  console.log("annotations", annotations);
   // Check if the mouse click is on any of the tags
   const clickedDot = annotations.find((annotation: AnnotationProps) => {
     context!.beginPath();
     context!.arc(annotation.currentAnnotationX, annotation.currentAnnotationY, 10, 0, 2 * Math.PI);
     return context!.isPointInPath(mouseX, mouseY);
   });
+  console.log("clickedDot", clickedDot);
+  console.log("mouseX", mouseX);
+  console.log("mouseY", mouseY);
   // Check if the click was within the bounds of the tags
   if (clickedDot) {
     setTempRedPrompt(false);

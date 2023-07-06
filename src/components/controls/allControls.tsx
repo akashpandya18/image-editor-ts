@@ -210,7 +210,8 @@ export const CropControl = ({
   setCropCanvas,
   setSelectCanvas,
   setCroppedImage,
-  croppedImage
+  croppedImage,
+  imgSrc
 }: CropControlProps) => {
   return (
     <div>
@@ -246,7 +247,7 @@ export const CropControl = ({
             className={"save-image"}
             disabled={croppedImage === ""}
             type={"button"}
-            onClick={() => saveImage({canvasRef, currentCropped, setCropCanvas, setSelectCanvas, setCroppedImage})}
+            onClick={() => saveImage({canvasRef, imgSrc, currentCropped, setCropCanvas, setSelectCanvas, setCroppedImage})}
             title={"Submit"}
           >
             <Check />

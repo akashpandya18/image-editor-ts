@@ -71,6 +71,8 @@ export interface HandleCanvasMouseMoveProps {
   setHoverTag: React.Dispatch<React.SetStateAction<string>>;
   setHoverPos: React.Dispatch<React.SetStateAction<{ hoveredDotX: number; hoveredDotY: number; }>>;
   setShowH: React.Dispatch<React.SetStateAction<boolean>>;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface HandleCanvasClickProps {
@@ -84,6 +86,8 @@ export interface HandleCanvasClickProps {
   setCurrentAnnotation: React.Dispatch<React.SetStateAction<{ currentAnnotationX: number; currentAnnotationY: number; }>>;
   setTag: React.Dispatch<React.SetStateAction<string>>;
   setDeletePos: React.Dispatch<React.SetStateAction<{ deletePositionX: number; deletePositionY: number; }>>
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface HandleInputChangeProps {
@@ -174,8 +178,11 @@ export interface SubmitTagsProps {
 
 export interface DeleteTagProps {
   position: { deletePositionX: number; deletePositionY: number; }
-  setPromptOff: (promptOffEvent: React.MouseEvent<HTMLButtonElement>) => void;
+  setDeleteTag: React.Dispatch<React.SetStateAction<boolean>>;
   deleteTagSubmit: (clearSingleTagEvent: React.MouseEvent<HTMLButtonElement>) => void;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
+  canvasRef: React.RefObject<HTMLCanvasElement>;
 }
 
 export interface TextOnImageControlProps {
@@ -385,6 +392,7 @@ export interface CropControlProps {
   setSelectCanvas: React.Dispatch<React.SetStateAction<boolean>>;
   setCroppedImage: React.Dispatch<React.SetStateAction<string>>;
   croppedImage: string;
+  imgSrc: string;
 }
 
 export interface CropProps {
@@ -430,6 +438,7 @@ export interface MouseDownProps {
 
 export interface SaveImageProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
+  imgSrc: string;
   currentCropped: Cropped;
   setCropCanvas: React.Dispatch<React.SetStateAction<string>>;
   setSelectCanvas: React.Dispatch<React.SetStateAction<boolean>>;
@@ -516,6 +525,7 @@ export interface FlipHorizontallyProps {
   rotate: number;
   cropCanvas: string;
   flipVertical: boolean;
+  currentCropped: Cropped;
 }
 
 export interface FlipVerticallyProps {

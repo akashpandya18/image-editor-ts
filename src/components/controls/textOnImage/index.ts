@@ -719,7 +719,7 @@ export const handleCross = ({
   context!.clearRect(0, 0, canvas!.width, canvas!.height);
   context!.filter = `blur(${blur}px) brightness(${brightness})`;
 
-  context!.clearRect(0, 0, canvas!.width, canvas!.height);
+  // context!.clearRect(0, 0, canvas!.width, canvas!.height);
   image.width = canvas!.width;
   image.height = canvas!.height;
 

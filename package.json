@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite --host --port 3000",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "run-build": "cd dist/ && http-server"
   },
   "dependencies": {
     "react": "^18.2.0",

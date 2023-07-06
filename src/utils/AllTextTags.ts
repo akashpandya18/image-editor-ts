@@ -12,7 +12,7 @@ export const AllTextTags = ({ canvasRef, allTextTags, flipHorizontal, flipVertic
     if (flipHorizontal && !flipVertical) {
       context!.translate(textTags.textPositionX, 0);
       context!.scale(-1, 1);
-      context!.fillText(textTags.text, 0, textTags.textPositionY);
+      context!.fillText(textTags.text, -20, textTags.textPositionY);
     }
     if (flipVertical && !flipHorizontal) {
       context!.translate(0, textTags.textPositionY + textTags.textPositionY);
