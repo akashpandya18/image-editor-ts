@@ -71,6 +71,8 @@ export interface HandleCanvasMouseMoveProps {
   setHoverTag: React.Dispatch<React.SetStateAction<string>>;
   setHoverPos: React.Dispatch<React.SetStateAction<{ hoveredDotX: number; hoveredDotY: number; }>>;
   setShowH: React.Dispatch<React.SetStateAction<boolean>>;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface HandleCanvasClickProps {
@@ -262,6 +264,7 @@ export interface TextOnImageProps {
   rotate: number;
   brightness: number;
   cropCanvas: string;
+  currentCropped: Cropped;
 }
 
 export interface TextObjectProps {
@@ -301,6 +304,7 @@ export interface HandleMouseMoveProps {
   brightness: number;
   setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
   cropCanvas: string;
+  currentCropped: Cropped;
 }
 
 export interface HandleMouseDownProps {

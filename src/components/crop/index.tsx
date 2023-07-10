@@ -103,7 +103,11 @@ export const saveImage = ({ canvasRef, imgSrc, currentCropped, setCropCanvas, se
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = imgSrc;
+  // TODO: due to canvas!.toDataURL() other things not happening
+  image.src = canvas!.toDataURL(); // imgSrc;
+
+  canvas!.width = currentCropped.width;
+  canvas!.height = currentCropped.height;
 
   image.onload = () => {
     context!.drawImage(
@@ -121,7 +125,6 @@ export const saveImage = ({ canvasRef, imgSrc, currentCropped, setCropCanvas, se
     setCropCanvas(canvas!.toDataURL());
     setSelectCanvas(false);
     setCroppedImage("");
-    setCurrentCropped({ startingX: 0, startingY: 0, height: 0, width: 0 });
   };
 };
 

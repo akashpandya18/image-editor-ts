@@ -155,8 +155,13 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
     image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
     const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
-    canvas!.width = width;
-    canvas!.height = height;
+    if (cropCanvas !== "") {
+      canvas!.width = currentCropped.width;
+      canvas!.height = currentCropped.height;
+    } else {
+      canvas!.width = width;
+      canvas!.height = height;
+    }
 
     image.onload = () => {
       // setting flip on canvas
@@ -181,8 +186,13 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
         context!.clearRect(0, 0, canvas!.width, canvas!.height);
         context!.filter = `blur(${blur}px) brightness(${brightness})`;
 
-        image.width = canvas!.width;
-        image.height = canvas!.height;
+        if (cropCanvas !== "") {
+          canvas!.width = currentCropped.width;
+          canvas!.height = currentCropped.height;
+        } else {
+          image.width = canvas!.width;
+          image.height = canvas!.height;
+        }
         context!.save();
         context!.translate(centerX, centerY);
         context!.rotate(degToRad(rotate++ % 360));
@@ -252,9 +262,8 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
         setTempPrompt(false);
       }
       // set crop rectangle disable when user didn't save crop changes and move to other tab
-      if (currentControl !== "crop") {
-        setCurrentCropped({ startingX: 0, startingY: 0, height: 0, width: 0 });
-      }
+      setCroppedImage("");
+      setSelectCanvas(false);
     };
   }, [currentControl, blur, zoom, rotate, brightness, allTextTags, flipHorizontal, flipVertical]);
   // setting crop rectangle in crop tab canvas
@@ -333,6 +342,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
       });
       context!.setLineDash([5, 5]);
       // left top node
+      context!.fillStyle = "white";
       context!.beginPath();
       context!.fillRect((dimensions.width / 4) - 2, (dimensions.height / 4) - 4, 6, 6);
       context!.fillStyle = "white";
@@ -656,7 +666,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               annotations,
               setHoverTag,
               setHoverPos,
-              setShowH
+              setShowH,
+              flipHorizontal,
+              flipVertical
             })}
           />
         ) : currentControl === "text-on-image" ? (
@@ -679,7 +691,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               annotations,
               setHoverTag,
               setHoverPos,
-              setShowH
+              setShowH,
+              flipHorizontal,
+              flipVertical
             })}
             showAllTags={showAllTags}
             setShowAllTags={setShowAllTags}
@@ -689,6 +703,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
             rotate={rotate}
             brightness={brightness}
             cropCanvas={cropCanvas}
+            currentCropped={currentCropped}
           />
         ) : currentControl === "crop" ? (
           <CropCanvas
@@ -716,7 +731,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               annotations,
               setHoverTag,
               setHoverPos,
-              setShowH
+              setShowH,
+              flipHorizontal,
+              flipVertical
             })}
           />
         ) : currentControl === "pen" ? (
@@ -748,7 +765,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               annotations,
               setHoverTag,
               setHoverPos,
-              setShowH
+              setShowH,
+              flipHorizontal,
+              flipVertical
             })}
             cropCanvas={cropCanvas}
           />

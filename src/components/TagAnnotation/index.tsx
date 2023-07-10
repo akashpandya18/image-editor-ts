@@ -18,11 +18,14 @@ export const handleCanvasMouseMove = ({
   annotations,
   setHoverTag,
   setHoverPos,
-  setShowH
+  setShowH,
+  flipHorizontal,
+  flipVertical
 }: HandleCanvasMouseMoveProps) => {
   tagHoverEvent.preventDefault();
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
+  const rect = canvas!.getBoundingClientRect();
 
   const mouseX = tagHoverEvent.nativeEvent.offsetX;
   const mouseY = tagHoverEvent.nativeEvent.offsetY;
@@ -34,9 +37,21 @@ export const handleCanvasMouseMove = ({
     return context!.isPointInPath(mouseX, mouseY);
   });
   if (hoveredDot) {
-    canvas!.style.cursor = "pointer";
     let hoveredDotX = hoveredDot.currentAnnotationX;
     let hoveredDotY = hoveredDot.currentAnnotationY;
+    canvas!.style.cursor = "pointer";
+    if (flipHorizontal && !flipVertical) {
+      hoveredDotX = rect.width - hoveredDot.currentAnnotationX;
+      hoveredDotY = hoveredDot.currentAnnotationY;
+    }
+    if (flipVertical && !flipHorizontal) {
+      hoveredDotX = hoveredDot.currentAnnotationX;
+      hoveredDotY = rect.height - hoveredDot.currentAnnotationY;
+    }
+    if (flipHorizontal && flipVertical) {
+      hoveredDotX = rect.width - hoveredDot.currentAnnotationX;
+      hoveredDotY = rect.height - hoveredDot.currentAnnotationY;
+    }
     let position = { hoveredDotX, hoveredDotY };
     setHoverTag(hoveredDot.tag);
     setHoverPos(position);

@@ -273,7 +273,8 @@ export const handleMouseMove = ({
   rotate,
   brightness,
   setDeleteTextTag,
-  cropCanvas
+  cropCanvas,
+  currentCropped
 }: HandleMouseMoveProps) => {
   const mouseX = textOnImageMouseMoveEvent.nativeEvent.offsetX;
   const mouseY = textOnImageMouseMoveEvent.nativeEvent.offsetY;
@@ -290,8 +291,13 @@ export const handleMouseMove = ({
   if (isDraggingText) {
     setDeleteTextTag(false);
 
-    canvas!.width = width;
-    canvas!.height = height;
+    if (cropCanvas !== "") {
+      canvas!.width = currentCropped.width;
+      canvas!.height = currentCropped.height;
+    } else {
+      canvas!.width = width;
+      canvas!.height = height;
+    }
     context!.strokeStyle = "gray";
     context!.setLineDash([10, 10]);
     context!.lineWidth = 2;
