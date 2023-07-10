@@ -74,7 +74,9 @@ export const TextOnImageCanvas = ({
   rotate,
   brightness,
   cropCanvas,
-  currentCropped
+  currentCropped,
+  flipHorizontal,
+  flipVertical
 }: TextOnImageProps) => {
   const [isDraggingText, setIsDraggingText] = useState<boolean>(false);
   const [draggingText, setDraggingText] = useState<string>("");
@@ -95,8 +97,9 @@ export const TextOnImageCanvas = ({
         allTextTags,
         setIsEditing,
         setFormData,
-        drawing,
-        cropCanvas
+        cropCanvas,
+        flipHorizontal,
+        flipVertical
       })}
       onMouseMove={(textOnImageMouseMoveEvent: React.MouseEvent<HTMLCanvasElement>) => handleMouseMove({
         textOnImageMouseMoveEvent,
@@ -118,7 +121,9 @@ export const TextOnImageCanvas = ({
         brightness,
         setDeleteTextTag,
         cropCanvas,
-        currentCropped
+        currentCropped,
+        flipHorizontal,
+        flipVertical
       })}
       onMouseDown={(textOnImageMouseDownEvent: React.MouseEvent<HTMLCanvasElement>) => handleMouseDown({
         textOnImageMouseDownEvent,
@@ -126,7 +131,9 @@ export const TextOnImageCanvas = ({
         setDraggingText,
         canvasRef,
         allTextTags,
-        setCurrentClicked
+        setCurrentClicked,
+        flipVertical,
+        flipHorizontal
       })}
       onMouseUp={(textOnImageMouseUpEvent: React.MouseEvent<HTMLCanvasElement>) => handleMouseUp({
         textOnImageMouseUpEvent,
@@ -138,7 +145,9 @@ export const TextOnImageCanvas = ({
         allTextTags,
         setAllTextTags,
         currentClicked,
-        setDeleteTextTag
+        setDeleteTextTag,
+        flipHorizontal,
+        flipVertical
       })}
     />
   );
@@ -377,7 +386,6 @@ export const PenCanvas = ({
 
     // Draw each line
     if (drawingPen.length > 0) {
-      console.log("drawingPen", drawingPen);
       drawingPen.forEach((line: any) => {
         const isArc = line.endY - line.startY < 5;
         if (isArc) {
@@ -433,75 +441,8 @@ export const PenCanvas = ({
 
 export const MoreFilterCanvas = ({
   canvasRef,
-  zoom,
-  blur,
-  rotate,
-  brightness,
-  imgSrc,
-  drawing,
-  handleTagMouseMove,
-  cropCanvas
+  handleTagMouseMove
 }: MoreFilterProps) => {
-  // useEffect(() => {
-  //   const canvas = canvasRef.current;
-  //   const context = canvas!.getContext("2d");
-  //   const image = new Image();
-  //   image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
-  //
-  //   context!.clearRect(0, 0, canvas!.width, canvas!.height);
-  //
-  //   image.width = canvas!.width;
-  //   image.height = canvas!.height;
-  //
-  //   // setTimeout(() => {
-  //     if (canvas) {
-  //       const { width, height } = canvas;
-  //       // Set canvas dimensions
-  //       canvas.width = width;
-  //       canvas.height = height;
-  //       // Clear canvas and scale it
-  //       const centerX = canvas.width / 2;
-  //       const centerY = canvas.height / 2;
-  //
-  //       context!.translate(centerX, centerY);
-  //       context!.scale(zoom, zoom);
-  //       context!.translate(-centerX, -centerY);
-  //       context!.clearRect(0, 0, width, height);
-  //     }
-  //
-  //     context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
-  //   // }, 0);
-  // }, [zoom, rotate]);
-  //
-  // useEffect(() => {
-  //   const canvas = canvasRef.current;
-  //   const context = canvas!.getContext("2d");
-  //   const image = new Image();
-  //   image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
-  //   const degToRad = (rotate: number) => rotate * Math.PI / 180;
-  //
-  //   image.onload = () => {
-  //     context!.clearRect(0, 0, canvas!.width, canvas!.height);
-  //     context!.filter = `blur(${blur}px) brightness(${brightness})`;
-  //     image.width = canvas!.width;
-  //     image.height = canvas!.height;
-  //
-  //     context!.save();
-  //     context!.translate(canvas!.width / 2, canvas!.height / 2);
-  //     context!.rotate(degToRad(rotate++ % 360));
-  //     // setTimeout(() => {
-  //       context!.drawImage(
-  //         image,
-  //         image.width / -2,
-  //         image.height / -2,
-  //         image.width,
-  //         image.height
-  //       );
-  //     // });
-  //     context!.restore();
-  //   };
-  // },[blur, zoom, rotate, brightness]);
-
   return (
     <canvas
       ref={canvasRef}

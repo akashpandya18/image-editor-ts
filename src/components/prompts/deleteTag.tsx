@@ -2,12 +2,33 @@ import React from "react";
 import { Check, Close } from "../../assets/icons";
 import { DeleteTagProps } from "../../types";
 
-export const DeleteTag = ({ position, setPromptOff, deleteTagSubmit }: DeleteTagProps) => {
+export const DeleteTag = ({ position, setPromptOff, deleteTagSubmit, flipHorizontal, flipVertical, canvasRef }: DeleteTagProps) => {
+  const canvas = canvasRef.current;
+  const context = canvas!.getContext("2d");
+  const rect = canvas!.getBoundingClientRect();
+  let topValue = position.deletePositionY + 2;
+  let leftValue = position.deletePositionX - 100;
+
+  if (flipHorizontal && !flipVertical) {
+    context!.translate(position.deletePositionX, 0);
+    leftValue = rect.width - position.deletePositionX - 200;
+  }
+  if (flipVertical && !flipHorizontal) {
+    context!.translate(0, position.deletePositionY + position.deletePositionY);
+    topValue = rect.height - position.deletePositionX + 10;
+  }
+  if (flipVertical && flipHorizontal) {
+    context!.translate(position.deletePositionX, 0);
+    leftValue = rect.width - position.deletePositionX - 200;
+    topValue = rect.height - position.deletePositionY + 10;
+    context!.translate(0, position.deletePositionY + position.deletePositionY);
+  }
+
   return (
     <div
       style={{
-        top: position.deletePositionY + 2,
-        left: position.deletePositionX - 100,
+        top: topValue,
+        left: leftValue,
         position: "absolute",
         zIndex: 9,
         width: "12.5rem",

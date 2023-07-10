@@ -174,6 +174,9 @@ export interface DeleteTagProps {
   position: { deletePositionX: number; deletePositionY: number; }
   setPromptOff: (promptOffEvent: React.MouseEvent<HTMLButtonElement>) => void;
   deleteTagSubmit: (clearSingleTagEvent: React.MouseEvent<HTMLButtonElement>) => void;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
+  canvasRef: React.RefObject<HTMLCanvasElement>;
 }
 
 export interface TextOnImageControlProps {
@@ -212,6 +215,8 @@ export interface TextOnChangeHandlerProps {
   drawing: string;
   rotate: number;
   cropCanvas: string;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface TextOnImageClickHandlerProps {
@@ -223,8 +228,9 @@ export interface TextOnImageClickHandlerProps {
   allTextTags: TextTag[];
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   setFormData: React.Dispatch<React.SetStateAction<{ text: string; size: number; color: string; id: string; }>>;
-  drawing: string;
   cropCanvas: string;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface TextFormProps {
@@ -265,6 +271,8 @@ export interface TextOnImageProps {
   brightness: number;
   cropCanvas: string;
   currentCropped: Cropped;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface TextObjectProps {
@@ -305,6 +313,8 @@ export interface HandleMouseMoveProps {
   setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
   cropCanvas: string;
   currentCropped: Cropped;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface HandleMouseDownProps {
@@ -314,6 +324,8 @@ export interface HandleMouseDownProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   allTextTags: TextTag[];
   setCurrentClicked: React.Dispatch<React.SetStateAction<{ currentClickedX: number; currentClickedY: number; }>>;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface HandleMouseUpProps {
@@ -327,6 +339,8 @@ export interface HandleMouseUpProps {
   setAllTextTags: React.Dispatch<React.SetStateAction<TextTag[] | any | never[]>>;
   currentClicked: { currentClickedX: number; currentClickedY: number; };
   setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface HandleDeleteProps {
@@ -357,6 +371,9 @@ export interface DeleteTextProps {
   position: { currentClickedX: number; currentClickedY: number; };
   handleDelete: () => void;
   setDeleteTextTag: React.Dispatch<React.SetStateAction<boolean>>;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
+  canvasRef: React.RefObject<HTMLCanvasElement>;
 }
 
 export interface CropControlProps {
@@ -566,14 +583,7 @@ export interface ControlsType {
 
 export interface MoreFilterProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  blur: number;
-  zoom: number;
-  rotate: number;
-  brightness: number;
-  imgSrc: string;
-  drawing: string;
   handleTagMouseMove: (tagHoverEvent: React.MouseEvent<HTMLCanvasElement>) => void;
-  cropCanvas: string;
 }
 
 export interface HandleToolClickProps {

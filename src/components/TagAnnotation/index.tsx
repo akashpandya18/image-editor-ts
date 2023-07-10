@@ -79,11 +79,13 @@ export const handleCanvasClick = ({
   setDeleteTag(false);
   setDeleteTagId("");
 
-  const mouseX = tagCanvasClickEvent.nativeEvent.offsetX;
-  const mouseY = tagCanvasClickEvent.nativeEvent.offsetY;
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const rect = canvas!.getBoundingClientRect();
+
+  let mouseX = tagCanvasClickEvent.nativeEvent.offsetX;
+  let mouseY = tagCanvasClickEvent.nativeEvent.offsetY;
+
   const currentAnnotationX = tagCanvasClickEvent.clientX - rect!.left;
   const currentAnnotationY = tagCanvasClickEvent.clientY - rect!.top;
   const annotation = { currentAnnotationX, currentAnnotationY };

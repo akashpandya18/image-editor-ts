@@ -396,7 +396,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
       setShowAllTags,
       drawing,
       rotate,
-      cropCanvas
+      cropCanvas,
+      flipHorizontal,
+      flipVertical
     });
   };
   // handle crop rectangle
@@ -704,6 +706,8 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
             brightness={brightness}
             cropCanvas={cropCanvas}
             currentCropped={currentCropped}
+            flipHorizontal={flipHorizontal}
+            flipVertical={flipVertical}
           />
         ) : currentControl === "crop" ? (
           <CropCanvas
@@ -753,12 +757,6 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
         ) : currentControl === "more" ? (
           <MoreFilterCanvas
             canvasRef={canvasRef}
-            zoom={zoom}
-            blur={blur}
-            rotate={rotate}
-            brightness={brightness}
-            imgSrc={imgSrc}
-            drawing={drawing}
             handleTagMouseMove={(tagHoverEvent: React.MouseEvent<HTMLCanvasElement>) => handleCanvasMouseMove({
               tagHoverEvent,
               canvasRef,
@@ -769,7 +767,6 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               flipHorizontal,
               flipVertical
             })}
-            cropCanvas={cropCanvas}
           />
         ) : (
           <RegularCanvas canvasRef={canvasRef} />
@@ -830,6 +827,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               drawing,
               cropCanvas
             })}
+            flipHorizontal={flipHorizontal}
+            flipVertical={flipVertical}
+            canvasRef={canvasRef}
           />
         )}
 
@@ -845,6 +845,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               setTempPrompt
             })}
             setDeleteTextTag={setDeleteTextTag}
+            flipHorizontal={flipHorizontal}
+            flipVertical={flipVertical}
+            canvasRef={canvasRef}
           />
         )}
 
