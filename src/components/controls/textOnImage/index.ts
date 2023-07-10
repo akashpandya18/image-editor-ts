@@ -65,6 +65,7 @@ export const clickHandler = ({
     );
   });
 
+  console.log("clickRect", clickRect);
   if (!clickRect) {
     context!.setLineDash([10, 10]);
     context!.lineWidth = 2;

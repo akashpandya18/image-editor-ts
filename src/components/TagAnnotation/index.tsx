@@ -76,12 +76,6 @@ export const handleCanvasClick = ({
   flipHorizontal,
   flipVertical
 }: HandleCanvasClickProps) => {
-  setTempRedPrompt(true);
-  setDeleteTag(false);
-  setDeleteTagId("");
-
-  // const mouseX = tagCanvasClickEvent.nativeEvent.offsetX;
-  // const mouseY = tagCanvasClickEvent.nativeEvent.offsetY;
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const rect = canvas!.getBoundingClientRect();
@@ -89,45 +83,80 @@ export const handleCanvasClick = ({
   const currentAnnotationY = tagCanvasClickEvent.clientY - rect!.top;
   const annotation = { currentAnnotationX, currentAnnotationY };
 
-  let mouseX: number;
-  let mouseY: number;
+  let mouseX = tagCanvasClickEvent.nativeEvent.offsetX;
+  let mouseY = tagCanvasClickEvent.nativeEvent.offsetY;
 
   if (flipHorizontal && !flipVertical) {
     mouseX = rect.width - tagCanvasClickEvent.nativeEvent.offsetX;
     mouseY = tagCanvasClickEvent.nativeEvent.offsetY;
-  } else if (flipVertical && !flipHorizontal) {
+  }
+  if (flipVertical && !flipHorizontal) {
     mouseX = tagCanvasClickEvent.nativeEvent.offsetX;
     mouseY = rect.height - tagCanvasClickEvent.nativeEvent.offsetY;
-  } else if (flipVertical && flipHorizontal) {
+  }
+  if (flipVertical && flipHorizontal) {
     mouseX = rect.width - tagCanvasClickEvent.nativeEvent.offsetX;
     mouseY = rect.height - tagCanvasClickEvent.nativeEvent.offsetY;
-  } else {
-    mouseX = tagCanvasClickEvent.nativeEvent.offsetX;
-    mouseY = tagCanvasClickEvent.nativeEvent.offsetY;
   }
 
   setCurrentAnnotation(annotation);
   setTag("");
-  console.log("annotations", annotations);
+
   // Check if the mouse click is on any of the tags
-  const clickedDot = annotations.find((annotation: AnnotationProps) => {
+  const clickedDot = annotations.find((annotationData: AnnotationProps) => {
+    // console.log("annotationData.currentAnnotationX", annotationData.currentAnnotationX);
+    // console.log("mouseX", mouseX);
+    // console.log("annotationData.currentAnnotationY", annotationData.currentAnnotationY);
+    // console.log("mouseY", mouseY);
+    // console.log("context!.isPointInPath(mouseX, mouseY)", context!.isPointInPath(mouseX, mouseY));
     context!.beginPath();
-    context!.arc(annotation.currentAnnotationX, annotation.currentAnnotationY, 10, 0, 2 * Math.PI);
+    context!.arc(annotationData.currentAnnotationX, annotationData.currentAnnotationY, 10, 0, 2 * Math.PI);
     return context!.isPointInPath(mouseX, mouseY);
   });
-  console.log("clickedDot", clickedDot);
-  console.log("mouseX", mouseX);
-  console.log("mouseY", mouseY);
+
+  annotations.forEach((annotationData: AnnotationProps) => {
+    const { currentAnnotationX, currentAnnotationY, tag } = annotationData;
+    context!.beginPath();
+    context!.arc(currentAnnotationX, currentAnnotationY, 10, 0, 2 * Math.PI);
+
+    console.log("currentAnnotationX", currentAnnotationX);
+    console.log("mouseX", mouseX);
+    console.log("currentAnnotationY", currentAnnotationY);
+    console.log("mouseY", mouseY);
+    console.log("context!.isPointInPath(mouseX, mouseY)", context!.isPointInPath(mouseX, mouseY));
+    if (context!.isPointInPath(mouseX, mouseY)) {
+      console.log("if");
+    } else {
+      console.log("else");
+    }
+  });
   // Check if the click was within the bounds of the tags
+  // console.log("clickedDot", clickedDot);
   if (clickedDot) {
     setTempRedPrompt(false);
     setDeleteTag(true);
     setShowH(false);
     setDeleteTagId(clickedDot.id);
-    const deletePositionX = clickedDot.currentAnnotationX;
-    const deletePositionY = clickedDot.currentAnnotationY;
-    const deleteAnnotation = { deletePositionX, deletePositionY };
+    let deletePositionX = clickedDot.currentAnnotationX;
+    let deletePositionY = clickedDot.currentAnnotationY;
+    if (flipHorizontal && !flipVertical) {
+      deletePositionX = rect.width - clickedDot.currentAnnotationX;
+      deletePositionY = clickedDot.currentAnnotationY;
+    }
+    if (flipVertical && !flipHorizontal) {
+      deletePositionX = clickedDot.currentAnnotationX;
+      deletePositionY = rect.height - clickedDot.currentAnnotationY;
+    }
+    if (flipHorizontal && flipVertical) {
+      deletePositionX = rect.width - clickedDot.currentAnnotationX;
+      deletePositionY = rect.height - clickedDot.currentAnnotationY;
+    }
+    const deleteAnnotation = { deletePositionX: mouseX, deletePositionY: mouseY };
     setDeletePos(deleteAnnotation);
+  } else {
+    setTempRedPrompt(true);
+    setDeleteTag(false);
+    setDeleteTagId("");
   }
 };
 
@@ -278,8 +307,8 @@ export const handleClearSingleTag = ({
       image,
       image.width / -2,
       image.height / -2,
-      image.width,
-      image.height
+      canvas!.width,
+      canvas!.height
     );
     context!.restore();
     if (deleteTagId !== "") {
