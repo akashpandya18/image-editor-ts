@@ -48,9 +48,7 @@ export const TextOnImageControl = ({
   imgSrc,
   annotations,
   allTextTags,
-  handleCross,
-  drawing,
-  cropCanvas
+  handleCross
 }: TextOnImageControlProps): JSX.Element => {
   let data = { text: "", color: "", size: 0, id: "" };
 
@@ -69,7 +67,7 @@ export const TextOnImageControl = ({
       const canvas = canvasRef.current;
       const context = canvas!.getContext("2d");
       const image = new Image();
-      image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
+      image.src = imgSrc;
 
       context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
       annotations.forEach((annotationData: AnnotationProps) => {
@@ -210,11 +208,10 @@ export const CropControl = ({
   canvasRef,
   currentCropped,
   selectCanvas,
-  setCropCanvas,
   setSelectCanvas,
   setCroppedImage,
-  setCurrentCropped,
-  imgSrc
+  // setCurrentCropped,
+  // imgSrc
 }: CropControlProps) => {
   return (
     <div>
@@ -250,7 +247,7 @@ export const CropControl = ({
             className={"save-image"}
             disabled={currentCropped.width <= 0 && currentCropped.height <= 0}
             type={"button"}
-            onClick={() => saveImage({canvasRef, imgSrc, currentCropped, setCropCanvas, setSelectCanvas, setCroppedImage, setCurrentCropped})}
+            onClick={() => saveImage({canvasRef, /* imgSrc, */ currentCropped, setSelectCanvas, setCroppedImage, /* setCurrentCropped */})}
             title={"Submit"}
           >
             <Check />

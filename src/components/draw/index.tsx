@@ -7,62 +7,22 @@ import {
   TextTag
 } from "../../types";
 
-export const saveDrawing = ({ canvasRef, /* setDrawing, imgSrc, */ drawingPen }: SaveDrawingProps) => {
+export const saveDrawing = ({ canvasRef, /* imgSrc */ }: SaveDrawingProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
   image.src = canvas!.toDataURL(); // imgSrc;
 
-  // Draw each line
-  drawingPen.forEach((line: any) => {
-    const isArc = line.endY - line.startY < 5
-    if (isArc) {
-      context!.beginPath();
-      context!.fillStyle = "#000";
-      context!.arc(
-        line.endX,
-        line.endY,
-        1,
-        0,
-        2 * Math.PI
-      );
-      context!.stroke();
-    } else {
-      context!.beginPath();
-      context!.moveTo(line.startX, line.startY);
-      context!.lineTo(line.endX, line.endY);
-      // context!.quadraticCurveTo(line.startX, line.startY, line.endX, line.endY);
-      // context!.fillStyle = "#000";
-      // context!.arc(
-      //   line.endX,
-      //   line.endY,
-      //   1,
-      //   0,
-      //   2 * Math.PI
-      // );
-      // context!.fill();
-      context!.strokeStyle = "black";
-      context!.lineWidth = 2;
-      context!.stroke();
-    }
-  });
-
-  // context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
-  // setDrawing(canvas!.toDataURL());
+  context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
 };
 
 export const clearDrawing = ({
   canvasRef,
   imgSrc,
   annotations,
-  setDrawing,
   showAllTags,
   setShowAllTags,
-  drawing,
-  allTextTags,
-  drawingPen,
-  setDrawingPen,
-  cropCanvas
+  allTextTags
 }: ClearDrawingProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -71,15 +31,7 @@ export const clearDrawing = ({
 
   const message = confirm("Do you want to undo the draw?");
   message &&
-    setDrawing("");
-    showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags, cropCanvas});
-
-    if (drawingPen.length > 0) {
-      const updatedArray = drawingPen.slice(0, drawingPen.length - 1);
-      setDrawingPen(updatedArray);
-      context!.clearRect(0, 0, canvas!.width, canvas!.height);
-      context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
-    }
+    showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags});
 
     allTextTags.forEach((textTags: TextTag) => {
       context!.textBaseline = "alphabetic";

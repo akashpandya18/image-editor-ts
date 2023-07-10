@@ -124,8 +124,6 @@ export const handleSubmitTag = ({
   showAllTags,
   allTextTags,
   rotate,
-  drawing,
-  cropCanvas,
   flipHorizontal,
   flipVertical
 }: HandleSubmitTagProps) => {
@@ -150,7 +148,7 @@ export const handleSubmitTag = ({
   }
 
   const image = new Image();
-  image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
+  image.src = imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   image.width = canvas!.width;
@@ -249,9 +247,7 @@ export const handleClearSingleTag = ({
   setTempRedPrompt,
   setShowAllTags,
   allTextTags,
-  rotate,
-  drawing,
-  cropCanvas
+  rotate
 }: HandleClearSingleTagProps) => {
   clearSingleTagEvent.preventDefault();
   setShowAllTags(false);
@@ -259,7 +255,7 @@ export const handleClearSingleTag = ({
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
+  image.src = imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   setTimeout(() => {
@@ -307,16 +303,14 @@ export const hideTags = ({
   imgSrc,
   canvasRef,
   annotations,
-  drawing,
   allTextTags,
-  rotate,
-  cropCanvas
+  rotate
 }: HideTagsProps) => {
   setShowAllTags(false);
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
+  image.src = imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   setTimeout(() => {
@@ -356,15 +350,13 @@ export const showTags = ({
   imgSrc,
   canvasRef,
   annotations,
-  drawing,
-  allTextTags,
-  cropCanvas
+  allTextTags
 }: ShowTagsProps) => {
   setShowAllTags(true);
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
+  image.src = imgSrc;
 
   image.width = canvas!.width;
   image.height = canvas!.height;

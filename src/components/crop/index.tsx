@@ -99,7 +99,7 @@ export const mouseDown = ({
   setStartingNode({ startingNodeX: mouseX, startingNodeY: mouseY });
 };
 
-export const saveImage = ({ canvasRef, imgSrc, currentCropped, setCropCanvas, setSelectCanvas, setCroppedImage, setCurrentCropped }: SaveImageProps) => {
+export const saveImage = ({ canvasRef, /* imgSrc, */ currentCropped, setSelectCanvas, setCroppedImage, /* setCurrentCropped */ }: SaveImageProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
@@ -122,7 +122,6 @@ export const saveImage = ({ canvasRef, imgSrc, currentCropped, setCropCanvas, se
       canvas!.height
     );
 
-    setCropCanvas(canvas!.toDataURL());
     setSelectCanvas(false);
     setCroppedImage("");
   };
@@ -143,12 +142,10 @@ export const mouseMove = ({
   annotations,
   showAllTags,
   setShowAllTags,
-  drawing,
   allTextTags,
   setHoverTag,
   setHoverPos,
-  setShowH,
-  cropCanvas
+  setShowH
 }: MouseMoveProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -240,7 +237,7 @@ export const mouseMove = ({
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
     const image = new Image();
-    image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
+    image.src = imgSrc;
 
     context!.clearRect(0, 0, canvas!.width, canvas!.height);
     context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
@@ -539,7 +536,7 @@ export const mouseMove = ({
     context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
   });
   // if show all tag is true
-  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags, cropCanvas});
+  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags});
 };
 
 export const mouseUP = ({

@@ -13,20 +13,18 @@ export const flipHorizontally = ({
   annotations,
   flipHorizontal,
   setFlipHorizontal,
-  drawing,
   showAllTags,
   setShowAllTags,
   allTextTags,
-  rotate,
-  cropCanvas
+  rotate
 }: FlipHorizontallyProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
+  image.src = imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
-  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags, cropCanvas});
+  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags});
 
   image.width = canvas!.width;
   image.height = canvas!.height;
@@ -72,20 +70,18 @@ export const flipVertically = ({
   annotations,
   flipVertical,
   setFlipVertical,
-  drawing,
   showAllTags,
   setShowAllTags,
   allTextTags,
-  rotate,
-  cropCanvas
+  rotate
 }: FlipVerticallyProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
+  image.src = imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
-  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags, cropCanvas});
+  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags});
 
   image.width = canvas!.width;
   image.height = canvas!.height;
