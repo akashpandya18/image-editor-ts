@@ -129,7 +129,6 @@ export const textOnChangeHandler = ({
   const rectWidth: number = textWidth + padding * 2;
   const rectHeight: number = textHeight + padding * 2;
 
-  // context!.clearRect(currentClicked.currentClickedX,currentClicked.currentClickedY - textHeight, textWidth, textHeight);
   image.width = canvas!.width;
   image.height = canvas!.height;
 
@@ -372,7 +371,6 @@ export const handleMouseMove = ({
     // @ts-ignore
     const { text, id, textPositionX, textPositionY } = allTextTags.find((obj: TextTag) => obj.id === draggingText);
     const dragObject = allTextTags.find((obj: TextTag) => obj.id === id);
-    // const textWidth: number = context!.measureText(text).width;
     const textHeight: number = parseInt(context!.font, 10);
     const padding: number = 10;
     const degToRad = (rotate: number) => rotate * Math.PI / 180;
@@ -395,7 +393,6 @@ export const handleMouseMove = ({
     }
 
     if (image.complete) {
-      // context!.clearRect(0, 0, canvas!.width, canvas!.height);
       context!.filter = `blur(${blur}px) brightness(${brightness})`;
       const centerX = canvas!.width / 2;
       const centerY = canvas!.height / 2;
@@ -518,23 +515,6 @@ export const handleMouseMove = ({
         context!.fillStyle = dragObject!.color;
         context!.font = `${dragObject!.size || 22}px monospace`;
         context!.textBaseline = "alphabetic";
-        // if (flipHorizontal && !flipVertical) {
-        //   context!.translate(movedArea.moveX, 0);
-        //   context!.scale(-1, 1);
-        //   // context!.fillText(text, -10, movedArea.moveY + (textHeight / 4));
-        // } else if (flipVertical && !flipHorizontal) {
-        //   context!.translate(0, movedArea.moveY + (textHeight / 4) + movedArea.moveY + (textHeight / 4));
-        //   context!.scale(1, -1);
-        //   // context!.fillText(text, movedArea.moveX + 10, movedArea.moveY + (textHeight / 4));
-        // } else if (flipVertical && flipHorizontal) {
-        //   context!.translate(movedArea.moveX, 0);
-        //   context!.scale(-1, 1);
-        //   context!.translate(0, movedArea.moveY + (textHeight / 4) + movedArea.moveY + (textHeight / 4));
-        //   context!.scale(1, -1);
-        //   // context!.fillText(text, -10, movedArea.moveY + (textHeight / 4));
-        // } else {
-        //   context!.fillText(text, movedArea.moveX + 10, movedArea.moveY + (textHeight / 4));
-        // }
         context!.fillText(text, movedArea.moveX + 10, movedArea.moveY + (textHeight / 4));
         context!.strokeRect(
           movedArea.moveX,

@@ -110,6 +110,8 @@ export interface HandleSubmitTagProps {
   rotate: number;
   drawing: string;
   cropCanvas: string;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface HandleClearSingleTagProps {
@@ -536,7 +538,6 @@ export interface FlipVerticallyProps {
 
 export interface PenProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  drawingPen: any;
   setDrawingPen: any;
   imgSrc: string;
   drawing: string;

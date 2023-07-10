@@ -81,14 +81,10 @@ export const handleCanvasClick = ({
 
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
-  const rect = canvas!.getBoundingClientRect();
 
   let mouseX = tagCanvasClickEvent.nativeEvent.offsetX;
   let mouseY = tagCanvasClickEvent.nativeEvent.offsetY;
-
-  const currentAnnotationX = tagCanvasClickEvent.clientX - rect!.left;
-  const currentAnnotationY = tagCanvasClickEvent.clientY - rect!.top;
-  const annotation = { currentAnnotationX, currentAnnotationY };
+  const annotation = { currentAnnotationX: mouseX, currentAnnotationY: mouseY };
 
   setCurrentAnnotation(annotation);
   setTag("");
@@ -129,13 +125,30 @@ export const handleSubmitTag = ({
   allTextTags,
   rotate,
   drawing,
-  cropCanvas
+  cropCanvas,
+  flipHorizontal,
+  flipVertical
 }: HandleSubmitTagProps) => {
   tagSubmitEvent.preventDefault();
-  const currentAnnotationX = currentAnnotation.currentAnnotationX;
-  const currentAnnotationY = currentAnnotation.currentAnnotationY;
+  let currentAnnotationX = currentAnnotation.currentAnnotationX;
+  let currentAnnotationY = currentAnnotation.currentAnnotationY;
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
+  const rect = canvas!.getBoundingClientRect();
+
+  if (flipHorizontal && !flipVertical) {
+    currentAnnotationX = rect.width - currentAnnotation.currentAnnotationX;
+    currentAnnotationY = currentAnnotation.currentAnnotationY;
+  }
+  if (flipVertical && !flipHorizontal) {
+    currentAnnotationX = currentAnnotation.currentAnnotationX;
+    currentAnnotationY = rect.height - currentAnnotation.currentAnnotationY;
+  }
+  if (flipVertical && flipHorizontal) {
+    currentAnnotationX = rect.width - currentAnnotation.currentAnnotationX;
+    currentAnnotationY = rect.height - currentAnnotation.currentAnnotationY;
+  }
+
   const image = new Image();
   image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;

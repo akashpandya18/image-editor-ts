@@ -217,39 +217,6 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
           context!.fillStyle = texts.color;
           context!.fillText(texts.text, texts.textPositionX + 10, texts.textPositionY);
         });
-        drawingPen.forEach((line: any) => {
-          const isArc = line.endY - line.startY < 5;
-          if (isArc) {
-            context!.beginPath();
-            context!.fillStyle = "#000";
-            context!.arc(
-              line.endX,
-              line.endY,
-              1,
-              0,
-              2 * Math.PI
-            );
-            context!.stroke();
-          } else {
-            context!.beginPath();
-            context!.moveTo(line.startX, line.startY);
-            context!.lineTo(line.endX, line.endY);
-            // context!.quadraticCurveTo(line.startX, line.startY, line.endX, line.endY);
-            // context!.fillStyle = "#000";
-            // context!.arc(
-            //   line.endX,
-            //   line.endY,
-            //   1,
-            //   0,
-            //   2 * Math.PI
-            // );
-            // context!.fill();
-            context!.strokeStyle = "black";
-            context!.lineWidth = 2;
-            context!.stroke();
-          }
-        });
-        // context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
       },10);
 
       // if show all tag is true
@@ -743,7 +710,6 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
         ) : currentControl === "pen" ? (
           <PenCanvas
             canvasRef={canvasRef}
-            drawingPen={drawingPen}
             setDrawingPen={setDrawingPen}
             imgSrc={imgSrc}
             drawing={drawing}
@@ -797,7 +763,9 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
                 allTextTags,
                 rotate,
                 drawing,
-                cropCanvas
+                cropCanvas,
+                flipHorizontal,
+                flipVertical
               })}
               position={currentAnnotation}
             />

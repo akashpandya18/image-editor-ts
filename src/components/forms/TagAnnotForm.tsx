@@ -11,6 +11,7 @@ export const TagAnnotationForm = ({
   refer,
   handleCloseInput
 }: TagAnnotationFormProps) => {
+
   return (
     <div
       ref={refer}

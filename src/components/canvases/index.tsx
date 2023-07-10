@@ -1,5 +1,4 @@
 import React, {
-  useEffect,
   useState,
   useRef
 } from "react";
@@ -277,7 +276,6 @@ export const FlipCanvas = ({
 
 export const PenCanvas = ({
   canvasRef,
-  drawingPen,
   setDrawingPen,
   imgSrc,
   drawing,
@@ -309,9 +307,6 @@ export const PenCanvas = ({
   const draw = (penMouseMoveEvent: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
-    // const rect = canvas!.getBoundingClientRect();
-    // const currentX = penMouseMoveEvent.clientX - rect.left;
-    // const currentY = penMouseMoveEvent.clientY - rect.top;
 
     const image = new Image();
     image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
@@ -346,16 +341,6 @@ export const PenCanvas = ({
       context.lineTo(mouseX, mouseY);
       context.stroke();
     }
-
-    // Update the last line in the state with the current position
-    // setDrawingPen((prevLines: any) => {
-    //   const updatedLines = [...prevLines];
-    //   const lastLine = updatedLines[updatedLines.length - 1];
-    //   lastLine.endX = currentX;
-    //   lastLine.endY = currentY;
-    //   return updatedLines;
-    // });
-    // setDrawingPen((prevDrawing: ({ x: number; y: number; })[]) => [...prevDrawing, {clientX, clientY, endX: clientX, endY: clientY }]);
   };
 
   const stopDrawing = () => { setIsDrawing(false); };
@@ -377,50 +362,6 @@ export const PenCanvas = ({
       context.fill();
     }
   };
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas!.getContext("2d");
-    const image = new Image();
-    image.src = drawing !== "" ? drawing : imgSrc;
-
-    // Draw each line
-    if (drawingPen.length > 0) {
-      drawingPen.forEach((line: any) => {
-        const isArc = line.endY - line.startY < 5;
-        if (isArc) {
-          context!.beginPath();
-          context!.moveTo(line.startX, line.startY);
-          context!.fillStyle = "#000";
-          context!.arc(
-            line.endX,
-            line.endY,
-            0,
-            0,
-            2 * Math.PI
-          );
-          context!.stroke();
-        } else {
-          context!.beginPath();
-          // context!.moveTo(line.startX, line.startY);
-          context!.lineTo(line.endX, line.endY);
-          // context!.quadraticCurveTo(line.startX, line.startY, line.endX, line.endY);
-          // context!.fillStyle = "#000";
-          // context!.arc(
-          //   line.endX,
-          //   line.endY,
-          //   1,
-          //   0,
-          //   2 * Math.PI
-          // );
-          // context!.fill();
-          context!.strokeStyle = "black";
-          context!.lineWidth = 2;
-          context!.stroke();
-        }
-      });
-    }
-  }, [drawingPen]);
 
   return (
     <canvas
