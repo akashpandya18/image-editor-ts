@@ -1,7 +1,4 @@
-import React, {
-  useState,
-  useRef
-} from "react";
+import React, { useState } from "react";
 import {
   clickHandler,
   handleMouseDown,
@@ -148,6 +145,7 @@ export const TextOnImageCanvas = ({
 };
 
 export const CropCanvas = ({
+  imgRef,
   canvasRef,
   currentCropped,
   setCurrentCropped,
@@ -167,7 +165,7 @@ export const CropCanvas = ({
   const [isDragging, setIsDragging] = useState(false);
   const [startingNode, setStartingNode] = useState({ startingNodeX: 0, startingNodeY: 0 });
 
-  const imgRef = useRef<HTMLImageElement>(null);
+  // const imgRef = useRef<HTMLImageElement>(null);
   let mouseUp = {
     difference,
     setDifference,

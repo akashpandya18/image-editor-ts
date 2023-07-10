@@ -99,15 +99,17 @@ export const mouseDown = ({
   setStartingNode({ startingNodeX: mouseX, startingNodeY: mouseY });
 };
 
-export const saveImage = ({ canvasRef, /* imgSrc, */ currentCropped, setSelectCanvas, setCroppedImage, /* setCurrentCropped */ }: SaveImageProps) => {
+export const saveImage = ({ imgRef, canvasRef, imgSrc, currentCropped, setSelectCanvas, setCroppedImage }: SaveImageProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  // TODO: due to canvas!.toDataURL() other things not happening
-  image.src = canvas!.toDataURL(); // imgSrc;
+  image.src = imgSrc;
 
   canvas!.width = currentCropped.width;
   canvas!.height = currentCropped.height;
+
+  console.log("currentCropped", currentCropped);
+  console.log("imgRef.current", imgRef!.current!.src);
 
   image.onload = () => {
     context!.drawImage(

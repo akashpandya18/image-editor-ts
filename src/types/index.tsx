@@ -360,6 +360,7 @@ export interface DeleteTextProps {
 }
 
 export interface CropControlProps {
+  imgRef: React.RefObject<HTMLImageElement>;
   select: () => void;
   image: string;
   canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -367,11 +368,12 @@ export interface CropControlProps {
   selectCanvas: boolean;
   setSelectCanvas: React.Dispatch<React.SetStateAction<boolean>>;
   setCroppedImage: React.Dispatch<React.SetStateAction<string>>;
-  // setCurrentCropped: React.Dispatch<React.SetStateAction<Cropped>>;
-  // imgSrc: string;
+  imgSrc: string;
+  croppedImage: string;
 }
 
 export interface CropProps {
+  imgRef: React.RefObject<HTMLImageElement>;
   canvasRef: React.RefObject<HTMLCanvasElement>;
   currentCropped: Cropped;
   setCurrentCropped: React.Dispatch<React.SetStateAction<Cropped>>;
@@ -410,12 +412,12 @@ export interface MouseDownProps {
 }
 
 export interface SaveImageProps {
+  imgRef: React.RefObject<HTMLImageElement>;
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  // imgSrc: string;
+  imgSrc: string;
   currentCropped: Cropped;
   setSelectCanvas: React.Dispatch<React.SetStateAction<boolean>>;
   setCroppedImage: React.Dispatch<React.SetStateAction<string>>;
-  // setCurrentCropped: React.Dispatch<React.SetStateAction<Cropped>>;
 }
 
 export interface MouseMoveProps {

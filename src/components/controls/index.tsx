@@ -105,6 +105,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
 
   const ref = useRef(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const nanoid = customAlphabet("1234567890abcdef", 10);
   const id = nanoid(5);
 
@@ -513,6 +514,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
             />
           ) : currentControl === "crop" ? (
             <CropControl
+              imgRef={imgRef}
               image={croppedImage}
               select={select}
               canvasRef={canvasRef}
@@ -520,8 +522,8 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               selectCanvas={selectCanvas}
               setSelectCanvas={setSelectCanvas}
               setCroppedImage={setCroppedImage}
-              // setCurrentCropped={setCurrentCropped}
-              // imgSrc={imgSrc}
+              imgSrc={imgSrc}
+              croppedImage={croppedImage}
             />
           ) : currentControl === "flip" ? (
             <FlipControl
@@ -648,6 +650,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
           />
         ) : currentControl === "crop" ? (
           <CropCanvas
+            imgRef={imgRef}
             canvasRef={canvasRef}
             currentCropped={currentCropped}
             setCurrentCropped={setCurrentCropped}

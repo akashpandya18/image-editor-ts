@@ -203,6 +203,7 @@ export const TextOnImageControl = ({
 };
 
 export const CropControl = ({
+  imgRef,
   select,
   image,
   canvasRef,
@@ -210,8 +211,8 @@ export const CropControl = ({
   selectCanvas,
   setSelectCanvas,
   setCroppedImage,
-  // setCurrentCropped,
-  // imgSrc
+  imgSrc,
+  croppedImage
 }: CropControlProps) => {
   return (
     <div>
@@ -245,9 +246,9 @@ export const CropControl = ({
           </button>
           <button
             className={"save-image"}
-            disabled={currentCropped.width <= 0 && currentCropped.height <= 0}
+            disabled={croppedImage === ""}
             type={"button"}
-            onClick={() => saveImage({canvasRef, /* imgSrc, */ currentCropped, setSelectCanvas, setCroppedImage, /* setCurrentCropped */})}
+            onClick={() => saveImage({imgRef, canvasRef, imgSrc, currentCropped, setSelectCanvas, setCroppedImage})}
             title={"Submit"}
           >
             <Check />
