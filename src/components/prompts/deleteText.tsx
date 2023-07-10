@@ -2,31 +2,12 @@ import React from "react";
 import { Check, Close } from "../../assets/icons";
 import { DeleteTextProps } from "../../types";
 
-export const DeleteText = ({ position, handleDelete, setDeleteTextTag, flipHorizontal, flipVertical, canvasRef }: DeleteTextProps) => {
-  const canvas = canvasRef.current;
-  const context = canvas!.getContext("2d");
-  const rect = canvas!.getBoundingClientRect();
-  let topValue = position.currentClickedY + 10;
-  let leftValue = position.currentClickedX - 100;
-
-  if (flipHorizontal && !flipVertical) {
-    context!.translate(position.currentClickedX, 0);
-    leftValue = rect.width - position.currentClickedX - 200;
-  } else if (flipVertical && !flipHorizontal) {
-    context!.translate(0, position.currentClickedY + position.currentClickedY);
-    topValue = rect.height - position.currentClickedY + 10;
-  } else if (flipVertical && flipHorizontal) {
-    context!.translate(position.currentClickedX, 0);
-    leftValue = rect.width - position.currentClickedX - 200;
-    topValue = rect.height - position.currentClickedY + 10;
-    context!.translate(0, position.currentClickedY + position.currentClickedY);
-  }
-
+export const DeleteText = ({ position, handleDelete, setDeleteTextTag }: DeleteTextProps) => {
   return (
     <div
       style={{
-        top: topValue,
-        left: leftValue,
+        top: position.currentClickedY + 10,
+        left: position.currentClickedX - 100,
         position: "absolute",
         zIndex: 9,
         width: "12.5rem",

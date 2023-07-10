@@ -5,10 +5,10 @@ import {
   MouseMoveProps,
   MouseUPProps,
   MouseLeaveProps,
-  AnnotationProps
+  AnnotationProps,
+  TextTag
 } from "../../types";
 import { showTags } from "../TagAnnotation";
-import { AllTextTags } from "../../utils/AllTextTags";
 
 export const mouseDown = ({
   cropMouseDownEvent,
@@ -99,15 +99,11 @@ export const mouseDown = ({
   setStartingNode({ startingNodeX: mouseX, startingNodeY: mouseY });
 };
 
-export const saveImage = ({ canvasRef, /* imgSrc, */ currentCropped, setCropCanvas, setSelectCanvas, setCroppedImage }: SaveImageProps) => {
+export const saveImage = ({ canvasRef, imgSrc, currentCropped, setCropCanvas, setSelectCanvas, setCroppedImage, setCurrentCropped }: SaveImageProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  // TODO: due to canvas!.toDataURL() other things not happening
-  image.src = canvas!.toDataURL(); // imgSrc;
-
-  canvas!.width = currentCropped.width;
-  canvas!.height = currentCropped.height;
+  image.src = imgSrc;
 
   image.onload = () => {
     context!.drawImage(
@@ -125,6 +121,7 @@ export const saveImage = ({ canvasRef, /* imgSrc, */ currentCropped, setCropCanv
     setCropCanvas(canvas!.toDataURL());
     setSelectCanvas(false);
     setCroppedImage("");
+    setCurrentCropped({ startingX: 0, startingY: 0, height: 0, width: 0 });
   };
 };
 
@@ -143,13 +140,12 @@ export const mouseMove = ({
   annotations,
   showAllTags,
   setShowAllTags,
+  drawing,
   allTextTags,
   setHoverTag,
   setHoverPos,
   setShowH,
-  cropCanvas,
-  flipHorizontal,
-  flipVertical
+  cropCanvas
 }: MouseMoveProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -241,7 +237,7 @@ export const mouseMove = ({
     const canvas = canvasRef.current;
     const context = canvas!.getContext("2d");
     const image = new Image();
-    image.src = cropCanvas !== "" ? cropCanvas : imgSrc;
+    image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
 
     context!.clearRect(0, 0, canvas!.width, canvas!.height);
     context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
@@ -533,9 +529,14 @@ export const mouseMove = ({
     context!.arc(currentAnnotationX, currentAnnotationY, 10, 0, 2 * Math.PI);
     context!.fill();
   });
-  AllTextTags({canvasRef, allTextTags, flipHorizontal, flipVertical});
+  allTextTags && allTextTags.forEach((textTags: TextTag) => {
+    context!.textBaseline = "alphabetic";
+    context!.font = `${textTags.size || 22}px monospace`;
+    context!.fillStyle = textTags.color;
+    context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
+  });
   // if show all tag is true
-  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, cropCanvas, flipHorizontal, flipVertical});
+  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, drawing, allTextTags, cropCanvas});
 };
 
 export const mouseUP = ({

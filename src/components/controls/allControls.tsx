@@ -11,14 +11,14 @@ import {
   PropsTag,
   AnnotationProps,
   TextOnImageControlProps,
+  TextTag,
   CropControlProps,
   PropsFlip,
   PenControlProps, FontSizeOptionsProps
 } from "../../types";
 import "./index.css";
 import { saveImage } from "../crop";
-import { FontSizeOptions } from "../../utils/data";
-import { AllTextTags } from "../../utils/AllTextTags";
+import {FontSizeOptions} from "../../utils/data";
 
 export const TagControls = ({ annotations }: PropsTag) => {
   return (
@@ -49,9 +49,8 @@ export const TextOnImageControl = ({
   annotations,
   allTextTags,
   handleCross,
-  cropCanvas,
-  flipHorizontal,
-  flipVertical
+  drawing,
+  cropCanvas
 }: TextOnImageControlProps): JSX.Element => {
   let data = { text: "", color: "", size: 0, id: "" };
 
@@ -70,7 +69,7 @@ export const TextOnImageControl = ({
       const canvas = canvasRef.current;
       const context = canvas!.getContext("2d");
       const image = new Image();
-      image.src = cropCanvas !== "" ? cropCanvas : imgSrc;
+      image.src = drawing !== "" ? drawing : cropCanvas !== "" ? cropCanvas : imgSrc;
 
       context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
       annotations.forEach((annotationData: AnnotationProps) => {
@@ -80,7 +79,12 @@ export const TextOnImageControl = ({
         context!.arc(currentAnnotationX, currentAnnotationY, 10, 0, 2 * Math.PI);
         context!.fill();
       });
-      AllTextTags({canvasRef, allTextTags, flipHorizontal, flipVertical});
+      allTextTags.forEach((textTags: TextTag) => {
+        context!.textBaseline = "alphabetic";
+        context!.font = `${textTags.size || 22}px monospace`;
+        context!.fillStyle = textTags.color;
+        context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
+      });
     }, 10);
   },[annotations, allTextTags]);
 
@@ -107,7 +111,6 @@ export const TextOnImageControl = ({
               >
                 <input
                   autoFocus
-                  id={formData.id}
                   value={formData.text}
                   style={{
                     height: "1.875rem",
@@ -210,7 +213,7 @@ export const CropControl = ({
   setCropCanvas,
   setSelectCanvas,
   setCroppedImage,
-  croppedImage,
+  setCurrentCropped,
   imgSrc
 }: CropControlProps) => {
   return (
@@ -245,9 +248,9 @@ export const CropControl = ({
           </button>
           <button
             className={"save-image"}
-            disabled={croppedImage === ""}
+            disabled={currentCropped.width <= 0 && currentCropped.height <= 0}
             type={"button"}
-            onClick={() => saveImage({canvasRef, imgSrc, currentCropped, setCropCanvas, setSelectCanvas, setCroppedImage})}
+            onClick={() => saveImage({canvasRef, imgSrc, currentCropped, setCropCanvas, setSelectCanvas, setCroppedImage, setCurrentCropped})}
             title={"Submit"}
           >
             <Check />
