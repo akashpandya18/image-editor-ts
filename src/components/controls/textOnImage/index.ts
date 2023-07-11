@@ -24,7 +24,8 @@ export const clickHandler = ({
   setIsEditing,
   setFormData,
   flipHorizontal,
-  flipVertical
+  flipVertical,
+  newImage
 }: TextOnImageClickHandlerProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -68,7 +69,7 @@ export const clickHandler = ({
     context!.lineWidth = 2;
 
     const image = new Image();
-    image.src = imgSrc;
+    image.src = newImage !== "" ? newImage : imgSrc;
     image.width = canvas!.width;
     image.height = canvas!.height;
 
@@ -102,13 +103,14 @@ export const textOnChangeHandler = ({
   setShowAllTags,
   rotate,
   flipHorizontal,
-  flipVertical
+  flipVertical,
+  newImage
 }: TextOnChangeHandlerProps) => {
   const { text, color, size } = textForm;
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = imgSrc;
+  image.src = newImage !== "" ? newImage : imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   context!.setLineDash([10, 10]);
@@ -131,7 +133,7 @@ export const textOnChangeHandler = ({
 
   context!.font = `${size}px monospace`;
 
-  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags});
+  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, newImage});
 
   if (image) {
     if (image.complete) {
@@ -160,14 +162,14 @@ export const textOnChangeHandler = ({
           image,
           image.width / -2,
           image.height / -2,
-          image.width,
-          image.height
+          image.width + 3,
+          image.height + 3
         );
         context!.restore();
 
         if (text.length === 0) {
           context!.clearRect(0, 0, canvas!.width, canvas!.height);
-          context!.drawImage(image, 0, 0, image.width, image.height);
+          context!.drawImage(image, 0, 0, image.width + 3, image.height + 3);
         } else {
           context!.save();
           if (flipHorizontal && !flipVertical) {
@@ -206,7 +208,7 @@ export const textOnChangeHandler = ({
     } else {
       image.onload = () => {
         context!.clearRect(0, 0, canvas!.width, canvas!.height);
-        context!.drawImage(image, 0, 0, image.width, image.height);
+        context!.drawImage(image, 0, 0, image.width + 3, image.height + 3);
 
         context!.strokeRect(
           currentClicked.currentClickedX,
@@ -227,14 +229,14 @@ export const textOnChangeHandler = ({
           image,
           image.width / -2,
           image.height / -2,
-          image.width,
-          image.height
+          image.width + 3,
+          image.height + 3
         );
         context!.restore();
 
         if (text.length === 0) {
           context!.clearRect(0, 0, canvas!.width, canvas!.height);
-          context!.drawImage(image, 0, 0, image.width, image.height);
+          context!.drawImage(image, 0, 0, image.width + 3, image.height + 3);
         } else {
           context!.save();
           if (flipHorizontal && !flipVertical) {
@@ -270,7 +272,7 @@ export const textOnChangeHandler = ({
           context!.fill();
         });
 
-        showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags});
+        showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, newImage});
       }
     }
   }
@@ -323,7 +325,8 @@ export const handleMouseMove = ({
   brightness,
   setDeleteTextTag,
   flipHorizontal,
-  flipVertical
+  flipVertical,
+  newImage
 }: HandleMouseMoveProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -349,11 +352,11 @@ export const handleMouseMove = ({
 
   const { width, height } = dimensions;
   const image = new Image();
-  image.src = imgSrc;
+  image.src = newImage !== "" ? newImage : imgSrc;
 
   handleTagMouseMove(textOnImageMouseMoveEvent);
 
-  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags});
+  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, newImage});
 
   if (isDraggingText) {
     setDeleteTextTag(false);
@@ -408,8 +411,8 @@ export const handleMouseMove = ({
         image,
         image.width / -2,
         image.height / -2,
-        image.width,
-        image.height
+        image.width + 3,
+        image.height + 3
       );
       context!.restore();
 
@@ -483,8 +486,8 @@ export const handleMouseMove = ({
           image,
           image.width / -2,
           image.height / -2,
-          image.width,
-          image.height
+          image.width + 3,
+          image.height + 3
         );
         context!.restore();
 
@@ -690,12 +693,13 @@ export const handleCross = ({
   setShowAllTags,
   blur,
   rotate,
-  brightness
+  brightness,
+  newImage
 }: HandleCrossProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = imgSrc;
+  image.src = newImage !== "" ? newImage : imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   setTempPrompt(false);
@@ -715,8 +719,8 @@ export const handleCross = ({
     image,
     image.width / -2,
     image.height / -2,
-    image.width,
-    image.height
+    image.width + 3,
+    image.height + 3
   );
   context!.restore();
 
@@ -734,5 +738,5 @@ export const handleCross = ({
     context!.fill();
   });
 
-  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags});
+  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, newImage});
 };

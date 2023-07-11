@@ -99,29 +99,22 @@ export const mouseDown = ({
   setStartingNode({ startingNodeX: mouseX, startingNodeY: mouseY });
 };
 
-export const saveImage = ({ imgRef, canvasRef, imgSrc, currentCropped, setSelectCanvas, setCroppedImage }: SaveImageProps) => {
+export const saveImage = ({ canvasRef, setSelectCanvas, setCroppedImage, newImage }: SaveImageProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = imgSrc;
+  image.src = newImage;
 
-  canvas!.width = currentCropped.width;
-  canvas!.height = currentCropped.height;
-
-  console.log("currentCropped", currentCropped);
-  console.log("imgRef.current", imgRef!.current!.src);
+  canvas!.width = image.width;
+  canvas!.height = image.height;
 
   image.onload = () => {
     context!.drawImage(
       image,
-      currentCropped.startingX + 2,
-      currentCropped.startingY + 2,
-      currentCropped.width - 3,
-      currentCropped.height - 3,
       0,
       0,
-      canvas!.width,
-      canvas!.height
+      canvas!.width + 3,
+      canvas!.height + 3
     );
 
     setSelectCanvas(false);
@@ -147,7 +140,8 @@ export const mouseMove = ({
   allTextTags,
   setHoverTag,
   setHoverPos,
-  setShowH
+  setShowH,
+  newImage
 }: MouseMoveProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -242,7 +236,7 @@ export const mouseMove = ({
     image.src = imgSrc;
 
     context!.clearRect(0, 0, canvas!.width, canvas!.height);
-    context!.drawImage(image, 0, 0, dimensions.width, dimensions.height);
+    context!.drawImage(image, 0, 0, dimensions.width + 3, dimensions.height + 3);
     context!.strokeStyle = "white";
     context!.setLineDash([5, 5]);
     context!.lineWidth = 2;
@@ -300,7 +294,7 @@ export const mouseMove = ({
     const image = imgRef.current;
 
     context!.clearRect(0, 0, canvas!.width, canvas!.height);
-    context!.drawImage(image!, 0, 0, dimensions.width, dimensions.height);
+    context!.drawImage(image!, 0, 0, dimensions.width + 3, dimensions.height + 3);
     context!.strokeStyle = "white";
     context!.setLineDash([5, 5]);
     context!.lineWidth = 2;
@@ -538,7 +532,7 @@ export const mouseMove = ({
     context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
   });
   // if show all tag is true
-  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags});
+  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, newImage});
 };
 
 export const mouseUP = ({

@@ -125,7 +125,8 @@ export const handleSubmitTag = ({
   allTextTags,
   rotate,
   flipHorizontal,
-  flipVertical
+  flipVertical,
+  newImage
 }: HandleSubmitTagProps) => {
   tagSubmitEvent.preventDefault();
   let currentAnnotationX = currentAnnotation.currentAnnotationX;
@@ -148,7 +149,7 @@ export const handleSubmitTag = ({
   }
 
   const image = new Image();
-  image.src = imgSrc;
+  image.src = newImage !== "" ? newImage : imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   image.width = canvas!.width;
@@ -176,8 +177,8 @@ export const handleSubmitTag = ({
           image,
           image.width / -2,
           image.height / -2,
-          image.width,
-          image.height
+          image.width + 3,
+          image.height + 3
         );
         context!.restore();
         tempAnnotation.forEach((annotationData: {
@@ -247,7 +248,8 @@ export const handleClearSingleTag = ({
   setTempRedPrompt,
   setShowAllTags,
   allTextTags,
-  rotate
+  rotate,
+  newImage
 }: HandleClearSingleTagProps) => {
   clearSingleTagEvent.preventDefault();
   setShowAllTags(false);
@@ -255,7 +257,7 @@ export const handleClearSingleTag = ({
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = imgSrc;
+  image.src = newImage !== "" ? newImage : imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   setTimeout(() => {
@@ -270,8 +272,8 @@ export const handleClearSingleTag = ({
       image,
       image.width / -2,
       image.height / -2,
-      image.width,
-      image.height
+      image.width + 3,
+      image.height + 3
     );
     context!.restore();
     if (deleteTagId !== "") {
@@ -304,13 +306,14 @@ export const hideTags = ({
   canvasRef,
   annotations,
   allTextTags,
-  rotate
+  rotate,
+  newImage
 }: HideTagsProps) => {
   setShowAllTags(false);
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = imgSrc;
+  image.src = newImage !== "" ? newImage : imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   setTimeout(() => {
@@ -325,8 +328,8 @@ export const hideTags = ({
       image,
       image.width / -2,
       image.height / -2,
-      image.width,
-      image.height
+      image.width + 3,
+      image.height + 3
     );
     context!.restore();
 
@@ -350,13 +353,14 @@ export const showTags = ({
   imgSrc,
   canvasRef,
   annotations,
-  allTextTags
+  allTextTags,
+  newImage
 }: ShowTagsProps) => {
   setShowAllTags(true);
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = imgSrc;
+  image.src = newImage !== "" ? newImage : imgSrc;
 
   image.width = canvas!.width;
   image.height = canvas!.height;

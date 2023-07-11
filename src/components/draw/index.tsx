@@ -13,7 +13,7 @@ export const saveDrawing = ({ canvasRef, /* imgSrc */ }: SaveDrawingProps) => {
   const image = new Image();
   image.src = canvas!.toDataURL(); // imgSrc;
 
-  context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
+  context!.drawImage(image, 0, 0, canvas!.width + 3, canvas!.height + 3);
 };
 
 export const clearDrawing = ({
@@ -22,16 +22,17 @@ export const clearDrawing = ({
   annotations,
   showAllTags,
   setShowAllTags,
-  allTextTags
+  allTextTags,
+  newImage
 }: ClearDrawingProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = imgSrc;
+  image.src = newImage !== "" ? newImage : imgSrc;
 
   const message = confirm("Do you want to undo the draw?");
   message &&
-    showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags});
+    showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, newImage});
 
     allTextTags.forEach((textTags: TextTag) => {
       context!.textBaseline = "alphabetic";
