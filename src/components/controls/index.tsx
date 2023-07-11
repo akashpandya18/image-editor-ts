@@ -163,7 +163,6 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
     image.onload = () => {
       // setting flip on canvas
       flipValue(canvas, context);
-      context!.clearRect(0, 0, canvas!.width, canvas!.height);
 
       // Clear canvas and scale it
       const centerX = canvas!.width / 2;
@@ -179,9 +178,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
 
       // setting tag/annotation, texts and rotation on canvas
       setTimeout(() => {
-        // setting blur and brightness value on canvas
         context!.clearRect(0, 0, canvas!.width, canvas!.height);
-        context!.filter = `blur(${blur}px) brightness(${brightness})`;
         if (newImage !== "") {
           canvas!.width = currentCropped.width;
           canvas!.height = currentCropped.height;
@@ -191,6 +188,8 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
         }
 
         context!.save();
+        // setting blur and brightness value on canvas
+        context!.filter = `blur(${blur}px) brightness(${brightness})`;
         context!.translate(centerX, centerY);
         context!.rotate(degToRad(rotate++ % 360));
         context!.drawImage(
@@ -229,7 +228,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
       setCroppedImage("");
       setSelectCanvas(false);
     };
-  }, [currentControl, blur, zoom, rotate, brightness, allTextTags, flipHorizontal, flipVertical]);
+  }, [canvasRef, currentControl, blur, zoom, rotate, brightness, allTextTags, flipHorizontal, flipVertical]);
   // setting crop rectangle in crop tab canvas
   useEffect(() => {
     currentCropped.startingX < 0 &&
@@ -281,6 +280,7 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
 
       const imageData = context1!.getImageData(currentCropped.startingX + 2, currentCropped.startingY + 2, currentCropped.width - 3, currentCropped.height - 3);
       newCtx!.putImageData(imageData, 0, 0);
+      console.log("imageData", imageData);
       let crop = newCanvas.toDataURL();
       setCroppedImage(crop);
       setNewImage(crop);
@@ -537,6 +537,8 @@ export const Controls = ({ imgSrc }: ControlsProps): JSX.Element => {
               setCroppedImage={setCroppedImage}
               newImage={newImage}
               croppedImage={croppedImage}
+              blur={blur}
+              brightness={brightness}
             />
           ) : currentControl === "flip" ? (
             <FlipControl

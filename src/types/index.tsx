@@ -377,6 +377,8 @@ export interface CropControlProps {
   setCroppedImage: React.Dispatch<React.SetStateAction<string>>;
   croppedImage: string;
   newImage: string;
+  blur: number;
+  brightness: number;
 }
 
 export interface CropProps {
@@ -423,6 +425,8 @@ export interface SaveImageProps {
   setSelectCanvas: React.Dispatch<React.SetStateAction<boolean>>;
   setCroppedImage: React.Dispatch<React.SetStateAction<string>>;
   newImage: string;
+  blur: number;
+  brightness: number;
 }
 
 export interface MouseMoveProps {

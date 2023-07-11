@@ -99,7 +99,7 @@ export const mouseDown = ({
   setStartingNode({ startingNodeX: mouseX, startingNodeY: mouseY });
 };
 
-export const saveImage = ({ canvasRef, setSelectCanvas, setCroppedImage, newImage }: SaveImageProps) => {
+export const saveImage = ({ canvasRef, setSelectCanvas, setCroppedImage, newImage, blur, brightness }: SaveImageProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
@@ -109,6 +109,7 @@ export const saveImage = ({ canvasRef, setSelectCanvas, setCroppedImage, newImag
   canvas!.height = image.height;
 
   image.onload = () => {
+    context!.filter  = `blur(${blur}px) brightness(${brightness})`;
     context!.drawImage(
       image,
       0,

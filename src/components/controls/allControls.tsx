@@ -14,11 +14,12 @@ import {
   TextTag,
   CropControlProps,
   PropsFlip,
-  PenControlProps, FontSizeOptionsProps
+  PenControlProps,
+  FontSizeOptionsProps
 } from "../../types";
 import "./index.css";
 import { saveImage } from "../crop";
-import {FontSizeOptions} from "../../utils/data";
+import { FontSizeOptions } from "../../utils/data";
 
 export const TagControls = ({ annotations }: PropsTag) => {
   return (
@@ -210,7 +211,9 @@ export const CropControl = ({
   setSelectCanvas,
   setCroppedImage,
   croppedImage,
-  newImage
+  newImage,
+  blur,
+  brightness
 }: CropControlProps) => {
   return (
     <div>
@@ -246,7 +249,7 @@ export const CropControl = ({
             className={"save-image"}
             disabled={croppedImage === ""}
             type={"button"}
-            onClick={() => saveImage({canvasRef, setSelectCanvas, setCroppedImage, newImage})}
+            onClick={() => saveImage({canvasRef, setSelectCanvas, setCroppedImage, newImage, blur, brightness})}
             title={"Submit"}
           >
             <Check />
