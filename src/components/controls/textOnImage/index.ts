@@ -17,15 +17,14 @@ import { showTags } from "../../TagAnnotation";
 export const clickHandler = ({
   textOnImageClickEvent,
   canvasRef,
+  imgSrc,
   setTempPrompt,
   setCurrentClicked,
-  imgSrc,
   allTextTags,
   setIsEditing,
   setFormData,
   flipHorizontal,
-  flipVertical,
-  newImage
+  flipVertical
 }: TextOnImageClickHandlerProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -69,7 +68,7 @@ export const clickHandler = ({
     context!.lineWidth = 2;
 
     const image = new Image();
-    image.src = newImage !== "" ? newImage : imgSrc;
+    image.src = imgSrc;
     image.width = canvas!.width;
     image.height = canvas!.height;
 
@@ -91,10 +90,10 @@ export const clickHandler = ({
 };
 
 export const textOnChangeHandler = ({
-  textForm,
   canvasRef,
-  currentClicked,
   imgSrc,
+  textForm,
+  currentClicked,
   isEditing,
   setError,
   allTextTags,
@@ -103,14 +102,13 @@ export const textOnChangeHandler = ({
   setShowAllTags,
   rotate,
   flipHorizontal,
-  flipVertical,
-  newImage
+  flipVertical
 }: TextOnChangeHandlerProps) => {
   const { text, color, size } = textForm;
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = newImage !== "" ? newImage : imgSrc;
+  image.src = imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   context!.setLineDash([10, 10]);
@@ -133,7 +131,7 @@ export const textOnChangeHandler = ({
 
   context!.font = `${size}px monospace`;
 
-  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, newImage});
+  showAllTags && showTags({canvasRef, imgSrc, setShowAllTags, annotations, allTextTags});
 
   if (image) {
     if (image.complete) {
@@ -272,7 +270,7 @@ export const textOnChangeHandler = ({
           context!.fill();
         });
 
-        showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, newImage});
+        showAllTags && showTags({canvasRef, imgSrc, setShowAllTags, annotations, allTextTags});
       }
     }
   }
@@ -308,12 +306,12 @@ export const submitHandler = ({
 
 export const handleMouseMove = ({
   textOnImageMouseMoveEvent,
+  canvasRef,
+  imgSrc,
   isDraggingText,
   draggingText,
-  canvasRef,
   allTextTags,
   dimensions,
-  imgSrc,
   currentClicked,
   annotations,
   handleTagMouseMove,
@@ -325,8 +323,7 @@ export const handleMouseMove = ({
   brightness,
   setDeleteTextTag,
   flipHorizontal,
-  flipVertical,
-  newImage
+  flipVertical
 }: HandleMouseMoveProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -352,11 +349,11 @@ export const handleMouseMove = ({
 
   const { width, height } = dimensions;
   const image = new Image();
-  image.src = newImage !== "" ? newImage : imgSrc;
+  image.src = imgSrc;
 
   handleTagMouseMove(textOnImageMouseMoveEvent);
 
-  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, newImage});
+  showAllTags && showTags({canvasRef, imgSrc, setShowAllTags, annotations, allTextTags});
 
   if (isDraggingText) {
     setDeleteTextTag(false);
@@ -528,9 +525,9 @@ export const handleMouseMove = ({
 
 export const handleMouseDown = ({
   textOnImageMouseDownEvent,
+  canvasRef,
   setIsDraggingText,
   setDraggingText,
-  canvasRef,
   allTextTags,
   setCurrentClicked,
   flipVertical,
@@ -683,23 +680,22 @@ export const handleDelete = ({
 };
 
 export const handleCross = ({
+  canvasRef,
+  imgSrc,
   setTempPrompt,
   setError,
-  canvasRef,
   allTextTags,
-  imgSrc,
   annotations,
   showAllTags,
   setShowAllTags,
   blur,
   rotate,
-  brightness,
-  newImage
+  brightness
 }: HandleCrossProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
-  image.src = newImage !== "" ? newImage : imgSrc;
+  image.src = imgSrc;
   const degToRad = (rotate: number) => rotate * Math.PI / 180;
 
   setTempPrompt(false);
@@ -738,5 +734,5 @@ export const handleCross = ({
     context!.fill();
   });
 
-  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, newImage});
+  showAllTags && showTags({canvasRef, imgSrc, setShowAllTags, annotations, allTextTags});
 };

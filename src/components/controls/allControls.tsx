@@ -39,18 +39,17 @@ export const TagControls = ({ annotations }: PropsTag) => {
 };
 
 export const TextOnImageControl = ({
+  canvasRef,
+  imgSrc,
   tempPrompt,
   textOnChangeHandler,
   onSubmit,
   formData,
   setFormData,
   error,
-  canvasRef,
-  imgSrc,
   annotations,
   allTextTags,
-  handleCross,
-  newImage
+  handleCross
 }: TextOnImageControlProps): JSX.Element => {
   let data = { text: "", color: "", size: 0, id: "" };
 
@@ -69,7 +68,7 @@ export const TextOnImageControl = ({
       const canvas = canvasRef.current;
       const context = canvas!.getContext("2d");
       const image = new Image();
-      image.src = newImage !== "" ? newImage : imgSrc;
+      image.src = imgSrc;
 
       context!.drawImage(image, 0, 0, canvas!.width + 3, canvas!.height + 3);
       annotations.forEach((annotationData: AnnotationProps) => {
@@ -205,15 +204,17 @@ export const TextOnImageControl = ({
 };
 
 export const CropControl = ({
-  select,
   canvasRef,
+  select,
   selectCanvas,
   setSelectCanvas,
-  setCroppedImage,
   croppedImage,
+  setCroppedImage,
   newImage,
   blur,
-  brightness
+  brightness,
+  setImgSrc,
+  currentCropped
 }: CropControlProps) => {
   return (
     <div>
@@ -249,7 +250,16 @@ export const CropControl = ({
             className={"save-image"}
             disabled={croppedImage === ""}
             type={"button"}
-            onClick={() => saveImage({canvasRef, setSelectCanvas, setCroppedImage, newImage, blur, brightness})}
+            onClick={() => saveImage({
+              canvasRef,
+              setImgSrc,
+              currentCropped,
+              setSelectCanvas,
+              setCroppedImage,
+              newImage,
+              blur,
+              brightness
+            })}
             title={"Submit"}
           >
             <Check />

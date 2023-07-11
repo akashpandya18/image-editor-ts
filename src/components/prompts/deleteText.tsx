@@ -2,7 +2,7 @@ import React from "react";
 import { Check, Close } from "../../assets/icons";
 import { DeleteTextProps } from "../../types";
 
-export const DeleteText = ({ position, handleDelete, setDeleteTextTag, flipHorizontal, flipVertical, canvasRef }: DeleteTextProps) => {
+export const DeleteText = ({ canvasRef, position, handleDelete, setDeleteTextTag, flipHorizontal, flipVertical }: DeleteTextProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const rect = canvas!.getBoundingClientRect();

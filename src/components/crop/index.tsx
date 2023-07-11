@@ -99,19 +99,24 @@ export const mouseDown = ({
   setStartingNode({ startingNodeX: mouseX, startingNodeY: mouseY });
 };
 
-export const saveImage = ({ canvasRef, setSelectCanvas, setCroppedImage, newImage, blur, brightness }: SaveImageProps) => {
+export const saveImage = ({ canvasRef, setImgSrc, currentCropped, setSelectCanvas, setCroppedImage, newImage, blur, brightness }: SaveImageProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
   image.src = newImage;
 
-  canvas!.width = image.width;
-  canvas!.height = image.height;
+  canvas!.width = currentCropped.width;
+  canvas!.height = currentCropped.height;
+
 
   image.onload = () => {
     context!.filter  = `blur(${blur}px) brightness(${brightness})`;
     context!.drawImage(
       image,
+      currentCropped.startingX + 2,
+      currentCropped.startingY + 2,
+      currentCropped.width - 3,
+      currentCropped.height - 3,
       0,
       0,
       canvas!.width + 3,
@@ -120,10 +125,14 @@ export const saveImage = ({ canvasRef, setSelectCanvas, setCroppedImage, newImag
 
     setSelectCanvas(false);
     setCroppedImage("");
+    setImgSrc(newImage);
   };
 };
 
 export const mouseMove = ({
+  canvasRef,
+  imgRef,
+  imgSrc,
   cropMouseMoveEvent,
   setDifference,
   currentCropped,
@@ -131,18 +140,14 @@ export const mouseMove = ({
   isResize,
   isDragging,
   startingNode,
-  canvasRef,
   dimensions,
-  imgRef,
-  imgSrc,
   annotations,
   showAllTags,
   setShowAllTags,
   allTextTags,
   setHoverTag,
   setHoverPos,
-  setShowH,
-  newImage
+  setShowH
 }: MouseMoveProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
@@ -533,7 +538,7 @@ export const mouseMove = ({
     context!.fillText(textTags.text, textTags.textPositionX + 10, textTags.textPositionY);
   });
   // if show all tag is true
-  showAllTags && showTags({setShowAllTags, imgSrc, canvasRef, annotations, allTextTags, newImage});
+  showAllTags && showTags({canvasRef, imgSrc, setShowAllTags, annotations, allTextTags});
 };
 
 export const mouseUP = ({

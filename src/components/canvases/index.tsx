@@ -53,13 +53,13 @@ export const TagCanvas = ({ canvasRef, handleTagClick, handleTagMouseMove }: Tag
 
 export const TextOnImageCanvas = ({
   canvasRef,
+  imgSrc,
   setTempPrompt,
   currentClicked,
   setCurrentClicked,
-  imgSrc,
   allTextTags,
-  dimensions,
   setAllTextTags,
+  dimensions,
   setIsEditing,
   setFormData,
   setDeleteTextTag,
@@ -71,10 +71,8 @@ export const TextOnImageCanvas = ({
   zoom,
   rotate,
   brightness,
-  currentCropped,
   flipHorizontal,
-  flipVertical,
-  newImage
+  flipVertical
 }: TextOnImageProps) => {
   const [isDraggingText, setIsDraggingText] = useState<boolean>(false);
   const [draggingText, setDraggingText] = useState<string>("");
@@ -96,8 +94,7 @@ export const TextOnImageCanvas = ({
         setIsEditing,
         setFormData,
         flipHorizontal,
-        flipVertical,
-        newImage
+        flipVertical
       })}
       onMouseMove={(textOnImageMouseMoveEvent: React.MouseEvent<HTMLCanvasElement>) => handleMouseMove({
         textOnImageMouseMoveEvent,
@@ -117,10 +114,8 @@ export const TextOnImageCanvas = ({
         rotate,
         brightness,
         setDeleteTextTag,
-        currentCropped,
         flipHorizontal,
-        flipVertical,
-        newImage
+        flipVertical
       })}
       onMouseDown={(textOnImageMouseDownEvent: React.MouseEvent<HTMLCanvasElement>) => handleMouseDown({
         textOnImageMouseDownEvent,
@@ -152,18 +147,17 @@ export const TextOnImageCanvas = ({
 
 export const CropCanvas = ({
   canvasRef,
+  imgSrc,
   currentCropped,
   setCurrentCropped,
   dimensions,
-  imgSrc,
   annotations,
   showAllTags,
   setShowAllTags,
   allTextTags,
   setHoverTag,
   setHoverPos,
-  setShowH,
-  newImage
+  setShowH
 }: CropProps): JSX.Element => {
   const [difference, setDifference] = useState({ width: 0, height: 0, differenceX: 0, differenceY: 0 });
   const [croppingNode, setCroppingNode] = useState<number>(0);
@@ -219,8 +213,7 @@ export const CropCanvas = ({
           allTextTags,
           setHoverTag,
           setHoverPos,
-          setShowH,
-          newImage
+          setShowH
         })}
         onMouseUp={(cropMouseUpLeaveEvent) => mouseUP({
           cropMouseUpLeaveEvent,
@@ -274,11 +267,10 @@ export const PenCanvas = ({
   canvasRef,
   imgSrc,
   hoverPos,
+  setHoverPos,
   annotations,
   setHoverTag,
-  setHoverPos,
-  setShowH,
-  newImage
+  setShowH
 }: PenProps) => {
   const [isDrawing, setIsDrawing] = useState(false);
 
@@ -298,7 +290,7 @@ export const PenCanvas = ({
     const context = canvas!.getContext("2d");
 
     const image = new Image();
-    image.src = newImage !== "" ? newImage : imgSrc;
+    image.src = imgSrc;
     if (!isDrawing) return;
 
     const mouseX = penMouseMoveEvent.nativeEvent.offsetX;

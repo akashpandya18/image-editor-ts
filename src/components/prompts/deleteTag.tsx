@@ -2,7 +2,7 @@ import React from "react";
 import { Check, Close } from "../../assets/icons";
 import { DeleteTagProps } from "../../types";
 
-export const DeleteTag = ({ position, setPromptOff, deleteTagSubmit, flipHorizontal, flipVertical, canvasRef }: DeleteTagProps) => {
+export const DeleteTag = ({ canvasRef, position, setPromptOff, deleteTagSubmit, flipHorizontal, flipVertical }: DeleteTagProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const rect = canvas!.getBoundingClientRect();

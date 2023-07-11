@@ -5,13 +5,17 @@ import "./App.css";
 import { OnSelectFileProps } from "./types";
 
 function App() {
-  const [imgSrc, setImgSrc] = useState("")
+  const [imgSrc, setImgSrc] = useState("");
+  const [originalImage, setOriginalImage] = useState("");
 
   const onSelectFile = (selectFileEvent: OnSelectFileProps) => {
     if (selectFileEvent.target.files && selectFileEvent.target.files.length > 0) {
       const reader = new FileReader();
       reader.addEventListener("load", () =>
-        setImgSrc(reader.result?.toString() || "")
+        {
+          setImgSrc(reader.result?.toString() || "")
+          setOriginalImage(reader.result?.toString() || "")
+        }
       );
       reader.readAsDataURL(selectFileEvent.target.files[0]);
     }
@@ -20,7 +24,7 @@ function App() {
   return (
     <div>
       {imgSrc ? (
-        <Controls imgSrc={imgSrc} />
+        <Controls imgSrc={imgSrc} setImgSrc={setImgSrc} originalImage={originalImage} />
       ) : (
         <FileUpload onSelectFile={onSelectFile} />
       )}

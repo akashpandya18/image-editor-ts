@@ -4,12 +4,12 @@ import { Close } from "../../assets/icons";
 import { TagAnnotationFormProps } from "../../types";
 
 export const TagAnnotationForm = ({
+  refer,
   tags,
+  handleCloseInput,
   handleInputChange,
   onSubmit,
-  position,
-  refer,
-  handleCloseInput
+  position
 }: TagAnnotationFormProps) => {
 
   return (
