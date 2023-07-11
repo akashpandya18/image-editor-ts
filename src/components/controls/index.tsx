@@ -282,19 +282,46 @@ export const Controls = ({ imgSrc, setImgSrc, originalImage }: ControlsProps): J
     if (selectCanvas) {
       const canvas = canvasRef.current;
       const context = canvas!.getContext("2d");
+      // const rect = canvas!.getBoundingClientRect();
 
       context!.strokeStyle = "white";
       context!.setLineDash([5, 5]);
-      const imageX = Math.floor(canvas!.width / 4);
-      const imageY = Math.floor(canvas!.height / 4);
+      // console.log("canvas!.width", canvas!.width);
+      // console.log("canvas!.height", canvas!.height);
+
+      let cropImageStartX = Math.floor(canvas!.width / 4);
+      let cropImageStartY = Math.floor(canvas!.height / 4);
+      const cropImageWidth = Math.floor(canvas!.width / 4);
+      const cropImageHeight = Math.floor(canvas!.height / 4);
+
+      // console.log("rect", rect);
+      // console.log("rect.width", rect.width);
+      // console.log("canvas!.width", canvas!.width);
+      // console.log("rect.height", rect.height);
+      // console.log("canvas!.height", canvas!.height);
+
+      // // Adjust the position based on the flipped canvas
+      // if (flipHorizontal && !flipVertical) {
+      //   cropImageStartX = rect.x - canvas!.width / 4;
+      //   cropImageStartY = canvas!.height / 4;
+      //   console.log("cropImageStartX", cropImageStartX);
+      // } else if (flipVertical && !flipHorizontal) {
+      //   cropImageStartX = canvas!.width / 4;
+      //   cropImageStartY = rect.height - canvas!.height / 4;
+      //   console.log("cropImageStartY", cropImageStartY);
+      // } else if (flipVertical && flipHorizontal) {
+      //   cropImageStartX = rect.width - canvas!.width / 4;
+      //   cropImageStartY = rect.height - canvas!.height / 4;
+      // }
+
       context!.lineWidth = 2;
-      context!.strokeRect(imageX, imageY, imageX, imageY);
+      context!.strokeRect(cropImageStartX, cropImageStartY, cropImageWidth, cropImageHeight);
 
       setCurrentCropped({
-        startingX: imageX,
-        startingY: imageY,
-        width: imageX,
-        height: imageY
+        startingX: cropImageStartX,
+        startingY: cropImageStartY,
+        width: cropImageWidth,
+        height: cropImageHeight
       });
       context!.setLineDash([5, 5]);
       // left top node
@@ -328,8 +355,8 @@ export const Controls = ({ imgSrc, setImgSrc, originalImage }: ControlsProps): J
       let newCanvas = document.createElement("canvas");
       let newCtx = newCanvas.getContext("2d");
 
-      newCanvas.height = imageY;
-      newCanvas.width = imageX;
+      newCanvas.height = cropImageHeight;
+      newCanvas.width = cropImageWidth;
 
       const imageData = context1!.getImageData(dimensions.width / 4 + 2, dimensions.height / 4 + 2, dimensions.width / 4 - 3, dimensions.height / 4 - 3);
       newCtx!.putImageData(imageData, 0, 0);
