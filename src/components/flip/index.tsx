@@ -10,6 +10,7 @@ import {
 export const flipHorizontally = ({
   canvasRef,
   imgSrc,
+  setImgSrc,
   annotations,
   flipHorizontal,
   setFlipHorizontal,
@@ -32,7 +33,7 @@ export const flipHorizontally = ({
   context!.clearRect(0, 0, canvas!.width, canvas!.height);
   context!.translate(canvas!.width, 0);
   context!.scale(-1, 1);
-  setFlipHorizontal(!flipHorizontal);
+  // setFlipHorizontal(!flipHorizontal);
 
   image.onload = () => {
     context!.clearRect(0, 0, canvas!.width, canvas!.height);
@@ -61,12 +62,14 @@ export const flipHorizontally = ({
       context!.arc(currentAnnotationX, currentAnnotationY, 10, 0, 2 * Math.PI);
       context!.fill();
     });
+    setImgSrc(canvas!.toDataURL());
   };
 };
 
 export const flipVertically = ({
   canvasRef,
   imgSrc,
+  setImgSrc,
   annotations,
   flipVertical,
   setFlipVertical,
@@ -89,7 +92,7 @@ export const flipVertically = ({
   context!.clearRect(0, 0, canvas!.width, canvas!.height);
   context!.translate(0, canvas!.height);
   context!.scale(1, -1);
-  setFlipVertical(!flipVertical);
+  // setFlipVertical(!flipVertical);
 
   image.onload = () => {
     context!.clearRect(0, 0, canvas!.width, canvas!.height);
@@ -118,5 +121,6 @@ export const flipVertically = ({
       context!.arc(currentAnnotationX, currentAnnotationY, 10, 0, 2 * Math.PI);
       context!.fill();
     });
+    setImgSrc(canvas!.toDataURL());
   };
 };

@@ -12,14 +12,35 @@ import { showTags } from "../TagAnnotation";
 
 export const mouseDown = ({
   cropMouseDownEvent,
+  canvasRef,
   currentCropped,
   setCroppingNode,
   setIsResize,
   setIsDragging,
-  setStartingNode
+  setStartingNode,
+  flipHorizontal,
+  flipVertical
 }: MouseDownProps) => {
-  const mouseX = cropMouseDownEvent.nativeEvent.offsetX;
-  const mouseY = cropMouseDownEvent.nativeEvent.offsetY;
+  const canvas = canvasRef.current;
+  const context = canvas!.getContext("2d");
+  let mouseX = cropMouseDownEvent.nativeEvent.offsetX;
+  let mouseY = cropMouseDownEvent.nativeEvent.offsetY;
+
+  // Adjust the canvas based on the flipped value
+  if (flipHorizontal && !flipVertical) {
+    context!.translate(canvas!.width, 0);
+    context!.scale(-1, 1);
+  }
+  if (flipVertical && !flipHorizontal) {
+    context!.translate(0, canvas!.height);
+    context!.scale(1, -1);
+  }
+  if (flipVertical && flipHorizontal) {
+    context!.translate(canvas!.width, 0);
+    context!.scale(-1, 1);
+    context!.translate(0, canvas!.height);
+    context!.scale(1, -1);
+  }
 
   if (
     mouseX > currentCropped.startingX - 5 &&
@@ -27,79 +48,90 @@ export const mouseDown = ({
     mouseY > currentCropped.startingY - 5 &&
     mouseY < currentCropped.startingY + 5
   ) {
-    setIsResize(true)
-    setCroppingNode(1)
+    setIsResize(true);
+    setCroppingNode(1);
   } else if (
     mouseX > currentCropped.startingX + currentCropped.width - 5 &&
     mouseX < currentCropped.startingX + currentCropped.width + 5 &&
     mouseY > currentCropped.startingY - 5 &&
     mouseY < currentCropped.startingY + 5
   ) {
-    setIsResize(true)
-    setCroppingNode(2)
+    setIsResize(true);
+    setCroppingNode(2);
   } else if (
     mouseX > currentCropped.startingX - 5 &&
     mouseX < currentCropped.startingX + 5 &&
     mouseY > currentCropped.startingY + currentCropped.height - 5 &&
     mouseY < currentCropped.startingY + currentCropped.height + 5
   ) {
-    setIsResize(true)
-    setCroppingNode(3)
+    setIsResize(true);
+    setCroppingNode(3);
   } else if (
     mouseX > currentCropped.startingX + currentCropped.width - 5 &&
     mouseX < currentCropped.startingX + currentCropped.width + 5 &&
     mouseY > currentCropped.startingY + currentCropped.height - 5 &&
     mouseY < currentCropped.startingY + currentCropped.height + 5
   ) {
-    setIsResize(true)
-    setCroppingNode(4)
+    setIsResize(true);
+    setCroppingNode(4);
   } else if (
     mouseX > currentCropped.startingX + 5 &&
     mouseX < currentCropped.startingX + currentCropped.width - 5 &&
     mouseY > currentCropped.startingY - 5 &&
     mouseY < currentCropped.startingY + 5
   ) {
-    setIsResize(true)
-    setCroppingNode(5)
+    setIsResize(true);
+    setCroppingNode(5);
   } else if (
     mouseX > currentCropped.startingX - 5 &&
     mouseX < currentCropped.startingX + 5 &&
     mouseY > currentCropped.startingY &&
     mouseY < currentCropped.height + currentCropped.startingY
   ) {
-    setIsResize(true)
-    setCroppingNode(6)
+    setIsResize(true);
+    setCroppingNode(6);
   } else if (
     mouseX > currentCropped.startingX + 5 &&
     mouseX < currentCropped.startingX + currentCropped.width - 5 &&
     mouseY > currentCropped.startingY + currentCropped.height - 5 &&
     mouseY < currentCropped.startingY + currentCropped.height + 5
   ) {
-    setIsResize(true)
-    setCroppingNode(7)
+    setIsResize(true);
+    setCroppingNode(7);
   } else if (
     mouseX > currentCropped.startingX + currentCropped.width - 5 &&
     mouseX < currentCropped.startingX + currentCropped.width + 5 &&
     mouseY > currentCropped.startingY &&
     mouseY < currentCropped.height + currentCropped.startingY
   ) {
-    setIsResize(true)
-    setCroppingNode(8)
+    setIsResize(true);
+    setCroppingNode(8);
   } else if (
     mouseX > currentCropped.startingX &&
     mouseX < currentCropped.width + currentCropped.startingX &&
     mouseY > currentCropped.startingY &&
     mouseY < currentCropped.height + currentCropped.startingY
   ) {
-    setIsDragging(true)
+    setIsDragging(true);
   } else {
-    setIsDragging(false)
-    setIsResize(false)
+    setIsDragging(false);
+    setIsResize(false);
   }
   setStartingNode({ startingNodeX: mouseX, startingNodeY: mouseY });
 };
 
-export const saveImage = ({ canvasRef, setImgSrc, currentCropped, setSelectCanvas, setCroppedImage, newImage, blur, brightness }: SaveImageProps) => {
+export const saveImage = ({
+  canvasRef,
+  setImgSrc,
+  currentCropped,
+  setSelectCanvas,
+  setCroppedImage,
+  newImage,
+  blur,
+  brightness,
+  flipHorizontal,
+  flipVertical
+}: SaveImageProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
   const image = new Image();
@@ -107,7 +139,6 @@ export const saveImage = ({ canvasRef, setImgSrc, currentCropped, setSelectCanva
 
   canvas!.width = currentCropped.width;
   canvas!.height = currentCropped.height;
-
 
   image.onload = () => {
     context!.filter  = `blur(${blur}px) brightness(${brightness})`;
@@ -122,6 +153,20 @@ export const saveImage = ({ canvasRef, setImgSrc, currentCropped, setSelectCanva
       canvas!.width + 3,
       canvas!.height + 3
     );
+    setTimeout(() => {
+      if (flipHorizontal && !flipVertical) {
+        context!.translate(canvas!.width, 0);
+        context!.scale(-1, 1);
+      } else if (flipVertical && !flipHorizontal) {
+        context!.translate(0, canvas!.height);
+        context!.scale(1, -1);
+      } else if (flipVertical && flipHorizontal) {
+        context!.translate(canvas!.width, 0);
+        context!.scale(-1, 1);
+        context!.translate(0, canvas!.height);
+        context!.scale(1, -1);
+      }
+    },10);
 
     setSelectCanvas(false);
     setCroppedImage("");
@@ -147,12 +192,825 @@ export const mouseMove = ({
   allTextTags,
   setHoverTag,
   setHoverPos,
-  setShowH
+  setShowH,
+  flipHorizontal,
+  flipVertical
 }: MouseMoveProps) => {
   const canvas = canvasRef.current;
   const context = canvas!.getContext("2d");
-  const mouseX = cropMouseMoveEvent.nativeEvent.offsetX;
-  const mouseY = cropMouseMoveEvent.nativeEvent.offsetY;
+  let mouseX = cropMouseMoveEvent.nativeEvent.offsetX;
+  let mouseY = cropMouseMoveEvent.nativeEvent.offsetY;
+
+  if (isDragging) {
+    const canvas = canvasRef.current;
+    const context = canvas!.getContext("2d");
+
+    const image = new Image();
+    image.src = imgSrc;
+
+    context!.clearRect(0, 0, canvas!.width, canvas!.height);
+    context!.drawImage(image, 0, 0, dimensions.width + 3, dimensions.height + 3);
+    context!.strokeStyle = "white";
+    context!.setLineDash([5, 5]);
+    context!.lineWidth = 2;
+
+    let movedArea = {
+      moveX: currentCropped.startingX + (mouseX - startingNode.startingNodeX),
+      moveY: currentCropped.startingY + (mouseY - startingNode.startingNodeY)
+    };
+
+    movedArea.moveX <= 0 ? 10 : movedArea.moveX;
+    movedArea.moveY <= 0 ? 10 : movedArea.moveY;
+
+    if (movedArea.moveX <= 0) {
+      movedArea.moveX = 10;
+    }
+    if (movedArea.moveY <= 0) {
+      movedArea.moveY = 10;
+    }
+    if (movedArea.moveY + currentCropped.height >= dimensions.height) {
+      movedArea.moveY = dimensions.height - currentCropped.height - 2;
+    }
+    if (movedArea.moveX + currentCropped.width >= dimensions.width) {
+      movedArea.moveX = dimensions.width - currentCropped.width - 2;
+    }
+
+    // setting crop rectangle and it's nodes as per flip effect
+    if (flipHorizontal && !flipVertical) {
+      context!.strokeRect((currentCropped.width - movedArea.moveX + (currentCropped.width * 2)), movedArea.moveY, currentCropped.width, currentCropped.height);
+      // left top node
+      context!.beginPath();
+      context!.fillRect((currentCropped.width - movedArea.moveX + (currentCropped.width * 2)) - 2, movedArea.moveY - 4, 6, 6);
+      context!.stroke();
+      // right top node
+      context!.beginPath();
+      context!.fillRect((currentCropped.width - movedArea.moveX + (currentCropped.width * 2)) + currentCropped.width - 2, movedArea.moveY - 6, 6, 6);
+      context!.fill();
+      context!.stroke();
+      // left bottom node
+      context!.beginPath();
+      context!.fillRect((currentCropped.width - movedArea.moveX + (currentCropped.width * 3)) - 3, movedArea.moveY + currentCropped.height - 3, 6, 6);
+      context!.stroke();
+      // right bottom node
+      context!.beginPath();
+      context!.fillRect((currentCropped.width - movedArea.moveX + (currentCropped.width * 2)) - 5, movedArea.moveY + currentCropped.height - 4, 6, 6);
+      context!.stroke();
+    } else if (flipVertical && !flipHorizontal) {
+      context!.strokeRect(movedArea.moveX, (currentCropped.height - movedArea.moveY + (currentCropped.height * 2)), currentCropped.width, currentCropped.height);
+      // left top node
+      context!.beginPath();
+      context!.fillRect(movedArea.moveX - 2, (currentCropped.height - movedArea.moveY + (currentCropped.height * 3)) - 4, 6, 6);
+      context!.stroke();
+      // right top node
+      context!.beginPath();
+      context!.fillRect(movedArea.moveX + currentCropped.width - 2, (currentCropped.height - movedArea.moveY + (currentCropped.height * 3)) - 6, 6, 6);
+      context!.fill();
+      context!.stroke();
+      // left bottom node
+      context!.beginPath();
+      context!.fillRect(movedArea.moveX - 4, (currentCropped.height - movedArea.moveY + (currentCropped.height * 2)) - 3, 6, 6);
+      context!.stroke();
+      // right bottom node
+      context!.beginPath();
+      context!.fillRect(movedArea.moveX + currentCropped.width, (currentCropped.height - movedArea.moveY + (currentCropped.height * 2)) - 4, 6, 6);
+      context!.stroke();
+    } else if (flipVertical && flipHorizontal) {
+      context!.strokeRect((currentCropped.width - movedArea.moveX + (currentCropped.width * 2)), (currentCropped.height - movedArea.moveY + (currentCropped.height * 2)), currentCropped.width, currentCropped.height);
+      // left top node
+      context!.beginPath();
+      context!.fillRect((currentCropped.width - movedArea.moveX + (currentCropped.width * 3)) - 2, (currentCropped.height - movedArea.moveY + (currentCropped.height * 3)) - 4, 6, 6);
+      context!.stroke();
+      // right top node
+      context!.beginPath();
+      context!.fillRect((currentCropped.width - movedArea.moveX + (currentCropped.width * 2)) - 2, (currentCropped.height - movedArea.moveY + (currentCropped.height * 3)) - 2, 6, 6);
+      context!.fill();
+      context!.stroke();
+      // left bottom node
+      context!.beginPath();
+      context!.fillRect((currentCropped.width - movedArea.moveX + (currentCropped.width * 2)) - 4, (currentCropped.height - movedArea.moveY + (currentCropped.height * 2)) - 3, 6, 6);
+      context!.stroke();
+      // right bottom node
+      context!.beginPath();
+      context!.fillRect((currentCropped.width - movedArea.moveX + (currentCropped.width * 3)), (currentCropped.height - movedArea.moveY + (currentCropped.height * 2)) - 2, 6, 6);
+      context!.stroke();
+    } else {
+      context!.strokeRect(movedArea.moveX, movedArea.moveY, currentCropped.width, currentCropped.height);
+      // left top node
+      context!.beginPath();
+      context!.fillRect(movedArea.moveX - 2, movedArea.moveY - 4, 6, 6);
+      context!.stroke();
+      // right top node
+      context!.beginPath();
+      context!.fillRect(movedArea.moveX + currentCropped.width - 2, movedArea.moveY - 6, 6, 6);
+      context!.fill();
+      context!.stroke();
+      // left bottom node
+      context!.beginPath();
+      context!.fillRect(movedArea.moveX - 4, movedArea.moveY + currentCropped.height - 3, 6, 6);
+      context!.stroke();
+      // right bottom node
+      context!.beginPath();
+      context!.fillRect(movedArea.moveX + currentCropped.width, movedArea.moveY + currentCropped.height - 4, 6, 6);
+      context!.stroke();
+    }
+  }
+
+  if (isResize) {
+    const canvas = canvasRef.current;
+    const context = canvas!.getContext("2d");
+    const image = imgRef.current;
+    const rect = canvas!.getBoundingClientRect();
+
+    // Adjust the position based on the flipped canvas
+    // if (flipHorizontal && !flipVertical) {
+    //   mouseX = rect.width - cropMouseMoveEvent.nativeEvent.offsetX;
+    //   mouseY = cropMouseMoveEvent.nativeEvent.offsetY;
+    // } else if (flipVertical && !flipHorizontal) {
+    //   mouseX = cropMouseMoveEvent.nativeEvent.offsetX;
+    //   mouseY = rect.height - cropMouseMoveEvent.nativeEvent.offsetY;
+    // } else if (flipVertical && flipHorizontal) {
+    //   mouseX = rect.width - cropMouseMoveEvent.nativeEvent.offsetX;
+    //   mouseY = rect.height - cropMouseMoveEvent.nativeEvent.offsetY;
+    // } else {
+    //   mouseX = cropMouseMoveEvent.nativeEvent.offsetX;
+    //   mouseY = cropMouseMoveEvent.nativeEvent.offsetY;
+    // }
+
+    context!.clearRect(0, 0, canvas!.width, canvas!.height);
+    context!.drawImage(image!, 0, 0, dimensions.width + 3, dimensions.height + 3);
+    context!.strokeStyle = "white";
+    context!.setLineDash([5, 5]);
+    context!.lineWidth = 2;
+
+    let widthDiff = 0;
+    let heightDiff = 0;
+
+    let movedArea = {
+      moveX: currentCropped.startingX + (mouseX - startingNode.startingNodeX),
+      moveY: currentCropped.startingY + (mouseY - startingNode.startingNodeY)
+    };
+
+    switch (croppingNode) {
+      case 1:
+        widthDiff = currentCropped.startingX - mouseX;
+        // heightDiff = currentCropped.startingY - mouseY;
+        heightDiff = currentCropped.startingY - movedArea.moveY;
+        if (flipHorizontal && !flipVertical) {
+          context!.strokeRect(currentCropped.startingX + currentCropped.width + widthDiff, mouseY, currentCropped.width + widthDiff, currentCropped.height + heightDiff);
+          // // left top node
+          // context!.beginPath();
+          // context!.fillRect(movedArea.moveX - 2, movedArea.moveY - 4, 6, 6);
+          // context!.stroke();
+          // // right top node
+          // context!.beginPath();
+          // context!.fillRect(currentCropped.startingX + currentCropped.width - 2, movedArea.moveY - 6, 6, 6);
+          // context!.stroke();
+          // // left bottom node
+          // context!.beginPath();
+          // context!.fillRect(movedArea.moveX - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          // context!.stroke();
+          // // right bottom node
+          // context!.fillRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
+          // context!.stroke();
+        } else if (flipVertical && !flipHorizontal) {
+          context!.strokeRect(mouseX, mouseY, currentCropped.width + widthDiff, currentCropped.height + heightDiff);
+          // // left top node
+          // context!.beginPath();
+          // context!.fillRect(movedArea.moveX - 2, movedArea.moveY - 4, 6, 6);
+          // context!.stroke();
+          // // right top node
+          // context!.beginPath();
+          // context!.fillRect(currentCropped.startingX + currentCropped.width - 2, movedArea.moveY - 6, 6, 6);
+          // context!.stroke();
+          // // left bottom node
+          // context!.beginPath();
+          // context!.fillRect(movedArea.moveX - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          // context!.stroke();
+          // // right bottom node
+          // context!.fillRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
+          // context!.stroke();
+        } else if (flipVertical && flipHorizontal) {
+          context!.strokeRect(mouseX, mouseY, currentCropped.width + widthDiff, currentCropped.height + heightDiff);
+          // // left top node
+          // context!.beginPath();
+          // context!.fillRect(movedArea.moveX - 2, movedArea.moveY - 4, 6, 6);
+          // context!.stroke();
+          // // right top node
+          // context!.beginPath();
+          // context!.fillRect(currentCropped.startingX + currentCropped.width - 2, movedArea.moveY - 6, 6, 6);
+          // context!.stroke();
+          // // left bottom node
+          // context!.beginPath();
+          // context!.fillRect(movedArea.moveX - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          // context!.stroke();
+          // // right bottom node
+          // context!.fillRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
+          // context!.stroke();
+        } else {
+          context!.strokeRect(mouseX, mouseY, currentCropped.width + widthDiff, currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX - 2, movedArea.moveY - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 2, movedArea.moveY - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.fillRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        }
+        setDifference({
+          width: currentCropped.width + widthDiff,
+          height: currentCropped.height + heightDiff,
+          differenceX: 0,
+          differenceY: 0
+        });
+        break;
+      case 2:
+        widthDiff = mouseX - (currentCropped.startingX + currentCropped.width);
+        heightDiff = currentCropped.startingY - mouseY;
+        if (flipHorizontal && !flipVertical) {
+          context!.strokeRect(currentCropped.startingX + currentCropped.width - widthDiff, mouseY, currentCropped.width + widthDiff, currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - widthDiff + currentCropped.width + widthDiff - 2, movedArea.moveY - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - widthDiff - 2, movedArea.moveY - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect((currentCropped.startingX * 2) + currentCropped.width - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - widthDiff - 4, currentCropped.startingY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        } else if (flipVertical && !flipHorizontal) {
+          context!.strokeRect(currentCropped.startingX, mouseY + currentCropped.height + heightDiff, currentCropped.width + widthDiff, currentCropped.height + currentCropped.startingY - mouseY);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 2, mouseY + currentCropped.height + heightDiff + currentCropped.height + heightDiff - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX + currentCropped.width - 2, currentCropped.startingY + (currentCropped.height * 2) + heightDiff - 3, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        } else if (flipVertical && flipHorizontal) {
+          context!.strokeRect(currentCropped.startingX + currentCropped.width - widthDiff, mouseY + currentCropped.height + heightDiff, currentCropped.width + widthDiff, currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - widthDiff + currentCropped.width + widthDiff - 2, mouseY + currentCropped.height + heightDiff + currentCropped.height + heightDiff - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - widthDiff - 2, currentCropped.startingY + (currentCropped.height * 2) + heightDiff - 3, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect((currentCropped.startingX * 2) + currentCropped.width - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - widthDiff - 4, currentCropped.startingY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        } else {
+          context!.strokeRect(currentCropped.startingX, mouseY, currentCropped.width + widthDiff, currentCropped.height + currentCropped.startingY - mouseY);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 2, movedArea.moveY - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX + currentCropped.width - 2, movedArea.moveY - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        }
+        setDifference({
+          width: currentCropped.width + widthDiff,
+          height: currentCropped.height + currentCropped.startingY - mouseY,
+          differenceX: 0,
+          differenceY: mouseY
+        });
+        break;
+      case 3:
+        heightDiff = mouseY - (currentCropped.startingY + currentCropped.height);
+        if (flipHorizontal && !flipVertical) {
+          context!.strokeRect(currentCropped.startingX + currentCropped.width + widthDiff, currentCropped.startingY, currentCropped.startingX - mouseX + currentCropped.width, currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width + widthDiff + currentCropped.width - mouseX + currentCropped.width - 2, currentCropped.startingY - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 2, currentCropped.startingY - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect((currentCropped.startingX * 2) + currentCropped.width - mouseX + currentCropped.width - 4, movedArea.moveY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width, movedArea.moveY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        } else if (flipVertical && !flipHorizontal) {
+          context!.strokeRect(mouseX, currentCropped.startingY + currentCropped.height - heightDiff, currentCropped.startingX - mouseX + currentCropped.width, currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX - 2, currentCropped.startingY + currentCropped.height - heightDiff + currentCropped.height + heightDiff - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 2, currentCropped.startingY + (currentCropped.height * 2) - 3, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX - 3, currentCropped.startingY + currentCropped.height - heightDiff - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.height - heightDiff - 4, 6, 6);
+          context!.stroke();
+        } else if (flipVertical && flipHorizontal) {
+          context!.strokeRect(currentCropped.startingX + currentCropped.width + widthDiff, currentCropped.startingY + currentCropped.height - heightDiff, currentCropped.startingX - mouseX + currentCropped.width, currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width + widthDiff + currentCropped.width - mouseX + currentCropped.width - 2, currentCropped.startingY + currentCropped.height - heightDiff + currentCropped.height + heightDiff - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 2, currentCropped.startingY + (currentCropped.height * 2) - 3, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect((currentCropped.startingX * 2) + currentCropped.width - mouseX + currentCropped.width - 4, currentCropped.startingY + currentCropped.height - heightDiff - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.height - heightDiff - 4, 6, 6);
+          context!.stroke();
+        } else {
+          context!.strokeRect(mouseX, currentCropped.startingY, currentCropped.startingX - mouseX + currentCropped.width, currentCropped.height + (mouseY - (currentCropped.startingY + currentCropped.height)));
+          // left top node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX - 2, currentCropped.startingY - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 2, currentCropped.startingY - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX - 4, movedArea.moveY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width, movedArea.moveY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        }
+        setDifference({
+          width: currentCropped.startingX - mouseX + currentCropped.width,
+          height: currentCropped.height + (mouseY - (currentCropped.startingY + currentCropped.height)),
+          differenceX: mouseX,
+          differenceY: 0
+        });
+        break;
+      case 4:
+        widthDiff = mouseX - (currentCropped.startingX + currentCropped.width);
+        heightDiff = mouseY - (currentCropped.startingY + currentCropped.height);
+        if (flipHorizontal && !flipVertical) {
+          context!.strokeRect(currentCropped.startingX + currentCropped.width - widthDiff, currentCropped.startingY, currentCropped.width + widthDiff, currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - widthDiff + currentCropped.width + widthDiff - 2, currentCropped.startingY - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - widthDiff - 2, currentCropped.startingY - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect((currentCropped.startingX * 2) + currentCropped.width - 4, movedArea.moveY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - widthDiff - 4, movedArea.moveY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        } else if (flipVertical && !flipHorizontal) {
+          context!.strokeRect(currentCropped.startingX, currentCropped.startingY + currentCropped.height - heightDiff, currentCropped.width + widthDiff, currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 2, currentCropped.startingY + currentCropped.height - heightDiff + currentCropped.height + heightDiff - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX + currentCropped.width - 2, (currentCropped.startingY * 2) + currentCropped.height - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 4, currentCropped.startingY + currentCropped.height - heightDiff - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX + currentCropped.width, currentCropped.startingY + currentCropped.height - heightDiff - 4, 6, 6);
+          context!.stroke();
+        } else if (flipVertical && flipHorizontal) {
+          context!.strokeRect(currentCropped.startingX + currentCropped.width - widthDiff, currentCropped.startingY + currentCropped.height - heightDiff, currentCropped.width + widthDiff, currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - widthDiff + currentCropped.width + widthDiff - 2, currentCropped.startingY + currentCropped.height - heightDiff + currentCropped.height + heightDiff - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - widthDiff - 2, (currentCropped.startingY * 2) + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect((currentCropped.startingX * 2) + currentCropped.width - 4, currentCropped.startingY + currentCropped.height - heightDiff - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - widthDiff - 4, currentCropped.startingY + currentCropped.height - heightDiff - 4, 6, 6);
+          context!.stroke();
+        } else {
+          context!.strokeRect(currentCropped.startingX, currentCropped.startingY, currentCropped.width + (mouseX - (currentCropped.startingX + currentCropped.width)), currentCropped.height + (mouseY - (currentCropped.startingY + currentCropped.height)));
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 2, currentCropped.startingY - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX + currentCropped.width - 2, currentCropped.startingY - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 4, movedArea.moveY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX + currentCropped.width, movedArea.moveY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        }
+        setDifference({
+          width: currentCropped.width + (mouseX - (currentCropped.startingX + currentCropped.width)),
+          height: currentCropped.height + (mouseY - (currentCropped.startingY + currentCropped.height)),
+          differenceX: 0,
+          differenceY: 0
+        });
+        break;
+      case 5:
+        heightDiff = currentCropped.startingY - mouseY;
+        if (flipHorizontal && !flipVertical) {
+          context!.strokeRect(currentCropped.startingX + currentCropped.width, mouseY, currentCropped.width, currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + (currentCropped.width * 2) - 2, movedArea.moveY - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 2, movedArea.moveY - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + (currentCropped.width * 2) - 3, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 4, currentCropped.startingY + currentCropped.height, 6, 6);
+          context!.stroke();
+        } else if (flipVertical && !flipHorizontal) {
+          context!.strokeRect(currentCropped.startingX, mouseY + currentCropped.height + heightDiff, currentCropped.width, currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 2, mouseY + currentCropped.height + heightDiff + currentCropped.height + heightDiff - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 2, mouseY + currentCropped.height + heightDiff + currentCropped.height + heightDiff - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        } else if (flipVertical && flipHorizontal) {
+          context!.strokeRect(currentCropped.startingX + currentCropped.width, mouseY + currentCropped.height + heightDiff, currentCropped.width, currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + (currentCropped.width * 2) - 2 - 2, mouseY + currentCropped.height + heightDiff + currentCropped.height + heightDiff - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 4, mouseY + currentCropped.height + heightDiff + currentCropped.height + heightDiff - 3, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + (currentCropped.width * 2) - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 4, currentCropped.startingY + currentCropped.height - 6, 6, 6);
+          context!.stroke();
+        } else {
+          context!.strokeRect(currentCropped.startingX, mouseY, currentCropped.width, currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 2, movedArea.moveY - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 2, movedArea.moveY - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        }
+        setDifference({
+          width: 0,
+          height: currentCropped.height + heightDiff,
+          differenceX: 0,
+          differenceY: mouseY
+        });
+        break;
+      case 6:
+        widthDiff = currentCropped.startingX - mouseX;
+        if (flipHorizontal && !flipVertical) {
+          context!.strokeRect(mouseX + currentCropped.width + widthDiff, currentCropped.startingY, currentCropped.width + widthDiff, currentCropped.height);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(mouseX + currentCropped.width + widthDiff + currentCropped.width + widthDiff - 2, currentCropped.startingY - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 2, currentCropped.startingY - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(mouseX + currentCropped.width + widthDiff + currentCropped.width + widthDiff - 2, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.height, 6, 6);
+          context!.stroke();
+        } else if (flipVertical && !flipHorizontal) {
+          context!.strokeRect(mouseX, currentCropped.startingY + currentCropped.height, currentCropped.width + widthDiff, currentCropped.height);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX - 2, currentCropped.startingY + (currentCropped.height * 2) - 2, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 2, currentCropped.startingY + (currentCropped.height * 2) - 3, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX - 3, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        } else if (flipVertical && flipHorizontal) {
+          context!.strokeRect(mouseX + currentCropped.width + widthDiff, currentCropped.startingY + currentCropped.height, currentCropped.width + widthDiff, currentCropped.height);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(mouseX + currentCropped.width + widthDiff + currentCropped.width + widthDiff - 2, currentCropped.startingY + (currentCropped.height * 2) - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 2, currentCropped.startingY + (currentCropped.height * 2) - 2, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(mouseX + currentCropped.width + widthDiff + currentCropped.width + widthDiff - 2, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 4, currentCropped.startingY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        } else {
+          context!.strokeRect(mouseX, currentCropped.startingY, currentCropped.width + widthDiff, currentCropped.height);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX - 2, currentCropped.startingY - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 2, currentCropped.startingY - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        }
+        setDifference({
+          width: currentCropped.width + widthDiff,
+          height: 0,
+          differenceX: mouseX,
+          differenceY: 0
+        });
+        break;
+      case 7:
+        heightDiff = mouseY - (currentCropped.startingY + currentCropped.height);
+        if (flipHorizontal && !flipVertical) {
+          context!.strokeRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY, currentCropped.width, currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + (currentCropped.width * 2) - 2, currentCropped.startingY - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 2, currentCropped.startingY - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + (currentCropped.width * 2) - 4, movedArea.moveY + currentCropped.height  - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width, movedArea.moveY + currentCropped.height, 6, 6);
+          context!.stroke();
+        } else if (flipVertical && !flipHorizontal) {
+          context!.strokeRect(currentCropped.startingX,currentCropped.startingY + currentCropped.startingY - heightDiff, currentCropped.width,currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 2, (currentCropped.startingY * 2) + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 2, (currentCropped.startingY * 2) + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 4, currentCropped.startingY + currentCropped.startingY - heightDiff - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.startingY - heightDiff - 4, 6, 6);
+          context!.stroke();
+        } else if (flipVertical && flipHorizontal) {
+          context!.strokeRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.startingY - heightDiff, currentCropped.width, currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + (currentCropped.width * 2) - 2, (currentCropped.startingY * 2) + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 2, (currentCropped.startingY * 2) + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + (currentCropped.width * 2) - 4, currentCropped.startingY + currentCropped.startingY - heightDiff  - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.startingY - heightDiff - 4, 6, 6);
+          context!.stroke();
+        } else {
+          context!.strokeRect(currentCropped.startingX, currentCropped.startingY, currentCropped.width, currentCropped.height + heightDiff);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 2, currentCropped.startingY - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - 2, currentCropped.startingY - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 4, movedArea.moveY + currentCropped.height  - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width, movedArea.moveY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        }
+        setDifference({
+          width: 0,
+          height: currentCropped.height + heightDiff,
+          differenceX: 0,
+          differenceY: 0
+        });
+        break;
+      case 8:
+        widthDiff = mouseX - (currentCropped.startingX + currentCropped.width);
+        if (flipHorizontal && !flipVertical) {
+          context!.strokeRect(currentCropped.startingX + currentCropped.startingX - widthDiff, currentCropped.startingY, currentCropped.width + widthDiff, currentCropped.height);
+          // left top node
+          context!.beginPath();
+          context!.fillRect((currentCropped.startingX * 2) + currentCropped.width - 2, currentCropped.startingY - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - widthDiff - 2, currentCropped.startingY - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect((currentCropped.startingX * 2) + currentCropped.width - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - widthDiff - 2, currentCropped.startingY + currentCropped.height - 2, 6, 6);
+          context!.stroke();
+        } else if (flipVertical && !flipHorizontal) {
+          context!.strokeRect(currentCropped.startingX, currentCropped.startingY + currentCropped.height, currentCropped.width + widthDiff, currentCropped.height);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 2, currentCropped.startingY + (currentCropped.height * 2) - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX + currentCropped.width - 2, currentCropped.startingY + (currentCropped.height * 2) - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        } else if (flipVertical && flipHorizontal) {
+          context!.strokeRect(currentCropped.startingX + currentCropped.startingX - widthDiff, currentCropped.startingY + currentCropped.height, currentCropped.width + widthDiff, currentCropped.height);
+          // left top node
+          context!.beginPath();
+          context!.fillRect((currentCropped.startingX * 2) + currentCropped.width - 2, currentCropped.startingY + (currentCropped.height * 2), 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - widthDiff - 3, currentCropped.startingY + (currentCropped.height * 2) - 3, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect((currentCropped.startingX * 2) + currentCropped.width - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX + currentCropped.width - widthDiff - 4, currentCropped.startingY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        } else {
+          context!.strokeRect(currentCropped.startingX, currentCropped.startingY, currentCropped.width + widthDiff, currentCropped.height);
+          // left top node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 2, currentCropped.startingY - 4, 6, 6);
+          context!.stroke();
+          // right top node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX + currentCropped.width - 2, currentCropped.startingY - 6, 6, 6);
+          context!.stroke();
+          // left bottom node
+          context!.beginPath();
+          context!.fillRect(currentCropped.startingX - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
+          context!.stroke();
+          // right bottom node
+          context!.beginPath();
+          context!.fillRect(movedArea.moveX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
+          context!.stroke();
+        }
+        setDifference({
+          width: currentCropped.width + widthDiff,
+          height: 0,
+          differenceX: 0,
+          differenceY: 0
+        });
+        break;
+      default:
+        break;
+    }
+  }
 
   // Check if the mouse is hovering over the white dot
   const hoveredDot = annotations.find((annotation: AnnotationProps) => {
@@ -235,295 +1093,6 @@ export const mouseMove = ({
     document.body.style.setProperty("cursor", "default");
   }
 
-  if (isDragging) {
-    const canvas = canvasRef.current;
-    const context = canvas!.getContext("2d");
-    const image = new Image();
-    image.src = imgSrc;
-
-    context!.clearRect(0, 0, canvas!.width, canvas!.height);
-    context!.drawImage(image, 0, 0, dimensions.width + 3, dimensions.height + 3);
-    context!.strokeStyle = "white";
-    context!.setLineDash([5, 5]);
-    context!.lineWidth = 2;
-
-    let movedArea = {
-      moveX: currentCropped.startingX + (mouseX - startingNode.startingNodeX),
-      moveY: currentCropped.startingY + (mouseY - startingNode.startingNodeY)
-    };
-
-    movedArea.moveX <= 0 ? 10 : movedArea.moveX;
-    movedArea.moveY <= 0 ? 10 : movedArea.moveY;
-
-    if (movedArea.moveX <= 0) {
-      movedArea.moveX = 0;
-    }
-    if (movedArea.moveY <= 0) {
-      movedArea.moveY = 0;
-    }
-    if (movedArea.moveY + currentCropped.height >= dimensions.height) {
-      movedArea.moveY = dimensions.height - currentCropped.height - 2;
-    }
-    if (movedArea.moveX + currentCropped.width >= dimensions.width) {
-      movedArea.moveX = dimensions.width - currentCropped.width - 2;
-    }
-
-    context!.strokeRect(
-      movedArea.moveX,
-      movedArea.moveY,
-      currentCropped.width,
-      currentCropped.height
-    );
-    context!.setLineDash([0, 0]);
-    // left top node
-    context!.beginPath();
-    context!.fillRect(movedArea.moveX - 2, movedArea.moveY - 4, 6, 6);
-    context!.stroke();
-    // right top node
-    context!.beginPath();
-    context!.fillRect(movedArea.moveX + currentCropped.width - 2, movedArea.moveY - 6, 6, 6);
-    context!.fill();
-    context!.stroke();
-    // left bottom node
-    context!.beginPath();
-    context!.fillRect(movedArea.moveX - 4, movedArea.moveY + currentCropped.height - 3, 6, 6);
-    context!.stroke();
-    // right bottom node
-    context!.beginPath();
-    context!.fillRect(movedArea.moveX + currentCropped.width, movedArea.moveY + currentCropped.height - 4, 6, 6);
-    context!.stroke();
-  }
-
-  if (isResize) {
-    const canvas = canvasRef.current;
-    const context = canvas!.getContext("2d");
-    const image = imgRef.current;
-
-    context!.clearRect(0, 0, canvas!.width, canvas!.height);
-    context!.drawImage(image!, 0, 0, dimensions.width + 3, dimensions.height + 3);
-    context!.strokeStyle = "white";
-    context!.setLineDash([5, 5]);
-    context!.lineWidth = 2;
-
-    let widthDiff = 0;
-    let heightDiff = 0;
-
-    let movedArea = {
-      moveX: currentCropped.startingX + (mouseX - startingNode.startingNodeX),
-      moveY: currentCropped.startingY + (mouseY - startingNode.startingNodeY)
-    };
-
-    switch (croppingNode) {
-      case 1:
-        widthDiff = currentCropped.startingX - mouseX;
-        heightDiff = currentCropped.startingY - mouseY;
-        context!.strokeRect(mouseX, mouseY, currentCropped.width + widthDiff, currentCropped.height + heightDiff);
-        // left top node
-        context!.beginPath();
-        context!.fillRect(movedArea.moveX - 2, movedArea.moveY - 4, 6, 6);
-        context!.stroke();
-        // right top node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX + currentCropped.width - 2, movedArea.moveY - 6, 6, 6);
-        context!.stroke();
-        // left bottom node
-        context!.beginPath();
-        context!.fillRect(movedArea.moveX - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
-        context!.stroke();
-        // right bottom node
-        context!.fillRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
-        context!.stroke();
-        setDifference({
-          width: currentCropped.width + widthDiff,
-          height: currentCropped.height + heightDiff,
-          differenceX: 0,
-          differenceY: 0
-        });
-        break;
-      case 2:
-        widthDiff = mouseX - (currentCropped.startingX + currentCropped.width);
-        context!.strokeRect(currentCropped.startingX, mouseY, currentCropped.width + widthDiff, currentCropped.height + currentCropped.startingY - mouseY);
-        // left top node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX - 2, movedArea.moveY - 4, 6, 6);
-        context!.stroke();
-        // right top node
-        context!.beginPath();
-        context!.fillRect(movedArea.moveX + currentCropped.width - 2, movedArea.moveY - 6, 6, 6);
-        context!.stroke();
-        // left bottom node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
-        context!.stroke();
-        // right bottom node
-        context!.beginPath();
-        context!.fillRect(movedArea.moveX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
-        context!.stroke();
-        setDifference({
-          width: currentCropped.width + widthDiff,
-          height: currentCropped.height + currentCropped.startingY - mouseY,
-          differenceX: 0,
-          differenceY: mouseY
-        });
-        break;
-      case 3:
-        context!.strokeRect(mouseX, currentCropped.startingY, currentCropped.startingX - mouseX + currentCropped.width, currentCropped.height + (mouseY - (currentCropped.startingY + currentCropped.height)));
-        // left top node
-        context!.beginPath();
-        context!.fillRect(movedArea.moveX - 2, currentCropped.startingY - 4, 6, 6);
-        context!.stroke();
-        // right top node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX + currentCropped.width - 2, currentCropped.startingY - 6, 6, 6);
-        context!.stroke();
-        // left bottom node
-        context!.beginPath();
-        context!.fillRect(movedArea.moveX - 4, movedArea.moveY + currentCropped.height - 3, 6, 6);
-        context!.stroke();
-        // right bottom node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX + currentCropped.width, movedArea.moveY + currentCropped.height - 4, 6, 6);
-        context!.stroke();
-        setDifference({
-          width: currentCropped.startingX - mouseX + currentCropped.width,
-          height: currentCropped.height + (mouseY - (currentCropped.startingY + currentCropped.height)),
-          differenceX: mouseX,
-          differenceY: 0
-        });
-        break;
-      case 4:
-        context!.strokeRect(currentCropped.startingX, currentCropped.startingY, currentCropped.width + (mouseX - (currentCropped.startingX + currentCropped.width)), currentCropped.height + (mouseY - (currentCropped.startingY + currentCropped.height)));
-        // left top node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX - 2, currentCropped.startingY - 4, 6, 6);
-        context!.stroke();
-        // right top node
-        context!.beginPath();
-        context!.fillRect(movedArea.moveX + currentCropped.width - 2, currentCropped.startingY - 6, 6, 6);
-        context!.stroke();
-        // left bottom node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX - 4, movedArea.moveY + currentCropped.height - 3, 6, 6);
-        context!.stroke();
-        // right bottom node
-        context!.beginPath();
-        context!.fillRect(movedArea.moveX + currentCropped.width, movedArea.moveY + currentCropped.height - 4, 6, 6);
-        context!.stroke();
-        setDifference({
-          width: currentCropped.width + (mouseX - (currentCropped.startingX + currentCropped.width)),
-          height: currentCropped.height + (mouseY - (currentCropped.startingY + currentCropped.height)),
-          differenceX: 0,
-          differenceY: 0
-        });
-        break;
-      case 5:
-        heightDiff = currentCropped.startingY - mouseY;
-        context!.strokeRect(currentCropped.startingX, mouseY, currentCropped.width, currentCropped.height + heightDiff);
-        // left top node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX - 2, movedArea.moveY - 4, 6, 6);
-        context!.stroke();
-        // right top node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX + currentCropped.width - 2, movedArea.moveY - 6, 6, 6);
-        context!.stroke();
-        // left bottom node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
-        context!.stroke();
-        // right bottom node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
-        context!.stroke();
-        setDifference({
-          width: 0,
-          height: currentCropped.height + heightDiff,
-          differenceX: 0,
-          differenceY: mouseY
-        });
-        break;
-      case 6:
-        widthDiff = currentCropped.startingX - mouseX;
-        context!.strokeRect(mouseX, currentCropped.startingY, currentCropped.width + widthDiff, currentCropped.height);
-        // left top node
-        context!.beginPath();
-        context!.fillRect(movedArea.moveX - 2, currentCropped.startingY - 4, 6, 6);
-        context!.stroke();
-        // right top node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX + currentCropped.width - 2, currentCropped.startingY - 6, 6, 6);
-        context!.stroke();
-        // left bottom node
-        context!.beginPath();
-        context!.fillRect(movedArea.moveX - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
-        context!.stroke();
-        // right bottom node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
-        context!.stroke();
-        setDifference({
-          width: currentCropped.width + widthDiff,
-          height: 0,
-          differenceX: mouseX,
-          differenceY: 0
-        });
-        break;
-      case 7:
-        heightDiff = mouseY - (currentCropped.startingY + currentCropped.height);
-        context!.strokeRect(currentCropped.startingX, currentCropped.startingY, currentCropped.width, currentCropped.height + heightDiff);
-        // left top node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX - 2, currentCropped.startingY - 4, 6, 6);
-        context!.stroke();
-        // right top node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX + currentCropped.width - 2, currentCropped.startingY - 6, 6, 6);
-        context!.stroke();
-        // left bottom node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX - 4, movedArea.moveY + currentCropped.height  - 3, 6, 6);
-        context!.stroke();
-        // right bottom node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX + currentCropped.width, movedArea.moveY + currentCropped.height - 4, 6, 6);
-        context!.stroke();
-        setDifference({
-          width: 0,
-          height: currentCropped.height + heightDiff,
-          differenceX: 0,
-          differenceY: 0
-        });
-        break;
-      case 8:
-        widthDiff = mouseX - (currentCropped.startingX + currentCropped.width);
-        context!.strokeRect(currentCropped.startingX, currentCropped.startingY, currentCropped.width + widthDiff, currentCropped.height);
-        // left top node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX - 2, currentCropped.startingY - 4, 6, 6);
-        context!.stroke();
-        // right top node
-        context!.beginPath();
-        context!.fillRect(movedArea.moveX + currentCropped.width - 2, currentCropped.startingY - 6, 6, 6);
-        context!.stroke();
-        // left bottom node
-        context!.beginPath();
-        context!.fillRect(currentCropped.startingX - 4, currentCropped.startingY + currentCropped.height - 3, 6, 6);
-        context!.stroke();
-        // right bottom node
-        context!.beginPath();
-        context!.fillRect(movedArea.moveX + currentCropped.width, currentCropped.startingY + currentCropped.height - 4, 6, 6);
-        context!.stroke();
-        setDifference({
-          width: currentCropped.width + widthDiff,
-          height: 0,
-          differenceX: 0,
-          differenceY: 0
-        });
-        break;
-      default:
-        break;
-    }
-  }
   annotations && annotations.forEach((annotationData: AnnotationProps) => {
     const { currentAnnotationX, currentAnnotationY } = annotationData;
     context!.beginPath();
@@ -543,6 +1112,7 @@ export const mouseMove = ({
 
 export const mouseUP = ({
   cropMouseUpLeaveEvent,
+  canvasRef,
   difference,
   setDifference,
   currentCropped,
@@ -552,10 +1122,15 @@ export const mouseUP = ({
   setIsResize,
   isDragging,
   setIsDragging,
-  startingNode
+  startingNode,
+  flipHorizontal,
+  flipVertical
 }: MouseUPProps) => {
-  const mouseX = cropMouseUpLeaveEvent.nativeEvent.offsetX;
-  const mouseY = cropMouseUpLeaveEvent.nativeEvent.offsetY;
+  const canvas = canvasRef.current;
+  const context = canvas!.getContext("2d");
+  const rect = canvas!.getBoundingClientRect();
+  let mouseX = cropMouseUpLeaveEvent.nativeEvent.offsetX;
+  let mouseY = cropMouseUpLeaveEvent.nativeEvent.offsetY;
 
   const distance = Math.sqrt(Math.pow(mouseX - startingNode.startingNodeX, 2) + Math.pow(mouseY - startingNode.startingNodeY, 2));
 
@@ -587,6 +1162,33 @@ export const mouseUP = ({
   }
 
   if (isResize) {
+    // Adjust the position based on the flipped canvas
+    if (flipHorizontal && !flipVertical) {
+      mouseX = rect.width - cropMouseUpLeaveEvent.nativeEvent.offsetX;
+      mouseY = cropMouseUpLeaveEvent.nativeEvent.offsetY;
+    } else if (flipVertical && !flipHorizontal) {
+      mouseX = cropMouseUpLeaveEvent.nativeEvent.offsetX;
+      mouseY = rect.height - cropMouseUpLeaveEvent.nativeEvent.offsetY;
+    } else if (flipVertical && flipHorizontal) {
+      mouseX = rect.width - cropMouseUpLeaveEvent.nativeEvent.offsetX;
+      mouseY = rect.height - cropMouseUpLeaveEvent.nativeEvent.offsetY;
+    } else {
+      mouseX = cropMouseUpLeaveEvent.nativeEvent.offsetX;
+      mouseY = cropMouseUpLeaveEvent.nativeEvent.offsetY;
+    }
+
+    if (flipHorizontal && !flipVertical) {
+      context!.translate(canvas!.width, 0);
+      context!.scale(-1, 1);
+    } else if (flipVertical && !flipHorizontal) {
+      context!.translate(0, canvas!.height);
+      context!.scale(1, -1);
+    } else if (flipVertical && flipHorizontal) {
+      context!.translate(canvas!.width, 0);
+      context!.scale(-1, 1);
+      context!.translate(0, canvas!.height);
+      context!.scale(1, -1);
+    }
     if (croppingNode === 1) {
       setCurrentCropped({
         startingX: mouseX,
@@ -653,9 +1255,24 @@ export const mouseUP = ({
     });
     setIsResize(false);
   }
+
+  if (flipHorizontal && !flipVertical) {
+    context!.translate(canvas!.width, 0);
+    context!.scale(-1, 1);
+  }
+  if (flipVertical && !flipHorizontal) {
+    context!.translate(0, canvas!.height);
+    context!.scale(1, -1);
+  }
+  if (flipVertical && flipHorizontal) {
+    context!.translate(canvas!.width, 0);
+    context!.scale(-1, 1);
+    context!.translate(0, canvas!.height);
+    context!.scale(1, -1);
+  }
 };
 
-export const mouseLeave = ({ cropMouseUpLeaveEvent, setIsDragging, setIsResize, mouseUp }: MouseLeaveProps) => {
+export const mouseLeave = ({ cropMouseUpLeaveEvent, canvasRef, setIsDragging, setIsResize, mouseUp, flipHorizontal, flipVertical }: MouseLeaveProps) => {
   const {
     difference,
     setDifference,
@@ -672,6 +1289,7 @@ export const mouseLeave = ({ cropMouseUpLeaveEvent, setIsDragging, setIsResize, 
   document.body.style.setProperty("cursor", "default");
   mouseUP({
     cropMouseUpLeaveEvent,
+    canvasRef,
     difference,
     setDifference,
     currentCropped,
@@ -681,6 +1299,8 @@ export const mouseLeave = ({ cropMouseUpLeaveEvent, setIsDragging, setIsResize, 
     setIsResize,
     isDragging,
     setIsDragging,
-    startingNode
+    startingNode,
+    flipHorizontal,
+    flipVertical
   });
 };

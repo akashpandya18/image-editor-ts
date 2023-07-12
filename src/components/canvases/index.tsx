@@ -157,7 +157,9 @@ export const CropCanvas = ({
   allTextTags,
   setHoverTag,
   setHoverPos,
-  setShowH
+  setShowH,
+  flipHorizontal,
+  flipVertical
 }: CropProps): JSX.Element => {
   const [difference, setDifference] = useState({ width: 0, height: 0, differenceX: 0, differenceY: 0 });
   const [croppingNode, setCroppingNode] = useState<number>(0);
@@ -189,11 +191,14 @@ export const CropCanvas = ({
         ref={canvasRef}
         onMouseDown={(cropMouseDownEvent: React.MouseEvent<HTMLCanvasElement>) => mouseDown({
           cropMouseDownEvent,
+          canvasRef,
           currentCropped,
           setCroppingNode,
           setIsResize,
           setIsDragging,
-          setStartingNode
+          setStartingNode,
+          flipHorizontal,
+          flipVertical
         })}
         onMouseMove={(cropMouseMoveEvent) => mouseMove({
           cropMouseMoveEvent,
@@ -213,10 +218,13 @@ export const CropCanvas = ({
           allTextTags,
           setHoverTag,
           setHoverPos,
-          setShowH
+          setShowH,
+          flipHorizontal,
+          flipVertical
         })}
         onMouseUp={(cropMouseUpLeaveEvent) => mouseUP({
           cropMouseUpLeaveEvent,
+          canvasRef,
           difference,
           setDifference,
           currentCropped,
@@ -226,13 +234,18 @@ export const CropCanvas = ({
           setIsResize,
           isDragging,
           setIsDragging,
-          startingNode
+          startingNode,
+          flipHorizontal,
+          flipVertical
         })}
         onMouseLeave={(cropMouseUpLeaveEvent: React.MouseEvent<HTMLCanvasElement>) => mouseLeave({
           cropMouseUpLeaveEvent,
+          canvasRef,
           setIsDragging,
           setIsResize,
-          mouseUp
+          mouseUp,
+          flipHorizontal,
+          flipVertical
         })}
       />
       <img

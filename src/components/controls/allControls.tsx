@@ -214,7 +214,9 @@ export const CropControl = ({
   blur,
   brightness,
   setImgSrc,
-  currentCropped
+  currentCropped,
+  flipHorizontal,
+  flipVertical
 }: CropControlProps) => {
   return (
     <div>
@@ -258,7 +260,9 @@ export const CropControl = ({
               setCroppedImage,
               newImage,
               blur,
-              brightness
+              brightness,
+              flipHorizontal,
+              flipVertical
             })}
             title={"Submit"}
           >

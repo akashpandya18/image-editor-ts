@@ -132,10 +132,12 @@ export const Controls = ({ imgSrc, setImgSrc, originalImage }: ControlsProps): J
     if (flipHorizontal && !flipVertical) {
       context!.translate(canvas!.width, 0);
       context!.scale(-1, 1);
-    } else if (flipVertical && !flipHorizontal) {
+    }
+    if (flipVertical && !flipHorizontal) {
       context!.translate(0, canvas!.height);
       context!.scale(1, -1);
-    } else if (flipVertical && flipHorizontal) {
+    }
+    if (flipVertical && flipHorizontal) {
       context!.translate(canvas!.width, 0);
       context!.scale(-1, 1);
       context!.translate(0, canvas!.height);
@@ -180,6 +182,7 @@ export const Controls = ({ imgSrc, setImgSrc, originalImage }: ControlsProps): J
         image.height = canvas!.height;
 
         context!.save();
+        // flipValue(canvas, context);
         // setting blur and brightness value on canvas
         context!.filter = `blur(${blur}px) brightness(${brightness})`;
         context!.translate(centerX, centerY);
@@ -267,6 +270,19 @@ export const Controls = ({ imgSrc, setImgSrc, originalImage }: ControlsProps): J
       let newCtx = newCanvas.getContext("2d");
       const { width, height } = currentCropped;
 
+      if (flipHorizontal && !flipVertical) {
+        context1!.translate(canvas1!.width, 0);
+        context1!.scale(-1, 1);
+      } else if (flipVertical && !flipHorizontal) {
+        context1!.translate(0, canvas1!.height);
+        context1!.scale(1, -1);
+      } else if (flipVertical && flipHorizontal) {
+        context1!.translate(canvas1!.width, 0);
+        context1!.scale(-1, 1);
+        context1!.translate(0, canvas1!.height);
+        context1!.scale(1, -1);
+      }
+
       newCanvas.height = height;
       newCanvas.width = width;
 
@@ -282,89 +298,130 @@ export const Controls = ({ imgSrc, setImgSrc, originalImage }: ControlsProps): J
     if (selectCanvas) {
       const canvas = canvasRef.current;
       const context = canvas!.getContext("2d");
-      // const rect = canvas!.getBoundingClientRect();
 
       context!.strokeStyle = "white";
       context!.setLineDash([5, 5]);
-      // console.log("canvas!.width", canvas!.width);
-      // console.log("canvas!.height", canvas!.height);
 
-      let cropImageStartX = Math.floor(canvas!.width / 4);
-      let cropImageStartY = Math.floor(canvas!.height / 4);
       const cropImageWidth = Math.floor(canvas!.width / 4);
       const cropImageHeight = Math.floor(canvas!.height / 4);
 
-      // console.log("rect", rect);
-      // console.log("rect.width", rect.width);
-      // console.log("canvas!.width", canvas!.width);
-      // console.log("rect.height", rect.height);
-      // console.log("canvas!.height", canvas!.height);
-
-      // // Adjust the position based on the flipped canvas
-      // if (flipHorizontal && !flipVertical) {
-      //   cropImageStartX = rect.x - canvas!.width / 4;
-      //   cropImageStartY = canvas!.height / 4;
-      //   console.log("cropImageStartX", cropImageStartX);
-      // } else if (flipVertical && !flipHorizontal) {
-      //   cropImageStartX = canvas!.width / 4;
-      //   cropImageStartY = rect.height - canvas!.height / 4;
-      //   console.log("cropImageStartY", cropImageStartY);
-      // } else if (flipVertical && flipHorizontal) {
-      //   cropImageStartX = rect.width - canvas!.width / 4;
-      //   cropImageStartY = rect.height - canvas!.height / 4;
-      // }
-
-      context!.lineWidth = 2;
-      context!.strokeRect(cropImageStartX, cropImageStartY, cropImageWidth, cropImageHeight);
-
       setCurrentCropped({
-        startingX: cropImageStartX,
-        startingY: cropImageStartY,
+        startingX: cropImageWidth,
+        startingY: cropImageHeight,
         width: cropImageWidth,
         height: cropImageHeight
       });
+
+      context!.lineWidth = 2;
       context!.setLineDash([5, 5]);
-      // left top node
-      context!.fillStyle = "white";
-      context!.beginPath();
-      context!.fillRect((dimensions.width / 4) - 2, (dimensions.height / 4) - 4, 6, 6);
-      context!.fillStyle = "white";
-      context!.fill();
-      context!.stroke();
-      // right top node
-      context!.beginPath();
-      context!.fillRect((dimensions.width / 4) + (dimensions.width / 4) - 2, (dimensions.height / 4) - 6, 6, 6);
-      context!.fillStyle = "white";
-      context!.fill();
-      context!.stroke();
-      // left bottom node
-      context!.beginPath();
-      context!.fillRect((dimensions.width / 4) - 4, (dimensions.height / 4) + (dimensions.height / 4) - 3, 6, 6);
-      context!.fillStyle = "white";
-      context!.fill();
-      context!.stroke();
-      // right bottom node
-      context!.beginPath();
-      context!.fillRect((dimensions.width / 4) + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) - 4, 6, 6);
-      context!.fillStyle = "white";
-      context!.fill();
-      context!.stroke();
-
-      const canvas1 = canvasRef.current;
-      const context1 = canvas1!.getContext("2d");
-      let newCanvas = document.createElement("canvas");
-      let newCtx = newCanvas.getContext("2d");
-
-      newCanvas.height = cropImageHeight;
-      newCanvas.width = cropImageWidth;
-
-      const imageData = context1!.getImageData(dimensions.width / 4 + 2, dimensions.height / 4 + 2, dimensions.width / 4 - 3, dimensions.height / 4 - 3);
-      newCtx!.putImageData(imageData, 0, 0);
-      let crop = newCanvas.toDataURL();
-      setCroppedImage(crop);
-      setNewImage(crop);
+      // setting crop rectangle and it's nodes as per flip effect
+      if (flipHorizontal && !flipVertical) {
+        context!.strokeRect(cropImageWidth * 2, cropImageHeight, cropImageWidth, cropImageHeight);
+        // left top node
+        context!.beginPath();
+        context!.fillStyle = "white";
+        context!.fillRect((cropImageWidth * 3) - 2, cropImageHeight - 4, 6, 6);
+        context!.fill();
+        context!.stroke();
+        // right top node
+        context!.beginPath();
+        context!.fillStyle = "white";
+        context!.fillRect((cropImageWidth * 2) - 2, cropImageHeight - 3, 6, 6);
+        context!.fill();
+        context!.stroke();
+        // left bottom node
+        context!.beginPath();
+        context!.fillStyle = "white";
+        context!.fillRect((cropImageWidth * 3) - 2, (cropImageHeight * 2) - 3, 6, 6);
+        context!.fill();
+        context!.stroke();
+        // right bottom node
+        context!.beginPath();
+        context!.fillStyle = "white";
+        context!.fillRect((cropImageWidth * 2) - 5, (cropImageHeight * 2) - 2, 6, 6);
+        context!.fill();
+        context!.stroke();
+      } else if (flipVertical && !flipHorizontal) {
+        context!.strokeRect(cropImageWidth, cropImageHeight * 2, cropImageWidth, cropImageHeight);
+        // left top node
+        context!.beginPath();
+        context!.fillStyle = "white";
+        context!.fillRect(cropImageWidth - 2, (cropImageHeight * 3) - 4, 6, 6);
+        context!.fill();
+        context!.stroke();
+        // right top node
+        context!.beginPath();
+        context!.fillStyle = "white";
+        context!.fillRect((cropImageWidth * 2) - 2, (cropImageHeight * 3) - 3, 6, 6);
+        context!.fill();
+        context!.stroke();
+        // left bottom node
+        context!.beginPath();
+        context!.fillStyle = "white";
+        context!.fillRect(cropImageWidth - 4, (cropImageHeight * 2) - 3, 6, 6);
+        context!.fill();
+        context!.stroke();
+        // right bottom node
+        context!.beginPath();
+        context!.fillStyle = "white";
+        context!.fillRect((cropImageWidth * 2), (cropImageHeight * 2) - 4, 6, 6);
+        context!.fill();
+        context!.stroke();
+      } else if (flipVertical && flipHorizontal) {
+        context!.strokeRect(cropImageWidth * 2, cropImageHeight * 2, cropImageWidth, cropImageHeight);
+        // left top node
+        context!.beginPath();
+        context!.fillStyle = "white";
+        context!.fillRect((cropImageWidth * 3), (cropImageHeight * 3) - 2, 6, 6);
+        context!.fill();
+        context!.stroke();
+        // right top node
+        context!.beginPath();
+        context!.fillStyle = "white";
+        context!.fillRect((cropImageWidth * 2) - 5, (cropImageHeight * 3) - 3, 6, 6);
+        context!.fill();
+        context!.stroke();
+        // left bottom node
+        context!.beginPath();
+        context!.fillStyle = "white";
+        context!.fillRect((cropImageWidth * 3) - 4, (cropImageHeight * 2) - 5, 6, 6);
+        context!.fill();
+        context!.stroke();
+        // right bottom node
+        context!.beginPath();
+        context!.fillStyle = "white";
+        context!.fillRect((cropImageWidth * 2) - 5, (cropImageHeight * 2) - 5, 6, 6);
+        context!.fill();
+        context!.stroke();
+      } else {
+        context!.strokeRect(cropImageWidth, cropImageHeight, cropImageWidth, cropImageHeight);
+        // left top node
+        context!.beginPath();
+        context!.fillStyle = "white";
+        context!.fillRect((dimensions.width / 4) - 2, (dimensions.height / 4) - 4, 6, 6);
+        context!.fill();
+        context!.stroke();
+        // right top node
+        context!.beginPath();
+        context!.fillStyle = "white";
+        context!.fillRect((dimensions.width / 4) + (dimensions.width / 4) - 2, (dimensions.height / 4) - 6, 6, 6);
+        context!.fill();
+        context!.stroke();
+        // left bottom node
+        context!.beginPath();
+        context!.fillStyle = "white";
+        context!.fillRect((dimensions.width / 4) - 4, (dimensions.height / 4) + (dimensions.height / 4) - 3, 6, 6);
+        context!.fill();
+        context!.stroke();
+        // right bottom node
+        context!.beginPath();
+        context!.fillStyle = "white";
+        context!.fillRect((dimensions.width / 4) + (dimensions.width / 4), (dimensions.height / 4) + (dimensions.height / 4) - 4, 6, 6);
+        context!.fill();
+        context!.stroke();
+      }
     }
-  }, [selectCanvas, showAllTags]);
+  }, [selectCanvas, showAllTags, flipVertical, flipHorizontal]);
   // input filed handleChange event of text-on-image tab canvas
   const textOnChangeHandlerCall = (textForm: TextFormProps) => {
     textOnChangeHandler({
@@ -557,12 +614,15 @@ export const Controls = ({ imgSrc, setImgSrc, originalImage }: ControlsProps): J
               brightness={brightness}
               setImgSrc={setImgSrc}
               currentCropped={currentCropped}
+              flipHorizontal={flipHorizontal}
+              flipVertical={flipVertical}
             />
           ) : currentControl === "flip" ? (
             <FlipControl
               flipHorizontally={() => flipHorizontally({
                 canvasRef,
                 imgSrc,
+                setImgSrc,
                 annotations,
                 flipHorizontal,
                 setFlipHorizontal,
@@ -574,6 +634,7 @@ export const Controls = ({ imgSrc, setImgSrc, originalImage }: ControlsProps): J
               flipVertically={() => flipVertically({
                 canvasRef,
                 imgSrc,
+                setImgSrc,
                 annotations,
                 flipVertical,
                 setFlipVertical,
@@ -701,6 +762,8 @@ export const Controls = ({ imgSrc, setImgSrc, originalImage }: ControlsProps): J
             setHoverTag={setHoverTag}
             setHoverPos={setHoverPos}
             setShowH={setShowH}
+            flipHorizontal={flipHorizontal}
+            flipVertical={flipVertical}
           />
         ) : currentControl === "flip" ? (
           <FlipCanvas

@@ -371,6 +371,8 @@ export interface CropControlProps {
   brightness: number;
   setImgSrc: React.Dispatch<React.SetStateAction<string>>;
   currentCropped: Cropped;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface CropProps {
@@ -386,6 +388,8 @@ export interface CropProps {
   setHoverTag: React.Dispatch<React.SetStateAction<string>>;
   setHoverPos: React.Dispatch<React.SetStateAction<{ hoveredDotX: number; hoveredDotY: number; }>>;
   setShowH: React.Dispatch<React.SetStateAction<boolean>>;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 interface DifferenceProps {
@@ -404,11 +408,14 @@ export interface Cropped {
 
 export interface MouseDownProps {
   cropMouseDownEvent: React.MouseEvent<HTMLCanvasElement>;
+  canvasRef: React.RefObject<HTMLCanvasElement>;
   currentCropped: Cropped;
   setCroppingNode: React.Dispatch<React.SetStateAction<number>>;
   setIsResize: React.Dispatch<React.SetStateAction<boolean>>;
   setIsDragging: React.Dispatch<React.SetStateAction<boolean>>;
   setStartingNode: React.Dispatch<React.SetStateAction<{ startingNodeX: number; startingNodeY: number; }>>;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface SaveImageProps {
@@ -420,6 +427,8 @@ export interface SaveImageProps {
   newImage: string;
   blur: number;
   brightness: number;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface MouseMoveProps {
@@ -441,10 +450,13 @@ export interface MouseMoveProps {
   setHoverTag: React.Dispatch<React.SetStateAction<string>>;
   setHoverPos: React.Dispatch<React.SetStateAction<{ hoveredDotX: number; hoveredDotY: number; }>>;
   setShowH: React.Dispatch<React.SetStateAction<boolean>>;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface MouseUPProps {
   cropMouseUpLeaveEvent: React.MouseEvent<HTMLCanvasElement>;
+  canvasRef: React.RefObject<HTMLCanvasElement>;
   difference: DifferenceProps;
   setDifference: React.Dispatch<React.SetStateAction<DifferenceProps>>;
   currentCropped: Cropped;
@@ -455,6 +467,8 @@ export interface MouseUPProps {
   isDragging: boolean;
   setIsDragging: React.Dispatch<React.SetStateAction<boolean>>;
   startingNode: { startingNodeX: number; startingNodeY: number; };
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 interface MouseUpProps {
@@ -470,9 +484,12 @@ interface MouseUpProps {
 
 export interface MouseLeaveProps {
   cropMouseUpLeaveEvent: React.MouseEvent<HTMLCanvasElement>;
+  canvasRef: React.RefObject<HTMLCanvasElement>;
   setIsDragging: React.Dispatch<React.SetStateAction<boolean>>;
   setIsResize: React.Dispatch<React.SetStateAction<boolean>>;
   mouseUp: MouseUpProps;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
 }
 
 export interface FlipCanvasProps {
@@ -488,6 +505,7 @@ export interface PropsFlip {
 export interface FlipHorizontallyProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   imgSrc: string;
+  setImgSrc: React.Dispatch<React.SetStateAction<string>>;
   annotations: AnnotationProps[];
   flipHorizontal: boolean;
   setFlipHorizontal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -500,6 +518,7 @@ export interface FlipHorizontallyProps {
 export interface FlipVerticallyProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   imgSrc: string;
+  setImgSrc: React.Dispatch<React.SetStateAction<string>>;
   annotations: AnnotationProps[];
   flipVertical: boolean;
   setFlipVertical: React.Dispatch<React.SetStateAction<boolean>>;
